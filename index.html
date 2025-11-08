@@ -10,24 +10,75 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- PROFESSIONAL HEADER WITH ACTIVE STATE -->
+  <!-- PROFESSIONAL HEADER WITH MOBILE MENU -->
   <header>
     <div class="header-container">
       <div class="logo">WORD <span>CALCULATOR</span></div>
-      <nav>
+      
+      <!-- Desktop Navigation -->
+      <nav class="desktop-nav">
         <a href="index.html" class="nav-link">Home</a>
         <a href="blog.html" class="nav-link">Blog</a>
-        <a href="#" class="nav-link">More <i class="fas fa-caret-down"></i></a>
+        <div class="dropdown">
+          <a href="#" class="nav-link">More <i class="fas fa-caret-down"></i></a>
+          <div class="dropdown-content">
+            <a href="#">Grammar Check</a>
+            <a href="#">Thesaurus</a>
+            <a href="#">Writing Tools</a>
+            <a href="#">Templates</a>
+          </div>
+        </div>
         <a href="#" class="signin-btn">Sign In</a>
       </nav>
+
+      <!-- Mobile Menu Button -->
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- Mobile Navigation -->
+      <nav class="mobile-nav" id="mobileNav">
+        <div class="mobile-nav-header">
+          <div class="logo">WORD <span>CALCULATOR</span></div>
+          <button class="mobile-close-btn" id="mobileCloseBtn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="mobile-nav-links">
+          <a href="index.html" class="nav-link mobile-link">Home</a>
+          <a href="blog.html" class="nav-link mobile-link">Blog</a>
+          <div class="mobile-dropdown">
+            <a href="#" class="nav-link mobile-link">More Tools <i class="fas fa-chevron-down"></i></a>
+            <div class="mobile-dropdown-content">
+              <a href="#" class="mobile-link">Grammar Check</a>
+              <a href="#" class="mobile-link">Thesaurus</a>
+              <a href="#" class="mobile-link">Writing Tools</a>
+              <a href="#" class="mobile-link">Templates</a>
+            </div>
+          </div>
+          <a href="#" class="nav-link mobile-link">Support</a>
+          <a href="#" class="nav-link mobile-link">Contact</a>
+          <div class="mobile-nav-actions">
+            <a href="#" class="signin-btn mobile-signin">Sign In</a>
+            <a href="#" class="signup-btn mobile-signup">Sign Up</a>
+          </div>
+        </div>
+      </nav>
+      <div class="mobile-overlay" id="mobileOverlay"></div>
     </div>
   </header>
 
   <div class="main-container">
     <!-- Editor Section -->
     <section class="editor-section">
+      <!-- TOP STATS - FIXED HEIGHT -->
       <div class="stats-top-bar">
-        <span class="stats-text" id="top-stats">0 words 0 characters</span>
+        <div class="stats-container">
+          <span class="stats-text" id="top-stats">0 words 0 characters</span>
+          <span class="selection-indicator" id="selection-indicator" style="display: none;">
+            <i class="fas fa-mouse-pointer"></i> Showing selected text stats
+          </span>
+        </div>
       </div>
 
       <!-- TOOLBAR WITH 19 ICONS -->
@@ -50,7 +101,7 @@
         <button class="tool-btn" onclick="showWordDensity()" title="Word Density"><i class="fas fa-percentage"></i></button>
         <button class="tool-btn" onclick="openCharMap()" title="Character Map"><i class="fas fa-keyboard"></i></button>
         <button class="tool-btn" onclick="showProStats()" title="Word Counter Pro"><i class="fas fa-cogs"></i></button>
-        <button class="tool-btn" onclick="textToSpeech()" title="Text to Speech"><i class="fas fa-volume-up"></i></button>
+        <button class="tool-btn" id="textToSpeechBtn" onclick="textToSpeech()" title="Text to Speech"><i class="fas fa-volume-up"></i></button>
         <button class="tool-btn" onclick="findReplace()" title="Find & Replace"><i class="fas fa-search"></i></button>
       </div>
 
@@ -86,7 +137,7 @@
         </div>
       </div>
 
-      <!-- Details Panel -->
+      <!-- Details Panel - BACK TO ORIGINAL STYLE -->
       <div class="panel open">
         <h4 class="panel-title" onclick="togglePanel(this)">
           Details <i class="fas fa-chevron-up"></i>
