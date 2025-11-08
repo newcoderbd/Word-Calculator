@@ -3,23 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Word Calculator - Count Words & Correct Writing</title>
-  <meta name="description" content="Free online word counter, character counter, and writing tool with 18 free tools.">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <title>Word Calculator - 28 Free Offline Tools</title>
+  <meta name="description" content="Free offline word counter with 28 powerful tools: grammar check, PDF export, thesaurus, text-to-speech, and more. Works on mobile & desktop.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- PROFESSIONAL HEADER WITH ACTIVE STATE -->
+  <!-- HEADER WITH MOBILE MENU -->
   <header>
     <div class="header-container">
       <div class="logo">WORD <span>CALCULATOR</span></div>
-      <nav>
-        <a href="index.html" class="nav-link">Home</a>
-        <a href="blog.html" class="nav-link">Blog</a>
-        <a href="#" class="nav-link">More <i class="fas fa-caret-down"></i></a>
+      
+      <!-- DESKTOP NAV -->
+      <nav class="desktop-nav">
+        <a href="#">Home</a>
+        <a href="#">Blog</a>
+        <a href="#">More <i class="fas fa-caret-down"></i></a>
         <a href="#" class="signin-btn">Sign In</a>
       </nav>
+
+      <!-- MOBILE MENU BUTTON -->
+      <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- MOBILE FULLSCREEN MENU -->
+      <div class="mobile-menu" id="mobileMenu">
+        <button class="close-btn" onclick="toggleMobileMenu()">×</button>
+        <a href="#">Home</a>
+        <a href="#">Blog</a>
+        <a href="#">More Tools</a>
+        <a href="#" class="signin-btn">Sign In</a>
+      </div>
     </div>
   </header>
 
@@ -30,67 +46,63 @@
         <span class="stats-text" id="top-stats">0 words 0 characters</span>
       </div>
 
-      <!-- TOOLBAR WITH 19 ICONS -->
+      <!-- TOOLBAR - 28 TOOLS -->
       <div class="toolbar">
-        <button class="tool-btn" onclick="checkGrammar()" title="Grammar & Spell Check"><i class="fas fa-spell-check"></i></button>
-        <button class="tool-btn" onclick="thesaurus()" title="Open Thesaurus (Simulated)"><i class="fas fa-book"></i></button>
-        <button class="tool-btn" onclick="toUpperCase()" title="Convert to UPPERCASE"><i class="fas fa-arrow-up"></i></button>
-        <button class="tool-btn" onclick="toLowerCase()" title="Convert to lowercase"><i class="fas fa-arrow-down"></i></button>
-        <button class="tool-btn" onclick="toTitleCase()" title="Convert to Title Case"><i class="fas fa-heading"></i></button>
-        <button class="tool-btn" onclick="toSentenceCase()" title="Convert to Sentence case"><i class="fas fa-align-left"></i></button>
-        <button class="tool-btn" onclick="toCamelCase()" title="Convert to camelCase"><i class="fas fa-code"></i></button>
-        <button class="tool-btn" onclick="saveDoc()" title="Save Document as .txt"><i class="fas fa-save"></i></button>
-        <button class="tool-btn" onclick="setGoal()" title="Set Word Goal"><i class="fas fa-target"></i></button>
-        <button class="toggle-btn autosave-off" onclick="toggleAutoSave()" title="Toggle Auto-Save"><i class="fas fa-sync"></i></button>
-        <button class="tool-btn clear-btn" onclick="clearEditor()" title="Clear All Text"><i class="fas fa-trash"></i></button>
-        <button class="tool-btn" onclick="undo()" title="Undo Last Action"><i class="fas fa-undo"></i></button>
-        <button class="tool-btn" onclick="redo()" title="Redo Last Action"><i class="fas fa-redo"></i></button>
-
-        <!-- 5 NEW TOOLS -->
+        <button class="tool-btn" onclick="checkGrammar()" title="Grammar Check"><i class="fas fa-spell-check"></i></button>
+        <button class="tool-btn" onclick="showThesaurus()" title="Offline Thesaurus"><i class="fas fa-book"></i></button>
+        <button class="tool-btn" onclick="toUpperCase()" title="UPPERCASE"><i class="fas fa-arrow-up"></i></button>
+        <button class="tool-btn" onclick="toLowerCase()" title="lowercase"><i class="fas fa-arrow-down"></i></button>
+        <button class="tool-btn" onclick="toTitleCase()" title="Title Case"><i class="fas fa-heading"></i></button>
+        <button class="tool-btn" onclick="toSentenceCase()" title="Sentence case"><i class="fas fa-align-left"></i></button>
+        <button class="tool-btn" onclick="toCamelCase()" title="camelCase"><i class="fas fa-code"></i></button>
+        <button class="tool-btn" onclick="saveDoc()" title="Save .txt"><i class="fas fa-save"></i></button>
+        <button class="tool-btn" onclick="setGoal()" title="Set Goal"><i class="fas fa-target"></i></button>
+        <button class="toggle-btn autosave-off" onclick="toggleAutoSave()" title="Auto-Save"><i class="fas fa-sync"></i></button>
+        <button class="tool-btn" onclick="clearEditor()" title="Clear"><i class="fas fa-trash"></i></button>
+        <button class="tool-btn" onclick="undo()" title="Undo"><i class="fas fa-undo"></i></button>
+        <button class="tool-btn" onclick="redo()" title="Redo"><i class="fas fa-redo"></i></button>
         <button class="tool-btn" onclick="showWordDensity()" title="Word Density"><i class="fas fa-percentage"></i></button>
-        <button class="tool-btn" onclick="openCharMap()" title="Character Map"><i class="fas fa-keyboard"></i></button>
-        <button class="tool-btn" onclick="showProStats()" title="Word Counter Pro"><i class="fas fa-cogs"></i></button>
-        <button class="tool-btn" onclick="textToSpeech()" title="Text to Speech"><i class="fas fa-volume-up"></i></button>
+        <button class="tool-btn" onclick="textToSpeech()" title="Read Aloud"><i class="fas fa-volume-up"></i></button>
         <button class="tool-btn" onclick="findReplace()" title="Find & Replace"><i class="fas fa-search"></i></button>
+
+        <button class="tool-btn" onclick="removeExtraSpaces()" title="Remove Extra Spaces"><i class="fas fa-magic"></i></button>
+        <button class="tool-btn" onclick="countNoSpaces()" title="Count Without Spaces"><i class="fas fa-compress"></i></button>
+        <button class="tool-btn" onclick="countSyllables()" title="Syllable Counter"><i class="fas fa-wave-square"></i></button>
+        <button class="tool-btn" onclick="uniqueWords()" title="Unique Words"><i class="fas fa-fingerprint"></i></button>
+        <button class="tool-btn" onclick="longestWord()" title="Longest Word"><i class="fas fa-ruler-horizontal"></i></button>
+        <button class="tool-btn" onclick="downloadPDF()" title="Download PDF"><i class="fas fa-file-pdf"></i></button>
+        <button class="tool-btn" onclick="copyToClipboard()" title="Copy Text"><i class="fas fa-clipboard"></i></button>
+        <button class="tool-btn" onclick="removeLineBreaks()" title="Remove Line Breaks"><i class="fas fa-paragraph"></i></button>
+        <button class="tool-btn" onclick="wordFrequencyTable()" title="Word Frequency Table"><i class="fas fa-table"></i></button>
+        <button class="tool-btn" onclick="readingEaseScore()" title="Reading Ease Score"><i class="fas fa-brain"></i></button>
+        <button class="tool-btn" onclick="countOnlyLetters()" title="Count Only Letters"><i class="fas fa-font"></i></button>
+        <button class="tool-btn" onclick="toggleCharLimit(280)" title="Twitter Limit (280)"><i class="fas fa-tachometer-alt"></i></button>
       </div>
 
-      <!-- RESIZABLE EDITOR WITH PLACEHOLDER -->
       <div id="editor" contenteditable="true" class="editor-textarea" data-placeholder="Start typing, or copy and paste your document here..."></div>
-
-      <!-- RESIZE HANDLE -->
       <div class="resize-handle"></div>
 
-      <!-- EXPLANATION BELOW EDITOR -->
       <div class="explanation-section">
-        <h2>What is Word Calculator?</h2>
-        <p>Apart from counting words and characters, our online editor can help you improve word choice and writing style, and, optionally, help you to detect grammar mistakes and plagiarism. To check word count, simply place your cursor into the text box above and start typing. You'll see the number of characters and words increase or decrease as you type, delete, and edit them. You can also copy and paste text from another program into the online editor above. The Auto-Save feature will make sure you won't lose any changes while editing, even if you leave the site and come back later. Tip: Bookmark this page now.</p>
-        <p>Knowing the word count of a text can be important. For example, if an author has to write a minimum or maximum amount of words for an article, essay, report, story, book, paper, you name it. Word Calculator will help to make sure its word count reaches a specific requirement or stays within a certain limit.</p>
-        <p>In addition, Word Calculator shows you the top 10 keywords and keyword density of the article you're writing. This allows you to know which keywords you use how often and at what percentages. This can prevent you from over-using certain words or word combinations and check for best distribution of keywords in your writing.</p>
-        <p>In the Details overview you can see the average speaking and reading time for your text, while Reading Level is an indicator of the education level a person would need in order to understand the words you are using.</p>
-        <p><strong>Disclaimer:</strong> We strive to make our tools as accurate as possible but we cannot guarantee it will always be so.</p>
+        <h2>Word Calculator – 100% Offline</h2>
+        <p><strong>28 powerful tools</strong> that work even without internet. Grammar check, thesaurus, text-to-speech, PDF export, and more.</p>
+        <p><strong>No signup • No tracking • Works offline</strong></p>
       </div>
     </section>
 
     <!-- Sidebar -->
     <aside class="sidebar">
-      <!-- GRAMMAR PANEL -->
       <div class="panel open grammar-panel">
-        <h4 class="panel-title" onclick="togglePanel(this)">
-          Grammar Check <i class="fas fa-chevron-up"></i>
-        </h4>
+        <h4 class="panel-title" onclick="togglePanel(this)">Grammar Check <i class="fas fa-chevron-up"></i></h4>
         <div class="panel-content show">
           <button class="check-btn" onclick="checkGrammar()">Check Grammar & Spelling</button>
           <div id="grammar-results" class="grammar-results">
-            <p class="placeholder">Click "Check Grammar & Spelling" to analyze your text.<br><br>When you add a Grammar API (e.g., Grammarly, LanguageTool), results will appear here.</p>
+            <p class="placeholder">Click to analyze your text.<br>API-ready for Grammarly/LanguageTool.</p>
           </div>
         </div>
       </div>
 
-      <!-- Details Panel -->
       <div class="panel open">
-        <h4 class="panel-title" onclick="togglePanel(this)">
-          Details <i class="fas fa-chevron-up"></i>
-        </h4>
+        <h4 class="panel-title" onclick="togglePanel(this)">Details <i class="fas fa-chevron-up"></i></h4>
         <div class="panel-content show">
           <ul class="stats-list">
             <li>Words <span id="det-words">0</span></li>
@@ -98,26 +110,14 @@
             <li>Sentences <span id="det-sentences">0</span></li>
             <li>Paragraphs <span id="det-paragraphs">0</span></li>
             <li>Reading Level <span id="det-reading-level">N/A</span></li>
-            <li>Reading Time <i class="fas fa-clock"></i> <span id="reading-time">0 sec</span></li>
-            <li>Speaking Time <i class="fas fa-microphone"></i> <span id="speaking-time">0 sec</span></li>
+            <li>Reading Time <span id="reading-time">0 sec</span></li>
+            <li>Speaking Time <span id="speaking-time">0 sec</span></li>
           </ul>
-          <div class="share-buttons">
-            <button onclick="shareStats('facebook')"><i class="fab fa-facebook-f"></i></button>
-            <button onclick="shareStats('twitter')"><i class="fab fa-twitter"></i></button>
-            <button onclick="shareStats('linkedin')"><i class="fab fa-linkedin-in"></i></button>
-            <button onclick="shareStats('pinterest')"><i class="fab fa-pinterest"></i></button>
-            <button onclick="shareStats('whatsapp')"><i class="fab fa-whatsapp"></i></button>
-            <button onclick="shareStats('email')"><i class="fas fa-envelope"></i></button>
-            <button onclick="shareStats('reddit')"><i class="fab fa-reddit"></i></button>
-          </div>
         </div>
       </div>
 
-      <!-- Keyword Density -->
       <div class="panel open">
-        <h4 class="panel-title" onclick="togglePanel(this)">
-          Keyword Density <i class="fas fa-chevron-up"></i>
-        </h4>
+        <h4 class="panel-title" onclick="togglePanel(this)">Keyword Density <i class="fas fa-chevron-up"></i></h4>
         <div class="panel-content show">
           <div class="keyword-header">
             <span class="density-title">Keyword Density</span>
@@ -130,26 +130,6 @@
           <div id="keyword-list" class="keyword-list">
             <p class="placeholder">Start typing to see keywords...</p>
           </div>
-          <div class="share-buttons">
-            <button onclick="shareStats('facebook')"><i class="fab fa-facebook-f"></i></button>
-            <button onclick="shareStats('twitter')"><i class="fab fa-twitter"></i></button>
-            <button onclick="shareStats('linkedin')"><i class="fab fa-linkedin-in"></i></button>
-            <button onclick="shareStats('pinterest')"><i class="fab fa-pinterest"></i></button>
-            <button onclick="shareStats('whatsapp')"><i class="fab fa-whatsapp"></i></button>
-            <button onclick="shareStats('email')"><i class="fas fa-envelope"></i></button>
-            <button onclick="shareStats('reddit')"><i class="fab fa-reddit"></i></button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Activities -->
-      <div class="panel open">
-        <h4 class="panel-title" onclick="togglePanel(this)">
-          Activities <i class="fas fa-chevron-up"></i>
-        </h4>
-        <div class="panel-content show">
-          <p>Keep track of the number of words you write each day using the activity button.</p>
-          <button class="activity-btn" onclick="activity()">ACTIVITY <i class="fas fa-chart-bar"></i></button>
         </div>
       </div>
     </aside>
@@ -159,28 +139,34 @@
   <footer class="site-footer">
     <div class="footer-container">
       <div class="footer-col">
-        <h4>Site Map</h4>
+        <h4>Word Calculator</h4>
+        <p>The most powerful free writing tool with 28 offline features.</p>
+        <p><strong>No signup • Works offline • 100% free</strong></p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="blog.html">Blog</a></li>
-          <li><a href="#">More Tools</a></li>
-          <li><a href="#">Help WordCounter</a></li>
-          <li><a href="#">Embed WordCounter</a></li>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Tools</a></li>
+          <li><a href="#">About</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>Support</h4>
         <ul>
-          <li><a href="#">Report a Bug</a></li>
           <li><a href="#">Contact Us</a></li>
-          <li><a href="privacypolicy.html">Privacy Policy</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Use</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Follow</h4>
+        <h4>Follow Us</h4>
         <div class="social-links">
           <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
           <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
         </div>
         <p class="copyright">© 2025 Word Calculator. All rights reserved.</p>
       </div>
@@ -189,5 +175,4 @@
 
   <script src="script.js"></script>
 </body>
-
 </html>
