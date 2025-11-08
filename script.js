@@ -1,4 +1,4 @@
-// script.js - Fixed Version with Original Details Panel
+// script.js - Final Version
 
 // Mobile Menu Functionality
 document.addEventListener('DOMContentLoaded', function() {
@@ -17,7 +17,6 @@ const mobileOverlay = document.getElementById('mobileOverlay');
 // Stats Elements
 const topStats = document.getElementById('top-stats');
 const statsTopBar = document.querySelector('.stats-top-bar');
-const selectionIndicator = document.getElementById('selection-indicator');
 
 // Details Elements
 const detWords = document.getElementById('det-words');
@@ -179,7 +178,6 @@ function switchToSelectionMode(selectedText) {
     
     // Update UI for selection mode
     statsTopBar.classList.add('selection-mode');
-    selectionIndicator.style.display = 'inline-flex';
     
     // Update keywords for selection only
     updateKeywords(selectedWordCount, selectedText);
@@ -191,7 +189,6 @@ function switchToFullDocumentMode() {
     
     // Update UI for full document mode
     statsTopBar.classList.remove('selection-mode');
-    selectionIndicator.style.display = 'none';
     
     // Update stats with full document data
     updateFullDocumentStats();
