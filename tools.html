@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Writing & Productivity Tools — WordCalculator.net</title>
+  <meta name="description" content="Browse writing, productivity and calculator tools including age calculator, BMI, calorie, and financial calculators.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="tools.css"/>
+  <link rel="icon" href="data:,"/>
+</head>
+<body>
+  <!-- Header -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">
+          Calculator
+          <small class="wc-tagline">Every Word Counts</small>
+        </span>
+      </a>
+
+      <nav class="wc-nav" aria-label="Primary">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="#" class="wc-link">Blog</a>
+        <a href="tools.html" class="wc-link active" aria-current="page">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+        <button class="wc-link wc-signin-btn" id="openAuthBtn" type="button">
+          Sign In <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+        </button>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="#" class="nav-link mobile-link">Blog</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+        <button class="nav-link mobile-link" id="openAuthBtnMobile" type="button">Sign In</button>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main -->
+  <main class="tools-main">
+    <!-- Hero / Intro -->
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Writing & Productivity Tools</h1>
+          <p>
+            Discover calculators, analyzers, and writing utilities that work alongside
+            WordCalculator. Save time, keep everything in one place, and stay focused on your content.
+          </p>
+          <div class="tools-meta-row">
+            <span><i class="fas fa-toolbox"></i> 16+ tools and utilities</span>
+            <span><i class="fas fa-bolt"></i> No sign-up required</span>
+            <span><i class="fas fa-shield-alt"></i> Privacy-first</span>
+          </div>
+        </div>
+        <div class="tools-hero-card">
+          <div class="tools-hero-badge">
+            <i class="fas fa-sparkles"></i> Featured
+          </div>
+          <h2>Word & Character Counter</h2>
+          <p>
+            Real-time counts, readability, keyword density, and grammar checks. The core editor behind WordCalculator.net.
+          </p>
+          <a href="https://wordcalculator.net" class="hero-cta">
+            Open Word Counter
+            <i class="fas fa-arrow-right"></i>
+          </a>
+          <ul class="hero-list">
+            <li><i class="fas fa-check"></i> Live stats</li>
+            <li><i class="fas fa-check"></i> Grammar & readability</li>
+            <li><i class="fas fa-check"></i> Export & share tools</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filters & Search -->
+    <section class="tools-controls-section" aria-label="Tool filters">
+      <div class="tools-controls">
+        <div class="tools-search">
+          <i class="fas fa-search"></i>
+          <input
+            type="search"
+            id="toolSearchInput"
+            placeholder="Search tools by name, keyword, or use case..."
+            autocomplete="off"
+          />
+        </div>
+        <div class="tools-filters" id="toolsFilter">
+          <button type="button" class="filter-pill active" data-category="all">
+            <i class="fas fa-layer-group"></i> All
+          </button>
+          <button type="button" class="filter-pill" data-category="calculator">
+            <i class="fas fa-calculator"></i> Calculators
+          </button>
+          <button type="button" class="filter-pill" data-category="text">
+            <i class="fas fa-font"></i> Text & Writing
+          </button>
+          <button type="button" class="filter-pill" data-category="productivity">
+            <i class="fas fa-clock"></i> Productivity
+          </button>
+          <button type="button" class="filter-pill" data-category="seo">
+            <i class="fas fa-chart-line"></i> SEO & Content
+          </button>
+        </div>
+      </div>
+      <p class="tools-controls-hint" id="toolsCountLabel">
+        Showing all tools
+      </p>
+    </section>
+
+    <!-- Tools Grid -->
+    <section class="tools-grid-section" aria-label="Available tools">
+      <div class="tools-grid" id="toolsGrid">
+
+        <!-- Calculators -->
+        <article class="tool-card"
+                 data-category="calculator"
+                 data-keywords="age calculator date of birth years months days birthday">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-user-clock"></i>
+            </span>
+            <span class="tool-badge badge-popular">Popular</span>
+          </div>
+          <h3>Age Calculator</h3>
+          <p>
+            Calculate exact age from date of birth in years, months, and days with timezone-safe logic.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> 10 sec</span>
+            <span><i class="fas fa-tag"></i> calculator</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <article class="tool-card"
+                 data-category="calculator"
+                 data-keywords="bmi calculator body mass index health kg cm weight height">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-heartbeat"></i>
+            </span>
+            <span class="tool-badge badge-new">New</span>
+          </div>
+          <h3>BMI Calculator</h3>
+          <p>
+            Quickly estimate Body Mass Index (BMI) using metric or imperial inputs, with category hints.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> 15 sec</span>
+            <span><i class="fas fa-tag"></i> health</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <article class="tool-card"
+                 data-category="calculator"
+                 data-keywords="calorie calculator tdee bmr nutrition maintenance weight loss gain">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-fire-alt"></i>
+            </span>
+            <span class="tool-badge badge-pro">Advanced</span>
+          </div>
+          <h3>Calorie Calculator</h3>
+          <p>
+            Estimate daily calorie needs (TDEE) using popular formulas and activity multipliers.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> 30 sec</span>
+            <span><i class="fas fa-tag"></i> health</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <article class="tool-card"
+                 data-category="calculator"
+                 data-keywords="loan emi calculator mortgage interest monthly payment principal finance">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-coins"></i>
+            </span>
+            <span class="tool-badge badge-pro">Advanced</span>
+          </div>
+          <h3>Loan & EMI Calculator</h3>
+          <p>
+            Compute EMI, interest, and amortization schedule for loans and recurring payments.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> 20 sec</span>
+            <span><i class="fas fa-tag"></i> finance</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <article class="tool-card"
+                 data-category="calculator"
+                 data-keywords="simple compound interest calculator savings roi investment finance">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-chart-pie"></i>
+            </span>
+          </div>
+          <h3>Interest Calculator</h3>
+          <p>
+            Compare simple vs compound interest, visualize growth, and evaluate savings scenarios.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> 25 sec</span>
+            <span><i class="fas fa-tag"></i> finance</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <!-- Text & Writing -->
+        <article class="tool-card"
+                 data-category="text"
+                 data-keywords="word counter character counter text length count live">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-text-width"></i>
+            </span>
+            <span class="tool-badge badge-popular">Core Tool</span>
+          </div>
+          <h3>Word & Character Counter</h3>
+          <p>
+            Real-time counts, readability, keyword density, and grammar for any paste-in content.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> Live</span>
+            <span><i class="fas fa-tag"></i> writing</span>
+          </div>
+          <a href="https://wordcalculator.net" class="tool-link">
+            Open Tool
+            <i class="fas fa-arrow-right"></i>
+          </a>
+        </article>
+
+        <article class="tool-card"
+                 data-category="text"
+                 data-keywords="case converter upper lower sentence title camel kebab snake">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-text-height"></i>
+            </span>
+          </div>
+          <h3>Case Converter</h3>
+          <p>
+            Convert text between sentence case, Title Case, UPPERCASE, lowercase, camelCase and more.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> Instant</span>
+            <span><i class="fas fa-tag"></i> text</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <article class="tool-card"
+                 data-category="text"
+                 data-keywords="grammar checker spell check proofreading errors correction language">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-spell-check"></i>
+            </span>
+            <span class="tool-badge badge-beta">Beta</span>
+          </div>
+          <h3>Grammar & Spell Checker</h3>
+          <p>
+            Detect spelling, grammar, and style issues with in-text highlights and one-click fixes.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> Live</span>
+            <span><i class="fas fa-tag"></i> writing</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <article class="tool-card"
+                 data-category="text"
+                 data-keywords="reading time calculator words per minute blog article">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-book-reader"></i>
+            </span>
+          </div>
+          <h3>Reading Time Calculator</h3>
+          <p>
+            Estimate reading time of any text based on configurable words-per-minute speeds.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> Instant</span>
+            <span><i class="fas fa-tag"></i> publishing</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <article class="tool-card"
+                 data-category="text"
+                 data-keywords="typing speed test wpm words per minute keyboard practice">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-keyboard"></i>
+            </span>
+          </div>
+          <h3>Typing Speed Test</h3>
+          <p>
+            Measure typing speed and accuracy with WPM and error rate, using curated text snippets.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> 1 min</span>
+            <span><i class="fas fa-tag"></i> productivity</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <!-- Productivity -->
+        <article class="tool-card"
+                 data-category="productivity"
+                 data-keywords="goal tracker writing streak habit daily words target">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-bullseye"></i>
+            </span>
+          </div>
+          <h3>Writing Goal Tracker</h3>
+          <p>
+            Track daily word targets, streaks, and progress across your writing projects.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> Ongoing</span>
+            <span><i class="fas fa-tag"></i> productivity</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <article class="tool-card"
+                 data-category="productivity"
+                 data-keywords="pomodoro timer focus session 25 minute break productivity">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-hourglass-start"></i>
+            </span>
+          </div>
+          <h3>Focus Timer (Pomodoro)</h3>
+          <p>
+            Run structured focus sessions with breaks to keep your writing flow distraction-free.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> 25 / 5 min</span>
+            <span><i class="fas fa-tag"></i> focus</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <article class="tool-card"
+                 data-category="productivity"
+                 data-keywords="session history autosave revision versions notes">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-history"></i>
+            </span>
+          </div>
+          <h3>Session History</h3>
+          <p>
+            Keep a lightweight log of your recent documents, stats, and edits across sessions.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> Background</span>
+            <span><i class="fas fa-tag"></i> workflow</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <!-- SEO & Content -->
+        <article class="tool-card"
+                 data-category="seo"
+                 data-keywords="keyword density analyzer seo term frequency content optimization">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-percentage"></i>
+            </span>
+          </div>
+          <h3>Keyword Density Analyzer</h3>
+          <p>
+            Analyze single and multi-word keyword frequency, with suggestions for a balanced density.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> Instant</span>
+            <span><i class="fas fa-tag"></i> seo</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <article class="tool-card"
+                 data-category="seo"
+                 data-keywords="title meta description checker snippet preview character limit">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-heading"></i>
+            </span>
+          </div>
+          <h3>Title & Meta Preview</h3>
+          <p>
+            Preview how your titles and meta descriptions will look in search results and socials.
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> Instant</span>
+            <span><i class="fas fa-tag"></i> seo</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+        <article class="tool-card"
+                 data-category="seo"
+                 data-keywords="plagiarism checker duplicate content originality">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-fingerprint"></i>
+            </span>
+            <span class="tool-badge badge-lab">Lab</span>
+          </div>
+          <h3>Plagiarism Checker</h3>
+          <p>
+            Scan for duplicate phrases and potential plagiarism across sources (privacy-friendly).
+          </p>
+          <div class="tool-meta">
+            <span><i class="far fa-clock"></i> 1–2 min</span>
+            <span><i class="fas fa-tag"></i> originality</span>
+          </div>
+          <button class="tool-link" data-coming-soon="true">
+            Coming Soon
+            <i class="fas fa-hourglass-half"></i>
+          </button>
+        </article>
+
+      </div>
+
+      <p class="tools-empty-state" id="toolsEmptyState" hidden>
+        No tools match your filters yet. Try clearing the search or choosing a different category.
+      </p>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="pro-footer" id="about" aria-label="Website footer">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">
+            WordCalculator<span>.net</span>
+          </div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+        <div class="pf-social">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col">
+          <h5>Product</h5>
+          <ul>
+            <li><a href="https://wordcalculator.net">Editor</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="#">Grammar Check</a></li>
+            <li><a href="#">Keyword Density</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Tips & Guides</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#">Report a Bug</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+        <div class="pf-links">
+          <a href="#">Sitemap</a>
+          <a href="#">Status</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Simple Auth Modal (optional demo) -->
+  <div class="modal-overlay" id="authOverlay" aria-hidden="true"></div>
+  <div class="modal modal-auth" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-head">
+      <h3 id="authTitle"><i class="fas fa-user-lock"></i> Account</h3>
+      <button class="modal-close" id="authCloseBtn" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="auth-note">
+        Sign-in and account features are coming soon. For now, all tools are free to use without registration.
+      </p>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="tools.js"></script>
+</body>
+</html>
