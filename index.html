@@ -3,18 +3,12 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WordCalculator.net — Word & Character Counter, Grammar, Density</title>
-  <meta name="description" content="Free online word and character counter with grammar suggestions, keyword density, and writing tools. Auto-save, PDF share, and print-ready.">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <title>WordCalculator.net — Word & Character Counter, Grammar & Tools</title>
+  <meta name="description" content="Free professional word and character counter with grammar check, readability, keyword density, and export tools. No sign-up required.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="styles.css"/>
   <link rel="icon" href="data:,"/>
-  <link rel="icon" type="image/x-icon" href="/favicon.ico"/>
-  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
-  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"/>
-  <link rel="manifest" href="/site.webmanifest"/>
 </head>
 <body>
 
@@ -35,45 +29,38 @@
       <nav class="wc-nav" aria-label="Primary">
         <a href="https://wordcalculator.net" class="wc-link active" aria-current="page">Home</a>
         <a href="#" class="wc-link">Blog</a>
-        <div class="wc-dropdown">
-          <button class="wc-link wc-dropbtn" aria-haspopup="true" aria-expanded="false">
-            More <i class="fa fa-caret-down" aria-hidden="true"></i>
-          </button>
-          <div class="wc-dropdown-menu" role="menu">
-            <a href="#grammar" role="menuitem">Grammar Check</a>
-            <a href="#density" role="menuitem">Keyword Density</a>
-            <a href="#tools" role="menuitem">Writing Tools</a>
-            <a href="#templates" role="menuitem">Templates</a>
-          </div>
-        </div>
-        <a href="#" class="wc-link wc-signin">Sign In <i class="fa fa-right-to-bracket" aria-hidden="true"></i></a>
+        <a href="#tools" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+        <button class="wc-link wc-signin-btn" id="openAuthBtn" type="button">
+          Sign In <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+        </button>
       </nav>
 
-      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
     </div>
 
     <!-- Mobile -->
     <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
       <div class="mobile-nav-header">
         <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
-          <span class="wc-slab slab-w">W</span><span class="wc-slab slab-o">O</span><span class="wc-slab slab-r">R</span><span class="wc-slab slab-d">D</span>
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
           <span class="wc-brand-text">Calculator</span>
         </a>
-        <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu"><i class="fas fa-times"></i></button>
+        <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+          <i class="fas fa-times"></i>
+        </button>
       </div>
       <div class="mobile-nav-links">
         <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
         <a href="#" class="nav-link mobile-link">Blog</a>
-        <div class="mobile-dropdown">
-          <a href="#" class="nav-link mobile-link">More Tools <i class="fas fa-chevron-down"></i></a>
-          <div class="mobile-dropdown-content">
-            <a href="#grammar" class="mobile-link">Grammar Check</a>
-            <a href="#density" class="mobile-link">Keyword Density</a>
-            <a href="#tools" class="mobile-link">Writing Tools</a>
-            <a href="#templates" class="mobile-link">Templates</a>
-          </div>
-        </div>
-        <a href="#" class="nav-link mobile-link">Sign In</a>
+        <a href="#tools" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+        <button class="nav-link mobile-link" id="openAuthBtnMobile" type="button">Sign In</button>
       </div>
     </nav>
     <div class="mobile-overlay" id="mobileOverlay"></div>
@@ -81,7 +68,7 @@
 
   <!-- Main -->
   <main class="main-container">
-    <section class="editor-section" aria-label="Editor">
+    <section class="editor-section" aria-label="Editor" id="tools">
 
       <!-- Stats top bar -->
       <div class="stats-top-bar">
@@ -90,80 +77,111 @@
         </div>
       </div>
 
-      <!-- Compact Toolbar -->
+      <!-- Toolbar -->
       <div class="toolbar toolbar-pro" id="toolbar">
-        <button class="tb-btn" onclick="checkGrammar()" id="grammarBtn" title="Grammar & Spell Check">
+        <!-- 1) Grammar (NOW TOGGLE) -->
+        <button class="tb-btn tb-btn-grammar" onclick="grammarToolbarClick()" id="grammarBtn" title="Grammar & Spell Check">
           <i class="fas fa-check"></i><span class="tb-label">Grammar</span>
           <span class="tb-badge tb-badge-on" id="grammar-badge">ON</span>
         </button>
 
-        <button class="tb-btn" onclick="thesaurus()" title="Thesaurus">
+        <!-- 2) CASE -->
+        <div class="tb-dropdown">
+          <button class="tb-btn tb-dd-btn" aria-haspopup="true" aria-expanded="false" aria-controls="menu-case" title="Case tools">
+            <i class="fas fa-text-height"></i><span class="tb-label">CASE</span><span class="caret" aria-hidden="true"></span>
+          </button>
+          <div class="tb-menu tb-menu-small" id="menu-case" role="menu" aria-label="Case Menu">
+            <button class="tb-item" role="menuitem" onclick="toSentenceCase()"><i class="fas fa-align-left"></i><span>Sentence case</span></button>
+            <button class="tb-item" role="menuitem" onclick="toTitleCase()"><i class="fas fa-heading"></i><span>Title Case</span></button>
+            <button class="tb-item" role="menuitem" onclick="toUpperCase()"><i class="fas fa-font"></i><span>UPPERCASE</span></button>
+            <button class="tb-item" role="menuitem" onclick="toLowerCase()"><i class="fas fa-font"></i><span>lowercase</span></button>
+            <button class="tb-item" role="menuitem" onclick="toCamelCase()"><i class="fas fa-code"></i><span>camelCase</span></button>
+            <button class="tb-item" role="menuitem" onclick="invertCase()"><i class="fas fa-exchange-alt"></i><span>Invert Case</span></button>
+          </div>
+        </div>
+
+        <!-- 3) Cleanup -->
+        <div class="tb-dropdown">
+          <button class="tb-btn tb-dd-btn" aria-haspopup="true" aria-expanded="false" aria-controls="menu-clean" title="Cleanup tools">
+            <i class="fas fa-broom"></i><span class="tb-label">Cleanup</span><span class="caret" aria-hidden="true"></span>
+          </button>
+          <div class="tb-menu tb-menu-small" id="menu-clean" role="menu" aria-label="Cleanup Menu">
+            <button class="tb-item" role="menuitem" onclick="trimSpaces()"><i class="fas fa-scissors"></i><span>Remove extra spaces</span></button>
+            <button class="tb-item" role="menuitem" onclick="removeLineBreaks()"><i class="fas fa-text-width"></i><span>Remove line breaks</span></button>
+            <button class="tb-item" role="menuitem" onclick="normalizeQuotes()"><i class="fas fa-quote-left"></i><span>Normalize quotes</span></button>
+            <button class="tb-item" role="menuitem" onclick="stripHTML()"><i class="fas fa-code"></i><span>Strip HTML tags</span></button>
+            <button class="tb-item" role="menuitem" onclick="stripDiacritics()"><i class="fas fa-language"></i><span>Strip diacritics</span></button>
+          </div>
+        </div>
+
+        <!-- 4) Find -->
+        <button class="tb-btn" onclick="findReplace()" title="Find & Replace">
+          <i class="fas fa-magnifying-glass"></i><span class="tb-label">Find</span>
+        </button>
+
+        <!-- 5) Readability -->
+        <div class="tb-dropdown">
+          <button class="tb-btn tb-dd-btn" aria-haspopup="true" aria-expanded="false" aria-controls="menu-read" title="Readability">
+            <i class="fas fa-gauge-high"></i><span class="tb-label">Readability</span><span class="caret" aria-hidden="true"></span>
+          </button>
+          <div class="tb-menu tb-menu-small" id="menu-read" role="menu" aria-label="Readability">
+            <button class="tb-item" role="menuitem" onclick="calcAllReadability()"><i class="fas fa-chart-line"></i><span>Calculate metrics</span></button>
+            <button class="tb-item" role="menuitem" onclick="showLexicalDiversity()"><i class="fas fa-percent"></i><span>Lexical diversity</span></button>
+            <button class="tb-item" role="menuitem" onclick="showNgrams(2)"><i class="fas fa-grip"></i><span>2-gram frequency</span></button>
+          </div>
+        </div>
+
+        <!-- 6) Thesaurus -->
+        <button class="tb-btn" onclick="openThesaurus()" title="Thesaurus">
           <i class="fas fa-book"></i><span class="tb-label">Thesaurus</span>
         </button>
 
-        <div class="tb-dropdown" data-dd="case">
-          <button class="tb-btn tb-dd-btn" title="Case tools">
-            <i class="fas fa-text-height"></i><span class="tb-label">Case</span><i class="fas fa-caret-down tb-caret"></i>
+        <!-- 7) Export -->
+        <div class="tb-dropdown">
+          <button class="tb-btn tb-dd-btn" aria-haspopup="true" aria-expanded="false" aria-controls="menu-export" title="Export & Print">
+            <i class="fas fa-file-export"></i><span class="tb-label">Export</span><span class="caret" aria-hidden="true"></span>
           </button>
-          <div class="tb-menu">
-            <a href="javascript:void(0)" onclick="toUpperCase()">UPPERCASE</a>
-            <a href="javascript:void(0)" onclick="toLowerCase()">lowercase</a>
-            <a href="javascript:void(0)" onclick="toTitleCase()">Title Case</a>
-            <a href="javascript:void(0)" onclick="toSentenceCase()">Sentence case</a>
-            <a href="javascript:void(0)" onclick="toCamelCase()">camelCase</a>
-            <a href="javascript:void(0)" onclick="invertCase()">Invert Case</a>
+          <div class="tb-menu tb-menu-small" id="menu-export" role="menu" aria-label="Export">
+            <button class="tb-item" role="menuitem" onclick="saveDoc()"><i class="fas fa-floppy-disk"></i><span>Save as TXT</span></button>
+            <button class="tb-item" role="menuitem" onclick="exportToMD()"><i class="fas fa-file-lines"></i><span>Export Markdown</span></button>
+            <button class="tb-item" role="menuitem" onclick="generateStatsPDF_UI()"><i class="fas fa-file-pdf"></i><span>Export PDF (stats)</span></button>
+            <button class="tb-item" role="menuitem" onclick="printDocument()"><i class="fas fa-print"></i><span>Print</span></button>
           </div>
         </div>
 
-        <button class="tb-btn" onclick="activity()" title="Activity">
-          <i class="fas fa-chart-bar"></i><span class="tb-label">Activity</span>
+        <!-- 8) Speak -->
+        <button class="tb-btn" onclick="textToSpeech()" id="speakBtn" title="Text to Speech">
+          <i id="speakIcon" class="fas fa-volume-up"></i><span class="tb-label">Speak</span>
         </button>
 
-        <button class="tb-btn" onclick="saveDoc()" title="Save .txt">
-          <i class="fas fa-save"></i><span class="tb-label">Save</span>
+        <!-- 9) Undo -->
+        <button class="tb-btn" onclick="undoAction()" title="Undo">
+          <i class="fas fa-rotate-left"></i><span class="tb-label">Undo</span>
         </button>
 
-        <div class="tb-dropdown" data-dd="goal">
-          <button class="tb-btn tb-dd-btn" title="Goal">
-            <i class="fas fa-trophy"></i><span class="tb-label">Goal</span><i class="fas fa-caret-down tb-caret"></i>
-          </button>
-          <div class="tb-menu">
-            <a href="javascript:void(0)" onclick="setGoal()">Set Goal</a>
-            <a href="javascript:void(0)" onclick="showProStats()">Pro Stats</a>
-          </div>
-        </div>
-
-        <button class="tb-btn" onclick="toggleAutoSave()" id="autoSaveBtn" title="Auto-Save">
-          <i class="fas fa-floppy-disk"></i><span class="tb-label">Auto-Save</span>
-          <span class="tb-badge tb-badge-off" id="autosave-badge">OFF</span>
+        <!-- 10) Redo -->
+        <button class="tb-btn" onclick="redoAction()" title="Redo">
+          <i class="fas fa-rotate-right"></i><span class="tb-label">Redo</span>
         </button>
 
-        <button class="tb-btn" onclick="clearEditor()" title="Clear">
+        <!-- 11) Clear -->
+        <button class="tb-btn" onclick="clearEditor()" title="Clear all text">
           <i class="fas fa-trash"></i><span class="tb-label">Clear</span>
         </button>
 
-        <button class="tb-btn" onclick="undo()" title="Undo">
-          <i class="fas fa-arrow-left"></i><span class="tb-label">Undo</span>
-        </button>
-
-        <button class="tb-btn" onclick="redo()" title="Redo">
-          <i class="fas fa-arrow-right"></i><span class="tb-label">Redo</span>
-        </button>
-
-        <div class="tb-dropdown tb-more" data-dd="more">
-          <button class="tb-btn tb-dd-btn" title="More tools">
-            <i class="fas fa-th"></i><span class="tb-label">More</span><span class="tb-more-count" id="moreCount">(0)</span><i class="fas fa-caret-down tb-caret"></i>
+        <!-- 12) More -->
+        <div class="tb-dropdown">
+          <button class="tb-btn tb-dd-btn" aria-haspopup="true" aria-expanded="false" aria-controls="menu-more" title="More tools">
+            <i class="fas fa-toolbox"></i><span class="tb-label">More</span><span class="caret" aria-hidden="true"></span>
           </button>
-          <div class="tb-menu tb-menu-right" id="moreMenu">
-            <a href="javascript:void(0)" onclick="showWordDensity()">Word Density</a>
-            <a href="javascript:void(0)" onclick="openCharMap()">Character Map</a>
-            <a href="javascript:void(0)" onclick="findReplace()">Find & Replace</a>
-            <a href="javascript:void(0)" onclick="printDocument()">Print</a>
-            <a href="javascript:void(0)" onclick="exportToMD()">Export Markdown</a>
-            <a href="javascript:void(0)" onclick="clearFormatting()">Clear Formatting</a>
-            <a href="javascript:void(0)" onclick="trimSpaces()">Trim Spaces</a>
-            <a href="javascript:void(0)" onclick="removeLineBreaks()">Remove Line Breaks</a>
-            <a href="javascript:void(0)" onclick="textToSpeech()">Text to Speech</a>
+          <div class="tb-menu tb-menu-small" id="menu-more" role="menu" aria-label="More">
+            <button class="tb-item" role="menuitem" onclick="insertDateTime()"><i class="fas fa-calendar-plus"></i><span>Insert date/time</span></button>
+            <button class="tb-item" role="menuitem" onclick="removeDuplicates()"><i class="fas fa-clone"></i><span>Remove duplicates</span></button>
+            <button class="tb-item" role="menuitem" onclick="sortLines(true)"><i class="fas fa-arrow-down-a-z"></i><span>Sort lines (A→Z)</span></button>
+            <button class="tb-item" role="menuitem" onclick="sortLines(false)"><i class="fas fa-arrow-down-z-a"></i><span>Sort lines (Z→A)</span></button>
+            <button class="tb-item" role="menuitem" onclick="shuffleLines()"><i class="fas fa-shuffle"></i><span>Shuffle lines</span></button>
+            <button class="tb-item" role="menuitem" onclick="hardWrapPrompt()"><i class="fas fa-align-justify"></i><span>Hard wrap (N chars)</span></button>
+            <button class="tb-item" role="menuitem" onclick="copyWordList()"><i class="fas fa-list"></i><span>Copy word list (CSV)</span></button>
           </div>
         </div>
       </div>
@@ -181,10 +199,19 @@
       <!-- Explanation -->
       <div class="explanation-section" id="explain">
         <h2>What is Word Calculator?</h2>
-        <p><strong>Word Calculator</strong> is a fast, accurate writing workspace designed to help you measure and improve your text in one place. Paste or type your content to see live counts for <strong>words, characters, sentences, and paragraphs</strong>, along with estimated <strong>reading and speaking time</strong>. You also get <strong>keyword frequency and density</strong> to balance repetition and strengthen clarity.</p>
-        <p>Beyond counting, Word Calculator includes practical editing helpers—case converters (Title, Sentence, UPPER/lower), smart cleanup, find-and-replace, TXT/MD export, printing, and optional grammar feedback. You can also listen to your writing with text-to-speech to catch awkward phrasing.</p>
-        <p>Whether you’re drafting an essay, polishing a blog post, or preparing professional copy, Word Calculator gives you the <strong>metrics, clarity, and tools</strong> you need to write with confidence—no sign-up required.</p>
-        <p><em>Note:</em> Automated suggestions provide guidance; always review tone and context before publishing.</p>
+        <p><strong>Word Calculator</strong> is a professional online writing companion that helps you measure, refine, and elevate your content in real time. It is more than a word counter — it is a complete text analytics suite designed for writers, students, bloggers, and professionals who value precision and clarity.</p>
+        <p>As you type or paste your text, Word Calculator instantly provides <strong>live word, character, and sentence counts</strong>, along with <strong>reading and speaking time</strong> estimations. These insights make it easy to meet platform requirements, stay concise, and maintain consistent tone across your writing projects.</p>
+        <p>The platform also includes a wide range of built-in tools such as <strong>case converters</strong> (Sentence, Title, UPPER/lower, camelCase), <strong>cleanup utilities</strong> (remove extra spaces, normalize quotes, strip HTML), <strong>readability scores</strong>, <strong>keyword density</strong>, and a <strong>grammar checker</strong> powered by AI for error detection and correction.</p>
+        <p>Need to share or store your work? Export your document to <strong>TXT, Markdown, or PDF</strong>, or print it with a clean, branded header that includes your website’s name for a polished presentation.</p>
+        <p>All your text remains <strong>private and secure</strong> — stored locally in your browser for auto-saving convenience. You can close the tab and return anytime without losing progress. No account or sign-up is required to use any of the free tools.</p>
+        <ul class="explain-bullets">
+          <li><strong>Instant Feedback:</strong> Real-time counts and metrics as you type.</li>
+          <li><strong>Readability Focus:</strong> Evaluate content with trusted formulas.</li>
+          <li><strong>Keyword Insights:</strong> View frequency and density to optimize structure.</li>
+          <li><strong>Smart Editing:</strong> Clean, convert, and format text with one-click tools.</li>
+          <li><strong>Accessibility:</strong> Text-to-Speech to proofread with your ears.</li>
+        </ul>
+        <p><em>Disclaimer:</em> Grammar and readability suggestions are automated and should be reviewed manually for accuracy and tone.</p>
       </div>
     </section>
 
@@ -198,14 +225,17 @@
         </h4>
         <div class="panel-content">
           <div class="grammar-controls">
-            <button class="check-btn" onclick="checkGrammar()"><i class="fa-solid fa-wand-magic-sparkles"></i> Check Grammar & Spelling</button>
-            <!-- Hidden by default; shows when fixes available -->
+            <button class="check-btn" onclick="checkGrammar()">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Check Grammar & Spelling
+            </button>
             <button class="applyall-btn" id="applyAllBtn" onclick="applyAllFixes()" style="display:none">
               <i class="fa-solid fa-screwdriver-wrench"></i> Apply All
             </button>
           </div>
           <div id="grammar-results" class="grammar-results">
-            <p class="placeholder">Click “Check Grammar & Spelling” to analyze your text. Issues will be highlighted inside the editor.</p>
+            <p class="placeholder">
+              Click “Check Grammar & Spelling” to analyze your text. Issues will be highlighted inside the editor.
+            </p>
           </div>
         </div>
       </div>
@@ -227,13 +257,34 @@
             <li>Speaking Time <i class="fas fa-microphone"></i> <span class="pill" id="speaking-time">0 sec</span></li>
           </ul>
 
-          <!-- One-line socials -->
-          <div class="details-share">
-            <a href="#" title="Facebook" onclick="shareFromPanel('facebook');return false;"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" title="X" onclick="shareFromPanel('twitter');return false;"><i class="fab fa-x-twitter"></i></a>
-            <a href="#" title="LinkedIn" onclick="shareFromPanel('linkedin');return false;"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#" title="Copy Link" onclick="copyShareLink();return false;"><i class="fas fa-link"></i></a>
-            <button class="btn-more-social" onclick="openSocialModal()">More</button>
+          <!-- Panel share icons (Details) -->
+          <div class="panel-share-strip">
+            <div class="panel-share">
+              <button class="share-btn" onclick="shareStats('facebook')" title="Share on Facebook">
+                <i class="fab fa-facebook-f"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('x')" title="Share on X">
+                <i class="fab fa-x-twitter"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('linkedin')" title="Share on LinkedIn">
+                <i class="fab fa-linkedin-in"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('whatsapp')" title="Share on WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('telegram')" title="Share on Telegram">
+                <i class="fab fa-telegram"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('reddit')" title="Share on Reddit">
+                <i class="fab fa-reddit-alien"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('email')" title="Share by Email">
+                <i class="fas fa-envelope"></i>
+              </button>
+              <button class="share-btn share-more-btn" onclick="openShareModal()" title="More social networks">
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -248,20 +299,116 @@
           <div class="keyword-header">
             <span class="density-title">Keyword Density</span>
             <select id="density-multiplier" aria-label="Minimum frequency">
-              <option value="1">x1</option><option value="2">x2</option><option value="3">x3</option>
+              <option value="1">x1</option>
+              <option value="2">x2</option>
+              <option value="3">x3</option>
             </select>
           </div>
           <div id="keyword-list" class="keyword-list">
             <p class="placeholder">Start typing to see keywords...</p>
           </div>
 
-          <!-- One-line socials -->
-          <div class="details-share">
-            <a href="#" title="Facebook" onclick="shareFromPanel('facebook');return false;"><i class="fab fa-facebook-f"></i></a>
-            <a href="#" title="X" onclick="shareFromPanel('twitter');return false;"><i class="fab fa-x-twitter"></i></a>
-            <a href="#" title="LinkedIn" onclick="shareFromPanel('linkedin');return false;"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#" title="Copy Link" onclick="copyShareLink();return false;"><i class="fas fa-link"></i></a>
-            <button class="btn-more-social" onclick="openSocialModal()">More</button>
+          <!-- Panel share icons (Density) -->
+          <div class="panel-share-strip">
+            <div class="panel-share">
+              <button class="share-btn" onclick="shareStats('facebook')" title="Share on Facebook">
+                <i class="fab fa-facebook-f"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('x')" title="Share on X">
+                <i class="fab fa-x-twitter"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('linkedin')" title="Share on LinkedIn">
+                <i class="fab fa-linkedin-in"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('whatsapp')" title="Share on WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('telegram')" title="Share on Telegram">
+                <i class="fab fa-telegram"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('reddit')" title="Share on Reddit">
+                <i class="fab fa-reddit-alien"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('email')" title="Share by Email">
+                <i class="fas fa-envelope"></i>
+              </button>
+              <button class="share-btn share-more-btn" onclick="openShareModal()" title="More social networks">
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Readability Breakdown -->
+      <div class="panel open" id="readability-panel" data-panel="readability">
+        <h4 class="panel-title">
+          <span><i class="fas fa-wrench"></i> Readability Breakdown</span>
+          <button class="panel-toggle" aria-label="Collapse/Expand"><i class="fas fa-chevron-up"></i></button>
+        </h4>
+        <div class="panel-content">
+          <div class="readability-panel">
+            <!-- NEW: Professional bar-style meter instead of clock/gauge -->
+            <div class="readability-meter">
+              <div class="readability-meter-header">
+                <div class="meter-label">Flesch Reading Ease</div>
+                <div class="meter-score" id="readabilityScoreLabel">N/A</div>
+              </div>
+              <div class="readability-meter-track">
+                <div class="readability-meter-fill" id="readabilityMeterFill"></div>
+              </div>
+            </div>
+
+            <div class="readability-legend">
+              <div class="readability-band">
+                <span class="band-color band-easy"></span>
+                <span>Easy (90–100)</span>
+              </div>
+              <div class="readability-band">
+                <span class="band-color band-medium"></span>
+                <span>Standard (60–89)</span>
+              </div>
+              <div class="readability-band">
+                <span class="band-color band-hard"></span>
+                <span>Challenging (0–59)</span>
+              </div>
+              <div class="readability-summary">
+                <strong id="readabilityBandLabel">Not enough text</strong>
+                <p id="readabilityHint">
+                  Type at least one full sentence to see where your text sits on the readability scale.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel share icons (Readability) -->
+          <div class="panel-share-strip">
+            <div class="panel-share">
+              <button class="share-btn" onclick="shareStats('facebook')" title="Share on Facebook">
+                <i class="fab fa-facebook-f"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('x')" title="Share on X">
+                <i class="fab fa-x-twitter"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('linkedin')" title="Share on LinkedIn">
+                <i class="fab fa-linkedin-in"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('whatsapp')" title="Share on WhatsApp">
+                <i class="fab fa-whatsapp"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('telegram')" title="Share on Telegram">
+                <i class="fab fa-telegram"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('reddit')" title="Share on Reddit">
+                <i class="fab fa-reddit-alien"></i>
+              </button>
+              <button class="share-btn" onclick="shareStats('email')" title="Share by Email">
+                <i class="fas fa-envelope"></i>
+              </button>
+              <button class="share-btn share-more-btn" onclick="openShareModal()" title="More social networks">
+                <i class="fas fa-ellipsis-h"></i>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -269,60 +416,184 @@
   </main>
 
   <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-container">
-      <div class="footer-col">
-        <h4>Site Map</h4>
-        <ul>
-          <li><a href="https://wordcalculator.net">Home</a></li>
-          <li><a href="#">Blog</a></li>
-          <li><a href="#tools">More Tools</a></li>
-          <li><a href="#">Embed WordCalculator</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Support</h4>
-        <ul>
-          <li><a href="#howitworks">How it works</a></li>
-          <li><a href="#">Report a Bug</a></li>
-          <li><a href="#">Contact Us</a></li>
-          <li><a href="#">Privacy Policy</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Follow</h4>
-        <div class="social-links">
-          <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-          <a href="#" title="Twitter"><i class="fab fa-x-twitter"></i></a>
-          <a href="#" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+  <footer class="pro-footer" id="about" aria-label="Website footer">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">
+            WordCalculator<span>.net</span>
+          </div>
         </div>
-        <p class="copyright">© 2025 WordCalculator.net. All rights reserved.</p>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+        <div class="pf-social">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col">
+          <h5>Product</h5>
+          <ul>
+            <li><a href="#tools">Editor</a></li>
+            <li><a href="#grammar">Grammar Check</a></li>
+            <li><a href="#density">Keyword Density</a></li>
+            <li><a href="#">Readability</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#explain">How It Works</a></li>
+            <li><a href="#">Tips & Guides</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#">Report a Bug</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+        <div class="pf-links">
+          <a href="#">Sitemap</a>
+          <a href="#">Status</a>
+          <a href="#">Accessibility</a>
+        </div>
       </div>
     </div>
   </footer>
 
-  <!-- Social Modal -->
-  <div class="modal-overlay" id="socialModalOverlay" aria-hidden="true"></div>
-  <div class="modal" id="socialModal" role="dialog" aria-modal="true" aria-labelledby="socialModalTitle">
+  <!-- Thesaurus Modal -->
+  <div class="modal-overlay" id="thOverlay" aria-hidden="true"></div>
+  <div class="modal" id="thModal" role="dialog" aria-modal="true" aria-labelledby="thTitle">
     <div class="modal-head">
-      <h3 id="socialModalTitle"><i class="fas fa-share-nodes"></i> Share as PDF</h3>
-      <button class="modal-close" onclick="closeSocialModal()" aria-label="Close"><i class="fas fa-times"></i></button>
+      <h3 id="thTitle"><i class="fas fa-book"></i> Thesaurus</h3>
+      <button class="modal-close" onclick="closeThesaurus()" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
     </div>
     <div class="modal-body">
-      <p>Pick a platform to share your stats as a PDF:</p>
-      <div class="social-grid">
-        <button onclick="shareFromModal('whatsapp')" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>
-        <button onclick="shareFromModal('telegram')" title="Telegram"><i class="fab fa-telegram"></i></button>
-        <button onclick="shareFromModal('reddit')" title="Reddit"><i class="fab fa-reddit-alien"></i></button>
-        <button onclick="shareFromModal('pinterest')" title="Pinterest"><i class="fab fa-pinterest-p"></i></button>
-        <button onclick="shareFromModal('instagram')" title="Instagram"><i class="fab fa-instagram"></i></button>
-        <button onclick="shareFromModal('tiktok')" title="TikTok"><i class="fab fa-tiktok"></i></button>
-        <button onclick="shareFromModal('youtube')" title="YouTube"><i class="fab fa-youtube"></i></button>
-        <button onclick="shareFromModal('snapchat')" title="Snapchat"><i class="fab fa-snapchat-ghost"></i></button>
-        <button onclick="shareFromModal('wechat')" title="WeChat"><i class="fab fa-weixin"></i></button>
-        <button onclick="shareFromModal('line')" title="LINE"><i class="fab fa-line"></i></button>
+      <div class="th-row">
+        <input id="thInput" type="text" placeholder="Enter a word..."/>
+        <button class="btn" onclick="lookupThesaurus()">
+          <i class="fas fa-search"></i> Search
+        </button>
       </div>
-      <div class="modal-note">A PDF will be generated first; then you can attach/upload it on the chosen platform.</div>
+      <div id="thResults" class="th-results"></div>
+    </div>
+  </div>
+
+  <!-- Auth Modal (Sign In / Register) -->
+  <div class="modal-overlay" id="authOverlay" aria-hidden="true"></div>
+  <div class="modal modal-auth" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-head">
+      <h3 id="authTitle"><i class="fas fa-user-lock"></i> Account</h3>
+      <button class="modal-close" id="authCloseBtn" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-target="#loginPane">
+          <i class="fa-solid fa-right-to-bracket"></i> Login
+        </button>
+        <button class="auth-tab" data-target="#registerPane">
+          <i class="fa-solid fa-user-plus"></i> Register
+        </button>
+      </div>
+
+      <div class="auth-pane active" id="loginPane">
+        <form class="auth-form" onsubmit="return fakeLogin(event)">
+          <label>Email</label>
+          <input type="email" required placeholder="you@example.com"/>
+          <label>Password</label>
+          <input type="password" required placeholder="••••••••"/>
+          <div class="auth-actions">
+            <button class="btn btn-primary" type="submit">Sign In</button>
+            <button class="btn btn-ghost" type="button" onclick="alert('Forgot password flow is not set up yet.')">Forgot?</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="auth-pane" id="registerPane">
+        <form class="auth-form" onsubmit="return fakeRegister(event)">
+          <label>Full Name</label>
+          <input type="text" required placeholder="Your name"/>
+          <label>Email</label>
+          <input type="email" required placeholder="you@example.com"/>
+          <label>Password</label>
+          <input type="password" required minlength="6" placeholder="Min 6 characters"/>
+          <div class="auth-actions">
+            <button class="btn btn-primary" type="submit">Create Account</button>
+          </div>
+        </form>
+      </div>
+
+      <p class="auth-note">
+        By continuing, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.
+      </p>
+    </div>
+  </div>
+
+  <!-- Share Modal (20 socials) -->
+  <div class="modal-overlay" id="shareOverlay" aria-hidden="true"></div>
+  <div class="modal modal-share" id="shareModal" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+    <div class="modal-head">
+      <h3 id="shareTitle"><i class="fas fa-share-nodes"></i> Share Stats & Text</h3>
+      <button class="modal-close" onclick="closeShareModal()" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="share-intro">Choose a platform to share your word statistics and page URL.</p>
+      <div class="share-grid">
+        <button class="share-grid-btn fb" onclick="shareStats('facebook')"><i class="fab fa-facebook-f"></i><span>Facebook</span></button>
+        <button class="share-grid-btn x" onclick="shareStats('x')"><i class="fab fa-x-twitter"></i><span>X (Twitter)</span></button>
+        <button class="share-grid-btn ln" onclick="shareStats('linkedin')"><i class="fab fa-linkedin-in"></i><span>LinkedIn</span></button>
+        <button class="share-grid-btn wa" onclick="shareStats('whatsapp')"><i class="fab fa-whatsapp"></i><span>WhatsApp</span></button>
+        <button class="share-grid-btn tg" onclick="shareStats('telegram')"><i class="fab fa-telegram"></i><span>Telegram</span></button>
+        <button class="share-grid-btn rd" onclick="shareStats('reddit')"><i class="fab fa-reddit-alien"></i><span>Reddit</span></button>
+        <button class="share-grid-btn pt" onclick="shareStats('pinterest')"><i class="fab fa-pinterest-p"></i><span>Pinterest</span></button>
+        <button class="share-grid-btn ig" onclick="shareStats('instagram')"><i class="fab fa-instagram"></i><span>Instagram</span></button>
+        <button class="share-grid-btn tb" onclick="shareStats('tumblr')"><i class="fab fa-tumblr"></i><span>Tumblr</span></button>
+        <button class="share-grid-btn wb" onclick="shareStats('weibo')"><i class="fab fa-weibo"></i><span>Weibo</span></button>
+        <button class="share-grid-btn vk" onclick="shareStats('vk')"><i class="fab fa-vk"></i><span>VK</span></button>
+        <button class="share-grid-btn dc" onclick="shareStats('discord')"><i class="fab fa-discord"></i><span>Discord</span></button>
+        <button class="share-grid-btn gh" onclick="shareStats('github')"><i class="fab fa-github"></i><span>GitHub</span></button>
+        <button class="share-grid-btn md" onclick="shareStats('medium')"><i class="fab fa-medium"></i><span>Medium</span></button>
+        <button class="share-grid-btn yt" onclick="shareStats('youtube')"><i class="fab fa-youtube"></i><span>YouTube</span></button>
+        <button class="share-grid-btn tk" onclick="shareStats('tiktok')"><i class="fab fa-tiktok"></i><span>TikTok</span></button>
+        <button class="share-grid-btn ln2" onclick="shareStats('line')"><i class="fab fa-line"></i><span>LINE</span></button>
+        <button class="share-grid-btn sc" onclick="shareStats('snapchat')"><i class="fab fa-snapchat-ghost"></i><span>Snapchat</span></button>
+        <button class="share-grid-btn pk" onclick="shareStats('pocket')"><i class="fab fa-get-pocket"></i><span>Pocket</span></button>
+        <button class="share-grid-btn em" onclick="shareStats('email')"><i class="fas fa-envelope"></i><span>Email</span></button>
+      </div>
+      <p class="share-note">Some platforms may open their homepage where you can paste the link manually.</p>
     </div>
   </div>
 
@@ -331,6 +602,3 @@
   <script src="script.js"></script>
 </body>
 </html>
-
-
-
