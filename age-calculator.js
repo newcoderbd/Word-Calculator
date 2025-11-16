@@ -1,196 +1,270 @@
-// -------- Utility: read dates from three fields --------
-function getDateFromParts(dayId, monthId, yearId, allowAllEmpty) {
-  const dayStr = document.getElementById(dayId).value.trim();
-  const monthStr = document.getElementById(monthId).value.trim();
-  const yearStr = document.getElementById(yearId).value.trim();
+// Utility: get element
+function $(id) {
+  return document.getElementById(id);
+}
 
-  const allEmpty = !dayStr && !monthStr && !yearStr;
+// Build Date from manual inputs (UTC-safe)
+function getDateFromFields(prefix, options = {}) {
+  const dayValue = $(prefix + "-day").value.trim();
+  const monthValue = $(prefix + "-month").value.trim();
+  const yearValue = $(prefix + "-year").value.trim();
 
-  if (allEmpty && allowAllEmpty) {
-    // means "use today"
+  const allowEmptyAll = options.allowEmptyAll === true;
+
+  const allEmpty = !dayValue && !monthValue && !yearValue;
+
+  if (allEmpty && allowEmptyAll) {
+    // Caller will decide what to do (e.g. use today)
     return null;
   }
 
-  // some fields filled, some empty → invalid
-  if (!dayStr || !monthStr || !yearStr) {
-    alert("Please fill day, month and year for this date.");
-    return undefined;
+  // If some field filled but not all => invalid
+  if (allEmpty === false && (!dayValue || !monthValue || !yearValue)) {
+    return { error: "Please enter day, month and year for the full date." };
   }
 
-  const day = parseInt(dayStr, 10);
-  const month = parseInt(monthStr, 10); // 1-12
-  const year = parseInt(yearStr, 10);
+  const day = parseInt(dayValue, 10);
+  const month = parseInt(monthValue, 10);
+  const year = parseInt(yearValue, 10);
 
   if (
-    isNaN(day) ||
-    isNaN(month) ||
-    isNaN(year) ||
-    year < 100 ||
-    year > 9999 ||
-    month < 1 ||
-    month > 12 ||
+    Number.isNaN(day) ||
+    Number.isNaN(month) ||
+    Number.isNaN(year) ||
     day < 1 ||
-    day > 31
+    day > 31 ||
+    month < 1 ||
+    month > 12
   ) {
-    alert("Please enter a valid date (day, month, year).");
-    return undefined;
+    return { error: "Please enter a valid day, month and year." };
   }
 
-  // JS months are 0-based
-  const date = new Date(year, month - 1, day);
-
-  // invalid (e.g. 31-Feb) check
+  // Build UTC date and validate
+  const date = new Date(Date.UTC(year, month - 1, day));
   if (
-    date.getFullYear() !== year ||
-    date.getMonth() !== month - 1 ||
-    date.getDate() !== day
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
   ) {
-    alert("The date you entered is not valid. Please check it again.");
-    return undefined;
+    return { error: "The date you entered does not exist. Please check it." };
   }
 
-  return date;
+  return { date };
 }
 
-// -------- Age differences in Y/M/D --------
-function diffYMD(dob, asOf) {
-  let years = asOf.getFullYear() - dob.getFullYear();
-  let months = asOf.getMonth() - dob.getMonth();
-  let days = asOf.getDate() - dob.getDate();
+// Main calculation
+function calculateAge() {
+  clearError();
+
+  const dobResult = getDateFromFields("dob");
+  if (dobResult.error) {
+    return showError(dobResult.error);
+  }
+  const dob = dobResult.date;
+
+  const asofResult = getDateFromFields("asof", { allowEmptyAll: true });
+
+  let asof;
+  if (asofResult === null) {
+    // Use today at UTC midnight
+    const now = new Date();
+    asof = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()));
+  } else if (asofResult.error) {
+    return showError(asofResult.error);
+  } else {
+    asof = asofResult.date;
+  }
+
+  if (asof < dob) {
+    return showError("The 'as of' date cannot be before the date of birth.");
+  }
+
+  updateResults(dob, asof);
+}
+
+function updateResults(dob, asof) {
+  const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+  // Breakdown years/months/days
+  let yearA = dob.getUTCFullYear();
+  let monthA = dob.getUTCMonth();
+  let dayA = dob.getUTCDate();
+
+  let yearB = asof.getUTCFullYear();
+  let monthB = asof.getUTCMonth();
+  let dayB = asof.getUTCDate();
+
+  let years = yearB - yearA;
+  let months = monthB - monthA;
+  let days = dayB - dayA;
 
   if (days < 0) {
-    // borrow days from previous month
-    const prevMonthLastDay = new Date(
-      asOf.getFullYear(),
-      asOf.getMonth(),
-      0
-    ).getDate();
-    days += prevMonthLastDay;
-    months--;
+    // Borrow days from previous month
+    const prevMonthDate = new Date(Date.UTC(yearB, monthB, 0)); // day 0 => last day of previous month
+    const daysInPrevMonth = prevMonthDate.getUTCDate();
+    days += daysInPrevMonth;
+    months -= 1;
   }
 
   if (months < 0) {
     months += 12;
-    years--;
+    years -= 1;
+  }
+
+  // Totals
+  const totalDays = Math.round((asof - dob) / MS_PER_DAY);
+  const weeks = Math.floor(totalDays / 7);
+  const approxMonths = Math.round(totalDays / 30.4375);
+
+  // Next birthday
+  let nextBirthdayYear = asof.getUTCFullYear();
+  let nextBirthday = new Date(
+    Date.UTC(nextBirthdayYear, dob.getUTCMonth(), dob.getUTCDate())
+  );
+
+  if (nextBirthday <= asof) {
+    nextBirthdayYear += 1;
+    nextBirthday = new Date(
+      Date.UTC(nextBirthdayYear, dob.getUTCMonth(), dob.getUTCDate())
+    );
+  }
+
+  // Handle Feb 29 on non-leap year: fallback to Feb 28
+  if (Number.isNaN(nextBirthday.getTime())) {
+    nextBirthday = new Date(
+      Date.UTC(nextBirthdayYear, 1, 28) // Feb 28
+    );
+  }
+
+  const daysUntilBirthday = Math.round(
+    (nextBirthday - asof) / MS_PER_DAY
+  );
+
+  // Format next birthday & countdown
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec"
+  ];
+
+  const nbDay = nextBirthday.getUTCDate();
+  const nbMonth = monthNames[nextBirthday.getUTCMonth()];
+  const nbYear = nextBirthday.getUTCFullYear();
+  const nextBirthdayLabel = `${nbDay}-${nbMonth}-${nbYear}`;
+
+  // Simple countdown text: X years, Y months, Z days until
+  const ageUntil = diffWithBreakdown(asof, nextBirthday);
+  const countdownLabel = `${ageUntil.years} year(s), ${ageUntil.months} month(s), ${ageUntil.days} day(s) (${daysUntilBirthday} days)`;
+
+  // As-of label
+  const asofLabel = `${asof.getUTCDate()}-${monthNames[asof.getUTCMonth()]}-${asof.getUTCFullYear()}`;
+
+  // Update DOM
+  $("result-years").textContent = years;
+  $("result-months").textContent = months;
+  $("result-days").textContent = days;
+
+  $("result-total-days").textContent = totalDays.toLocaleString();
+  $("result-weeks").textContent = weeks.toLocaleString();
+  $("result-total-months").textContent = approxMonths.toLocaleString();
+
+  $("result-next-birthday").textContent = nextBirthdayLabel;
+  $("result-next-countdown").textContent = countdownLabel;
+
+  $("result-asof-label").textContent = asofLabel;
+  $("result-status").textContent = "Age calculated successfully.";
+}
+
+// Helper: breakdown between two dates (for countdown)
+function diffWithBreakdown(start, end) {
+  let yearA = start.getUTCFullYear();
+  let monthA = start.getUTCMonth();
+  let dayA = start.getUTCDate();
+
+  let yearB = end.getUTCFullYear();
+  let monthB = end.getUTCMonth();
+  let dayB = end.getUTCDate();
+
+  let years = yearB - yearA;
+  let months = monthB - monthA;
+  let days = dayB - dayA;
+
+  if (days < 0) {
+    const prevMonthDate = new Date(Date.UTC(yearB, monthB, 0));
+    const daysInPrevMonth = prevMonthDate.getUTCDate();
+    days += daysInPrevMonth;
+    months -= 1;
+  }
+
+  if (months < 0) {
+    months += 12;
+    years -= 1;
   }
 
   return { years, months, days };
 }
 
-// -------- Helpers --------
-function daysBetween(d1, d2) {
-  const oneDay = 24 * 60 * 60 * 1000;
-  const start = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
-  const end = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
-  return Math.round((end - start) / oneDay);
+// Error helpers
+function showError(message) {
+  const el = $("error-message");
+  el.textContent = message;
+  $("result-status").textContent = "Waiting for valid input…";
 }
 
-function getNextBirthday(dob, asOf) {
-  let year = asOf.getFullYear();
-  let next = new Date(year, dob.getMonth(), dob.getDate());
-
-  if (next < asOf) {
-    year++;
-    next = new Date(year, dob.getMonth(), dob.getDate());
-  }
-
-  const daysUntil = daysBetween(asOf, next);
-  return { date: next, daysUntil };
+function clearError() {
+  $("error-message").textContent = "";
 }
 
-function setText(id, value) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = value;
-}
-
-function formatDate(date) {
-  const d = String(date.getDate()).padStart(2, "0");
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const y = date.getFullYear();
-  return `${d}-${m}-${y}`;
-}
-
-// -------- Main calculation --------
-function calculateAge() {
-  const dob = getDateFromParts("dob-day", "dob-month", "dob-year", false);
-  if (dob === undefined) return;
-
-  let asOf = getDateFromParts("asof-day", "asof-month", "asof-year", true);
-  if (asOf === undefined) return;
-
-  if (asOf === null) {
-    asOf = new Date(); // today
-  }
-
-  if (asOf < dob) {
-    alert('"As of" date cannot be before the date of birth.');
-    return;
-  }
-
-  const { years, months, days } = diffYMD(dob, asOf);
-  const totalDays = daysBetween(dob, asOf);
-  const weeks = Math.floor(totalDays / 7);
-  const approxMonths = Math.round(totalDays / 30.4375);
-
-  const { date: nextBday, daysUntil } = getNextBirthday(dob, asOf);
-
-  // Breakdown
-  setText("years-output", years);
-  setText("months-output", months);
-  setText("days-output", days);
-
-  // Totals
-  setText("total-days-output", totalDays.toLocaleString());
-  setText("weeks-output", weeks.toLocaleString());
-  setText("approx-months-output", approxMonths.toLocaleString());
-
-  // Next birthday
-  setText("next-birthday-date-output", formatDate(nextBday));
-  setText("next-birthday-until-output", `${daysUntil} day(s)`);
-
-  // Quick info
-  setText("as-of-date-output", formatDate(asOf));
-  setText("status-output", "Age calculated successfully.");
-}
-
-// -------- Reset --------
-function resetForm() {
-  const ids = [
-    "dob-day",
-    "dob-month",
-    "dob-year",
-    "asof-day",
-    "asof-month",
-    "asof-year",
-  ];
-
-  ids.forEach((id) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (el.tagName === "SELECT") {
-      el.value = "";
-    } else {
-      el.value = "";
+// Reset form and results
+function resetAll() {
+  ["dob-day", "dob-month", "dob-year", "asof-day", "asof-month", "asof-year"].forEach(
+    (id) => {
+      $(id).value = "";
     }
+  );
+
+  clearError();
+
+  $("result-years").textContent = "0";
+  $("result-months").textContent = "0";
+  $("result-days").textContent = "0";
+  $("result-total-days").textContent = "0";
+  $("result-weeks").textContent = "0";
+  $("result-total-months").textContent = "0";
+  $("result-next-birthday").textContent = "—";
+  $("result-next-countdown").textContent = "—";
+  $("result-asof-label").textContent = "—";
+  $("result-status").textContent = "Waiting for input…";
+}
+
+// Footer year
+function setFooterYear() {
+  const yearSpan = $("footer-year");
+  if (yearSpan) {
+    yearSpan.textContent = new Date().getFullYear();
+  }
+}
+
+// Bind events
+document.addEventListener("DOMContentLoaded", function () {
+  $("calculate-btn").addEventListener("click", function (e) {
+    e.preventDefault();
+    calculateAge();
   });
 
-  setText("years-output", "0");
-  setText("months-output", "0");
-  setText("days-output", "0");
-  setText("total-days-output", "0");
-  setText("weeks-output", "0");
-  setText("approx-months-output", "0");
-  setText("next-birthday-date-output", "—");
-  setText("next-birthday-until-output", "—");
-  setText("as-of-date-output", "—");
-  setText("status-output", "Waiting for input…");
-}
+  $("reset-btn").addEventListener("click", function (e) {
+    e.preventDefault();
+    resetAll();
+  });
 
-// -------- Event listeners --------
-document.addEventListener("DOMContentLoaded", () => {
-  const calcBtn = document.getElementById("calculate-btn");
-  const resetBtn = document.getElementById("reset-btn");
-
-  if (calcBtn) calcBtn.addEventListener("click", calculateAge);
-  if (resetBtn) resetBtn.addEventListener("click", resetForm);
+  setFooterYear();
 });
