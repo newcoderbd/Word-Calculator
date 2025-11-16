@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Age Calculator — WordCalculator.net</title>
+  <meta name="description" content="Free age calculator to find your exact age in years, months and days with total days, weeks and next birthday information.">
+
+  <!-- Fonts & Icons (same style as your site) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Use the same CSS file as tools page -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <!-- Extra styles only for this page -->
+  <style>
+    .age-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .age-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .age-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .age-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .age-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 12px;
+    }
+
+    .age-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .age-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .age-row label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .age-row small {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .age-row input[type="date"] {
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .age-row input[type="date"]:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+    }
+
+    .age-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .age-btn-primary,
+    .age-btn-secondary {
+      border-radius: 10px;
+      border: 1px solid transparent;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .age-btn-primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .age-btn-primary:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.28);
+    }
+
+    .age-btn-secondary {
+      background: #f3f4f6;
+      border-color: #e5e7eb;
+      color: #111827;
+    }
+
+    .age-btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .age-note {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .age-results-card {
+      background: #020617;
+      color: #e5e7eb;
+      border-radius: 14px;
+      border: 1px solid #1f2937;
+      padding: 14px 14px 12px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+    }
+
+    .age-results-card h2 {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .age-results-meta {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 10px;
+    }
+
+    .age-results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 6px;
+      font-size: 13px;
+    }
+
+    .age-results-block {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 10px;
+      padding: 8px 10px;
+      border: 1px solid #1e293b;
+    }
+
+    .age-results-block h3 {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #e5e7eb;
+    }
+
+    .age-results-block p {
+      font-size: 12px;
+      margin: 2px 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .age-results-label {
+      color: #9ca3af;
+    }
+
+    .age-results-value {
+      font-weight: 700;
+      color: #e5e7eb;
+    }
+
+    .age-disclaimer {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    @media (max-width: 900px) {
+      .age-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .age-results-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header (same style as tools.html) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">
+          Calculator
+          <small class="wc-tagline">Every Word Counts</small>
+        </span>
+      </a>
+
+      <nav class="wc-nav" aria-label="Primary">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+        <button class="wc-link wc-signin-btn" id="openAuthBtn" type="button">
+          Sign In <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+        </button>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+        <button class="nav-link mobile-link" id="openAuthBtnMobile" type="button">Sign In</button>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main -->
+  <main class="age-main">
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Age Calculator</h1>
+          <p>
+            Calculate exact age from date of birth in years, months and days.
+            You also get total days lived, weeks, approximate months and next birthday information.
+          </p>
+          <div class="tools-meta-row">
+            <span><i class="fas fa-user-clock"></i> Exact breakdown</span>
+            <span><i class="fas fa-bolt"></i> Instant result</span>
+            <span><i class="fas fa-shield-alt"></i> Runs in your browser</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="age-layout" aria-label="Age calculator">
+      <!-- Left: form -->
+      <div class="age-card">
+        <h2>Enter your dates</h2>
+        <p class="lead">
+          Select your date of birth and an optional "as of" date. If you leave the second field empty, today will be used.
+        </p>
+
+        <form class="age-form" onsubmit="return false;">
+          <div class="age-row">
+            <label for="dob">Date of birth</label>
+            <input type="date" id="dob" />
+          </div>
+
+          <div class="age-row">
+            <label for="asOf">Calculate age as of</label>
+            <input type="date" id="asOf" />
+            <small>Leave empty to calculate age as of today.</small>
+          </div>
+
+          <div class="age-actions">
+            <button type="button" id="calculateBtn" class="age-btn-primary">
+              <i class="fas fa-calculator"></i> Calculate Age
+            </button>
+            <button type="button" id="resetBtn" class="age-btn-secondary">
+              <i class="fas fa-rotate-left"></i> Reset
+            </button>
+          </div>
+
+          <p class="age-note">
+            Tip: For the most accurate result, make sure the date of birth is correct and the "as of" date is not before your birth date.
+          </p>
+        </form>
+      </div>
+
+      <!-- Right: results -->
+      <aside class="age-results-card" aria-label="Age result summary">
+        <h2>Age summary</h2>
+        <p class="age-results-meta">
+          Results update instantly when you click <strong>Calculate Age</strong>.
+        </p>
+
+        <div class="age-results-grid">
+          <div class="age-results-block">
+            <h3>Breakdown</h3>
+            <p><span class="age-results-label">Years</span> <span class="age-results-value" id="years">0</span></p>
+            <p><span class="age-results-label">Months</span> <span class="age-results-value" id="months">0</span></p>
+            <p><span class="age-results-label">Days</span> <span class="age-results-value" id="days">0</span></p>
+          </div>
+
+          <div class="age-results-block">
+            <h3>Totals</h3>
+            <p><span class="age-results-label">Total days</span> <span class="age-results-value" id="totalDays">0</span></p>
+            <p><span class="age-results-label">Weeks</span> <span class="age-results-value" id="weeks">0</span></p>
+            <p><span class="age-results-label">Approx. months</span> <span class="age-results-value" id="approxMonths">0</span></p>
+          </div>
+
+          <div class="age-results-block">
+            <h3>Next birthday</h3>
+            <p><span class="age-results-label">Date</span> <span class="age-results-value" id="nextBirthday">—</span></p>
+            <p><span class="age-results-label">Time until</span> <span class="age-results-value" id="timeUntil">—</span></p>
+          </div>
+
+          <div class="age-results-block">
+            <h3>Quick info</h3>
+            <p><span class="age-results-label">As of date</span> <span class="age-results-value" id="asOfLabel">Today</span></p>
+            <p><span class="age-results-label">Status</span> <span class="age-results-value" id="statusLabel">Waiting for input…</span></p>
+          </div>
+        </div>
+
+        <p class="age-disclaimer">
+          This age calculator is for informational purposes only and uses your local timezone.
+          For official documents or legal requirements, always verify with an official source.
+        </p>
+      </aside>
+    </section>
+  </main>
+
+  <!-- Footer (same style as tools.html / index.html) -->
+  <footer class="pro-footer" id="about" aria-label="Website footer">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">
+            WordCalculator<span>.net</span>
+          </div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+        <div class="pf-social">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col">
+          <h5>Product</h5>
+          <ul>
+            <li><a href="https://wordcalculator.net">Editor</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="#">Grammar Check</a></li>
+            <li><a href="#">Keyword Density</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Tips & Guides</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#">Report a Bug</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+        <div class="pf-links">
+          <a href="#">Sitemap</a>
+          <a href="#">Status</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast (reuse from tools page if needed) -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="tools.js"></script>
+  <script src="age-calculator.js"></script>
+</body>
+</html>
