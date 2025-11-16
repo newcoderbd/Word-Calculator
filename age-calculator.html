@@ -2,45 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Age Calculator — WordCalculator.net</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta
-    name="description"
-    content="Exact age calculator. Calculate age from date of birth in years, months, days, total days lived, weeks and next birthday."
-  />
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-    rel="stylesheet"
-  />
+  <meta name="description" content="Calculate exact age from date of birth in years, months, and days. Get total days lived, weeks, approximate months, and next birthday information. Runs entirely in your browser." />
 
-  <!-- Icons (optional, can remove if already loaded globally) -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-    integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
-
-  <!-- Styles -->
   <link rel="stylesheet" href="age-calculator.css" />
-
-  <!-- Script -->
-  <script src="age-calculator.js" defer></script>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+  <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png" />
 </head>
-<body class="page-body">
-  <!-- ====== Top navigation ====== -->
+<body>
+  <!-- Site header (same structure as home page) -->
   <header class="site-header">
     <div class="container header-inner">
       <a href="index.html" class="brand">
         <span class="brand-badge">W</span>
         <span class="brand-text">
-          <span class="brand-title">WORD Calculator</span>
-          <span class="brand-tagline">Every Word Counts</span>
+          <span class="brand-main">O R D Calculator</span>
+          <span class="brand-sub">Every Word Counts</span>
         </span>
       </a>
 
@@ -48,254 +28,280 @@
         <a href="index.html" class="nav-link">Home</a>
         <a href="tools.html" class="nav-link">Tools</a>
         <a href="about.html" class="nav-link">About Us</a>
+        <a href="#" class="nav-link nav-signin">
+          <span>Sign In</span>
+        </a>
       </nav>
-
-      <a href="signin.html" class="signin-btn">
-        <i class="fa-solid fa-right-to-bracket"></i>
-        <span>Sign In</span>
-      </a>
     </div>
   </header>
 
-  <!-- ====== Hero / intro ====== -->
   <main>
-    <section class="hero-section">
-      <div class="container">
-        <div class="hero-card">
-          <h1 class="hero-title">Age Calculator</h1>
-          <p class="hero-text">
+    <section class="hero">
+      <div class="container hero-inner">
+        <div>
+          <h1>Age Calculator</h1>
+          <p>
             Calculate exact age from date of birth in years, months, and days.
-            You also get total days lived, approximate months and next birthday
-            information. This calculator runs entirely in your browser and uses
-            local time for dates.
+            This calculator also shows total days lived, weeks, approximate months,
+            and next birthday information. Everything runs in your browser.
           </p>
-
-          <div class="hero-badges">
-            <span class="pill pill-safe">
-              <i class="fa-solid fa-shield-heart"></i> Client-side only
-            </span>
-            <span class="pill">
-              <i class="fa-regular fa-clock"></i> Uses local time
-            </span>
-            <span class="pill">
-              <i class="fa-solid fa-database-slash"></i> No data is stored
-            </span>
+          <div class="hero-tags">
+            <span class="tag">Exact breakdown</span>
+            <span class="tag">Instant result</span>
+            <span class="tag">Runs in your browser</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ====== Calculator layout ====== -->
     <section class="calculator-section">
-      <div class="container layout-grid">
-        <!-- ===== Left: Inputs ===== -->
-        <div class="age-card age-card-left">
-          <h2 class="section-title">Enter your dates</h2>
-          <p class="section-subtitle">
-            Select your date of birth and an optional "as of" date. If you leave
-            the second row empty, today will be used.
+      <div class="container calculator-grid">
+        <!-- Left: form -->
+        <div class="card card-form">
+          <h2>Enter your dates</h2>
+          <p class="card-subtitle">
+            You can type day and year manually and pick the month from the list.
+            If you leave the second date empty, today will be used automatically.
           </p>
 
+          <div id="error-message" class="error-message" aria-live="polite"></div>
+
           <!-- Date of birth -->
-          <div class="form-group">
-            <label class="field-label">Date of birth</label>
+          <div class="date-group">
+            <label class="group-label">Date of birth</label>
             <div class="date-input-row">
-              <input
-                id="dob-day"
-                class="date-part-input"
-                type="text"
-                inputmode="numeric"
-                maxlength="2"
-                placeholder="DD"
-                aria-label="Day of birth"
-              />
-              <select
-                id="dob-month"
-                class="date-part-select"
-                aria-label="Month of birth"
-              >
-                <option value="">Month</option>
-                <option value="1">Jan</option>
-                <option value="2">Feb</option>
-                <option value="3">Mar</option>
-                <option value="4">Apr</option>
-                <option value="5">May</option>
-                <option value="6">Jun</option>
-                <option value="7">Jul</option>
-                <option value="8">Aug</option>
-                <option value="9">Sep</option>
-                <option value="10">Oct</option>
-                <option value="11">Nov</option>
-                <option value="12">Dec</option>
-              </select>
-              <input
-                id="dob-year"
-                class="date-part-input"
-                type="text"
-                inputmode="numeric"
-                maxlength="4"
-                placeholder="YYYY"
-                aria-label="Year of birth"
-              />
+              <div class="field">
+                <span class="field-label">Day</span>
+                <input
+                  id="dob-day"
+                  type="number"
+                  inputmode="numeric"
+                  placeholder="DD"
+                  min="1"
+                  max="31"
+                />
+              </div>
+
+              <div class="field">
+                <span class="field-label">Month</span>
+                <select id="dob-month">
+                  <option value="">Month</option>
+                  <option value="1">January</option>
+                  <option value="2">February</option>
+                  <option value="3">March</option>
+                  <option value="4">April</option>
+                  <option value="5">May</option>
+                  <option value="6">June</option>
+                  <option value="7">July</option>
+                  <option value="8">August</option>
+                  <option value="9">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <span class="field-label">Year</span>
+                <input
+                  id="dob-year"
+                  type="number"
+                  inputmode="numeric"
+                  placeholder="YYYY"
+                />
+              </div>
             </div>
           </div>
 
-          <!-- As of date -->
-          <div class="form-group">
-            <label class="field-label">Calculate age as of</label>
+          <!-- As-of date -->
+          <div class="date-group">
+            <label class="group-label">Calculate age as of</label>
             <div class="date-input-row">
-              <input
-                id="asof-day"
-                class="date-part-input"
-                type="text"
-                inputmode="numeric"
-                maxlength="2"
-                placeholder="DD"
-                aria-label="As of day"
-              />
-              <select
-                id="asof-month"
-                class="date-part-select"
-                aria-label="As of month"
-              >
-                <option value="">Month (optional)</option>
-                <option value="1">Jan</option>
-                <option value="2">Feb</option>
-                <option value="3">Mar</option>
-                <option value="4">Apr</option>
-                <option value="5">May</option>
-                <option value="6">Jun</option>
-                <option value="7">Jul</option>
-                <option value="8">Aug</option>
-                <option value="9">Sep</option>
-                <option value="10">Oct</option>
-                <option value="11">Nov</option>
-                <option value="12">Dec</option>
-              </select>
-              <input
-                id="asof-year"
-                class="date-part-input"
-                type="text"
-                inputmode="numeric"
-                maxlength="4"
-                placeholder="YYYY"
-                aria-label="As of year"
-              />
+              <div class="field">
+                <span class="field-label">Day</span>
+                <input
+                  id="asof-day"
+                  type="number"
+                  inputmode="numeric"
+                  placeholder="DD"
+                  min="1"
+                  max="31"
+                />
+              </div>
+
+              <div class="field">
+                <span class="field-label">Month</span>
+                <select id="asof-month">
+                  <option value="">(Today if empty)</option>
+                  <option value="1">January</option>
+                  <option value="2">February</option>
+                  <option value="3">March</option>
+                  <option value="4">April</option>
+                  <option value="5">May</option>
+                  <option value="6">June</option>
+                  <option value="7">July</option>
+                  <option value="8">August</option>
+                  <option value="9">September</option>
+                  <option value="10">October</option>
+                  <option value="11">November</option>
+                  <option value="12">December</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <span class="field-label">Year</span>
+                <input
+                  id="asof-year"
+                  type="number"
+                  inputmode="numeric"
+                  placeholder="YYYY"
+                />
+              </div>
             </div>
-            <p class="help-text">
+            <p class="helper-text">
               Leave all three fields empty to calculate age as of today.
+              If you fill any of them, you must fill the full date.
             </p>
           </div>
 
-          <!-- Buttons -->
           <div class="button-row">
-            <button id="calculate-btn" class="primary-btn">
-              Calculate Age
-            </button>
-            <button id="reset-btn" class="secondary-btn">Reset</button>
+            <button id="calculate-btn" class="btn primary">Calculate Age</button>
+            <button id="reset-btn" class="btn ghost">Reset</button>
           </div>
 
-          <p class="tip-text">
-            Tip: For the most accurate result, make sure the dates are valid and
-            the "as of" date is not before the birth date.
+          <p class="small-note">
+            For the most accurate result, make sure the dates are correct.
+            This calculator uses your local timezone but stores nothing.
           </p>
         </div>
 
-        <!-- ===== Right: Results ===== -->
-        <div class="age-card age-card-right">
-          <h2 class="section-title">Age summary</h2>
-          <p class="section-subtitle">
-            Results update instantly when you click <strong>Calculate Age</strong>.
+        <!-- Right: results -->
+        <div class="card card-results">
+          <h2>Age summary</h2>
+          <p class="card-subtitle">
+            Results update whenever you click <strong>Calculate Age</strong>.
           </p>
 
           <div class="results-grid">
-            <!-- Breakdown -->
             <div class="result-box">
-              <h3 class="result-title">Breakdown</h3>
-              <div class="result-row">
-                <span>Years</span>
-                <span id="years-output">0</span>
-              </div>
-              <div class="result-row">
-                <span>Months</span>
-                <span id="months-output">0</span>
-              </div>
-              <div class="result-row">
-                <span>Days</span>
-                <span id="days-output">0</span>
-              </div>
+              <h3>Breakdown</h3>
+              <dl>
+                <div class="row">
+                  <dt>Years</dt>
+                  <dd id="result-years">0</dd>
+                </div>
+                <div class="row">
+                  <dt>Months</dt>
+                  <dd id="result-months">0</dd>
+                </div>
+                <div class="row">
+                  <dt>Days</dt>
+                  <dd id="result-days">0</dd>
+                </div>
+              </dl>
             </div>
 
-            <!-- Totals -->
             <div class="result-box">
-              <h3 class="result-title">Totals</h3>
-              <div class="result-row">
-                <span>Total days</span>
-                <span id="total-days-output">0</span>
-              </div>
-              <div class="result-row">
-                <span>Weeks</span>
-                <span id="weeks-output">0</span>
-              </div>
-              <div class="result-row">
-                <span>Approx. months</span>
-                <span id="approx-months-output">0</span>
-              </div>
+              <h3>Totals</h3>
+              <dl>
+                <div class="row">
+                  <dt>Total days</dt>
+                  <dd id="result-total-days">0</dd>
+                </div>
+                <div class="row">
+                  <dt>Weeks</dt>
+                  <dd id="result-weeks">0</dd>
+                </div>
+                <div class="row">
+                  <dt>Approx. months</dt>
+                  <dd id="result-total-months">0</dd>
+                </div>
+              </dl>
             </div>
 
-            <!-- Next birthday -->
             <div class="result-box">
-              <h3 class="result-title">Next birthday</h3>
-              <div class="result-row">
-                <span>Date</span>
-                <span id="next-birthday-date-output">—</span>
-              </div>
-              <div class="result-row">
-                <span>Time until</span>
-                <span id="next-birthday-until-output">—</span>
-              </div>
+              <h3>Next birthday</h3>
+              <dl>
+                <div class="row">
+                  <dt>Date</dt>
+                  <dd id="result-next-birthday">—</dd>
+                </div>
+                <div class="row">
+                  <dt>Time until</dt>
+                  <dd id="result-next-countdown">—</dd>
+                </div>
+              </dl>
             </div>
 
-            <!-- Quick info -->
             <div class="result-box">
-              <h3 class="result-title">Quick info</h3>
-              <div class="result-row">
-                <span>As of date</span>
-                <span id="as-of-date-output">—</span>
-              </div>
-              <div class="result-row">
-                <span>Status</span>
-                <span id="status-output">Waiting for input…</span>
-              </div>
+              <h3>Quick info</h3>
+              <dl>
+                <div class="row">
+                  <dt>As of date</dt>
+                  <dd id="result-asof-label">—</dd>
+                </div>
+                <div class="row">
+                  <dt>Status</dt>
+                  <dd id="result-status">Waiting for input…</dd>
+                </div>
+              </dl>
             </div>
           </div>
 
           <p class="disclaimer">
-            This age calculator is for informational purposes only and uses your
-            local timezone. For official documents or legal requirements, always
-            verify with an official source.
+            This age calculator is for informational purposes only and uses your local
+            time. For legal or official purposes, always verify with an official source.
           </p>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- ====== Footer (simple) ====== -->
+  <!-- Footer (same style idea as home/tools) -->
   <footer class="site-footer">
     <div class="container footer-inner">
-      <span>© <span id="year-footer"></span> WordCalculator.net — All rights reserved.</span>
-      <div class="footer-links">
-        <a href="sitemap.html">Sitemap</a>
-        <a href="status.html">Status</a>
-        <a href="accessibility.html">Accessibility</a>
+      <div class="footer-brand">
+        <span class="brand-badge">W</span>
+        <span class="brand-main">WordCalculator.net</span>
+        <span class="footer-tagline">
+          A focused, distraction-free toolkit for precise writing.
+        </span>
+      </div>
+
+      <div class="footer-columns">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="index.html">Editor</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="#">Grammar Check</a></li>
+            <li><a href="#">Keyword Density</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="#">Status</a></li>
+            <li><a href="#">Accessibility</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© <span id="footer-year"></span> WordCalculator.net — All rights reserved.</span>
       </div>
     </div>
   </footer>
 
-  <script>
-    // set footer year
-    document.getElementById("year-footer").textContent =
-      new Date().getFullYear();
-  </script>
+  <script src="age-calculator.js"></script>
 </body>
 </html>
