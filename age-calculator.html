@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
-  <!-- Use the same CSS file as tools page -->
+  <!-- Same CSS as tools page -->
   <link rel="stylesheet" href="tools.css" />
 
   <!-- Extra styles only for this page -->
@@ -59,7 +59,7 @@
     .age-row {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
     }
 
     .age-row label {
@@ -73,38 +73,53 @@
       color: #6b7280;
     }
 
-    .age-date-group {
-      display: flex;
-      flex-wrap: wrap;
+    /* New: three-part date layout */
+    .age-row-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
-      margin-top: 4px;
     }
 
-    .age-date-field {
-      flex: 1 1 70px;
-      min-width: 0;
+    @media (max-width: 600px) {
+      .age-row-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
     }
 
-    .age-date-field input {
-      width: 100%;
+    .age-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .age-field-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .age-field input,
+    .age-field select {
       padding: 8px 10px;
       border-radius: 10px;
       border: 1px solid #e5e7eb;
       font-size: 13px;
       outline: none;
       font-family: inherit;
+      background-color: #ffffff;
     }
 
-    .age-date-field input:focus {
+    .age-field input:focus,
+    .age-field select:focus {
       border-color: #2563eb;
       box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
     }
 
-    .age-date-field span {
-      display: block;
-      font-size: 11px;
-      color: #6b7280;
-      margin-top: 2px;
+    .age-field input::placeholder {
+      color: #9ca3af;
+      font-size: 12px;
     }
 
     .age-actions {
@@ -235,7 +250,7 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
+  <!-- Header (same style as tools.html) -->
   <header class="wc-header">
     <div class="wc-wrap">
       <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
@@ -311,89 +326,75 @@
       <div class="age-card">
         <h2>Enter your dates</h2>
         <p class="lead">
-          Type your date of birth and an optional "as of" date manually. If you leave the second date empty, today will be used.
+          Enter your date of birth and an optional "as of" date. If you leave the second date empty, today will be used.
         </p>
 
         <form class="age-form" onsubmit="return false;">
-          <!-- DOB manual inputs -->
+          <!-- DOB -->
           <div class="age-row">
-            <label for="dob-day">Date of birth</label>
-            <div class="age-date-group">
-              <div class="age-date-field">
-                <input
-                  type="number"
-                  id="dob-day"
-                  min="1"
-                  max="31"
-                  placeholder="DD"
-                  inputmode="numeric"
-                />
-                <span>Day</span>
+            <label>Date of birth</label>
+            <div class="age-row-grid">
+              <div class="age-field">
+                <span class="age-field-label">Day</span>
+                <input type="number" id="dobDay" min="1" max="31" placeholder="DD" />
               </div>
-              <div class="age-date-field">
-                <input
-                  type="number"
-                  id="dob-month"
-                  min="1"
-                  max="12"
-                  placeholder="MM"
-                  inputmode="numeric"
-                />
-                <span>Month</span>
+              <div class="age-field">
+                <span class="age-field-label">Month</span>
+                <select id="dobMonth">
+                  <option value="">Month</option>
+                  <option value="1">Jan</option>
+                  <option value="2">Feb</option>
+                  <option value="3">Mar</option>
+                  <option value="4">Apr</option>
+                  <option value="5">May</option>
+                  <option value="6">Jun</option>
+                  <option value="7">Jul</option>
+                  <option value="8">Aug</option>
+                  <option value="9">Sep</option>
+                  <option value="10">Oct</option>
+                  <option value="11">Nov</option>
+                  <option value="12">Dec</option>
+                </select>
               </div>
-              <div class="age-date-field">
-                <input
-                  type="number"
-                  id="dob-year"
-                  min="1900"
-                  max="9999"
-                  placeholder="YYYY"
-                  inputmode="numeric"
-                />
-                <span>Year</span>
+              <div class="age-field">
+                <span class="age-field-label">Year</span>
+                <input type="number" id="dobYear" min="1900" max="9999" placeholder="YYYY" />
               </div>
             </div>
           </div>
 
-          <!-- As-of manual inputs -->
+          <!-- As of -->
           <div class="age-row">
-            <label for="asof-day">Calculate age as of</label>
-            <div class="age-date-group">
-              <div class="age-date-field">
-                <input
-                  type="number"
-                  id="asof-day"
-                  min="1"
-                  max="31"
-                  placeholder="DD"
-                  inputmode="numeric"
-                />
-                <span>Day</span>
+            <label>Calculate age as of</label>
+            <div class="age-row-grid">
+              <div class="age-field">
+                <span class="age-field-label">Day</span>
+                <input type="number" id="asOfDay" min="1" max="31" placeholder="DD" />
               </div>
-              <div class="age-date-field">
-                <input
-                  type="number"
-                  id="asof-month"
-                  min="1"
-                  max="12"
-                  placeholder="MM"
-                  inputmode="numeric"
-                />
-                <span>Month</span>
+              <div class="age-field">
+                <span class="age-field-label">Month</span>
+                <select id="asOfMonth">
+                  <option value="">Month</option>
+                  <option value="1">Jan</option>
+                  <option value="2">Feb</option>
+                  <option value="3">Mar</option>
+                  <option value="4">Apr</option>
+                  <option value="5">May</option>
+                  <option value="6">Jun</option>
+                  <option value="7">Jul</option>
+                  <option value="8">Aug</option>
+                  <option value="9">Sep</option>
+                  <option value="10">Oct</option>
+                  <option value="11">Nov</option>
+                  <option value="12">Dec</option>
+                </select>
               </div>
-              <div class="age-date-field">
-                <input
-                  type="number"
-                  id="asof-year"
-                  min="1900"
-                  max="9999"
-                  placeholder="YYYY"
-                  inputmode="numeric"
-                />
-                <span>Year</span>
+              <div class="age-field">
+                <span class="age-field-label">Year</span>
+                <input type="number" id="asOfYear" min="1900" max="9999" placeholder="YYYY" />
               </div>
             </div>
-            <small>Leave all fields empty to calculate age as of today.</small>
+            <small>If left empty, the calculator uses today as the reference date.</small>
           </div>
 
           <div class="age-actions">
@@ -406,7 +407,7 @@
           </div>
 
           <p class="age-note">
-            Tip: Make sure the dates are valid (for example 31-02 is not valid) and the "as of" date is not before your birth date.
+            Tip: For the most accurate result, use a valid calendar date. The age is calculated using your local timezone.
           </p>
         </form>
       </div>
@@ -447,14 +448,14 @@
         </div>
 
         <p class="age-disclaimer">
-          This age calculator is for informational purposes only and uses your local timezone.
+          This age calculator is for informational purposes only.
           For official documents or legal requirements, always verify with an official source.
         </p>
       </aside>
     </section>
   </main>
 
-  <!-- Footer -->
+  <!-- Footer (same as tools/index) -->
   <footer class="pro-footer" id="about" aria-label="Website footer">
     <div class="pf-wrap">
       <div class="pf-brand">
@@ -527,7 +528,7 @@
     </div>
   </footer>
 
-  <!-- Toast -->
+  <!-- Toast (from tools page if exists) -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <!-- Scripts -->
