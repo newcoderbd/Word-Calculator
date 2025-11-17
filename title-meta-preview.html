@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Title &amp; Meta Preview — WordCalculator.net</title>
+  <meta name="description" content="Preview how your SEO title and meta description will look on Google search results.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .tmp-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .tmp-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .tmp-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .tmp-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+
+    .tmp-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 10px;
+    }
+
+    .tmp-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .tmp-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .tmp-field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .tmp-input,
+    .tmp-textarea {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 8px 10px;
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .tmp-input:focus,
+    .tmp-textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+    }
+
+    .tmp-textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .tmp-counter {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .tmp-counter-ok {
+      color: #16a34a;
+      font-weight: 600;
+    }
+
+    .tmp-counter-warn {
+      color: #eab308;
+      font-weight: 600;
+    }
+
+    .tmp-counter-bad {
+      color: #dc2626;
+      font-weight: 600;
+    }
+
+    .tmp-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tmp-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .tmp-btn.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .tmp-btn.primary:hover {
+      background: #1d4ed8;
+    }
+
+    .tmp-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .tmp-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .tmp-preview-panel {
+      background: #020617;
+      border-radius: 14px;
+      padding: 14px;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+    }
+
+    .tmp-preview-panel h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #f9fafb;
+    }
+
+    .tmp-preview-switch {
+      display: inline-flex;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 2px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      margin-bottom: 10px;
+    }
+
+    .tmp-switch-btn {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: none;
+      background: transparent;
+      color: #9ca3af;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .tmp-switch-btn.active {
+      background: #111827;
+      color: #e5e7eb;
+      font-weight: 600;
+    }
+
+    .tmp-google-box {
+      background: #020617;
+      border-radius: 12px;
+      padding: 12px 12px 10px;
+      border: 1px solid #1f2937;
+      max-width: 600px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+    }
+
+    .tmp-google-url {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tmp-google-url span.domain {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 360px;
+    }
+
+    .tmp-google-title {
+      font-size: 18px;
+      line-height: 1.2;
+      color: #4f46e5;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tmp-google-desc {
+      font-size: 13px;
+      line-height: 1.4;
+      color: #d1d5db;
+      max-height: 3.2em;
+      overflow: hidden;
+    }
+
+    .tmp-preview-meta {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .tmp-preview-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-right: 10px;
+    }
+
+    .tmp-preview-meta i {
+      font-size: 11px;
+    }
+
+    @media (max-width: 900px) {
+      .tmp-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header (same as all tools) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">Calculator<small class="wc-tagline">Every Word Counts</small></span>
+      </a>
+
+      <nav class="wc-nav">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="tmp-main">
+
+    <!-- Hero section -->
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Title &amp; Meta Preview</h1>
+          <p>Preview your SEO title and meta description exactly how they may appear on Google search results.</p>
+
+          <div class="tools-meta-row">
+            <span><i class="fas fa-heading"></i> SEO title length</span>
+            <span><i class="fas fa-file-alt"></i> Meta description</span>
+            <span><i class="fas fa-magnifying-glass"></i> SERP preview</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tool Layout -->
+    <section class="tmp-layout">
+
+      <!-- LEFT SIDE: Inputs -->
+      <div class="tmp-card">
+        <h2>Configure your SEO snippet</h2>
+        <p class="lead">Edit your page URL, title and meta description. The preview updates in real-time.</p>
+
+        <form id="tmpForm">
+          <div class="tmp-grid">
+            <div class="tmp-field">
+              <label for="tmpUrl">Page URL (optional)</label>
+              <input
+                type="text"
+                id="tmpUrl"
+                class="tmp-input"
+                placeholder="https://wordcalculator.net/your-page"
+              />
+            </div>
+
+            <div class="tmp-field">
+              <label for="tmpTitle">SEO title</label>
+              <input
+                type="text"
+                id="tmpTitle"
+                class="tmp-input"
+                placeholder="Write your SEO title here..."
+              />
+              <small id="tmpTitleCounter" class="tmp-counter">
+                0 characters
+              </small>
+            </div>
+
+            <div class="tmp-field">
+              <label for="tmpDescription">Meta description</label>
+              <textarea
+                id="tmpDescription"
+                class="tmp-textarea"
+                placeholder="Write a compelling summary that will appear under your title in Google search results..."
+              ></textarea>
+              <small id="tmpDescCounter" class="tmp-counter">
+                0 characters
+              </small>
+            </div>
+          </div>
+
+          <div class="tmp-actions">
+            <button type="button" id="tmpCopyTitle" class="tmp-btn primary">
+              <i class="fas fa-copy"></i> Copy &lt;title&gt; tag
+            </button>
+            <button type="button" id="tmpCopyMeta" class="tmp-btn">
+              <i class="fas fa-copy"></i> Copy meta description tag
+            </button>
+            <button type="button" id="tmpReset" class="tmp-btn">
+              <i class="fas fa-rotate-left"></i> Reset
+            </button>
+          </div>
+
+          <p class="tmp-note">
+            Recommended length: title around <strong>50–60</strong> characters, description around
+            <strong>120–160</strong> characters. This tool is an approximation — real search results may differ.
+          </p>
+        </form>
+      </div>
+
+      <!-- RIGHT SIDE: Preview -->
+      <div class="tmp-preview-panel">
+        <h2>Google search preview</h2>
+
+        <div class="tmp-preview-switch">
+          <button type="button" class="tmp-switch-btn active" data-view="desktop" id="tmpDesktopBtn">
+            Desktop
+          </button>
+          <button type="button" class="tmp-switch-btn" data-view="mobile" id="tmpMobileBtn">
+            Mobile
+          </button>
+        </div>
+
+        <div class="tmp-google-box" id="tmpGoogleBox">
+          <div class="tmp-google-url">
+            <i class="fas fa-lock"></i>
+            <span class="domain" id="tmpPreviewUrl">https://www.wordcalculator.net/example-page</span>
+          </div>
+          <div class="tmp-google-title" id="tmpPreviewTitle">
+            Example page title for WordCalculator.net
+          </div>
+          <div class="tmp-google-desc" id="tmpPreviewDesc">
+            This is an example meta description. It shows how your page summary might appear in Google search results.
+          </div>
+        </div>
+
+        <div class="tmp-preview-meta" id="tmpPreviewMeta">
+          <span>
+            <i class="fas fa-text-width"></i>
+            <span id="tmpTitleMetaInfo">Title: 0 chars</span>
+          </span>
+          <span>
+            <i class="fas fa-align-left"></i>
+            <span id="tmpDescMetaInfo">Description: 0 chars</span>
+          </span>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer (same as all tools) -->
+  <footer class="pro-footer" id="about">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">WordCalculator<span>.net</span></div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col"><h5>Product</h5></div>
+        <div class="pf-col"><h5>Resources</h5></div>
+        <div class="pf-col"><h5>Company</h5></div>
+        <div class="pf-col"><h5>Legal</h5></div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Shared + Page Scripts -->
+  <script src="tools.js"></script>
+  <script src="title-meta-preview.js"></script>
+</body>
+</html>
