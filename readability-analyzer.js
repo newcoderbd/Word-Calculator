@@ -1,260 +1,318 @@
-// Readability & Text Statistics logic
-
 (function () {
-  const textarea = document.getElementById("readabilityInput");
-  const sampleBtn = document.getElementById("sampleTextBtn");
-  const clearBtn = document.getElementById("clearTextBtn");
+  "use strict";
 
-  const wordCountEl = document.getElementById("wordCount");
-  const charCountEl = document.getElementById("charCount");
-  const charNoSpaceCountEl = document.getElementById("charNoSpaceCount");
-  const sentenceCountEl = document.getElementById("sentenceCount");
-  const paragraphCountEl = document.getElementById("paragraphCount");
-  const avgWordLengthEl = document.getElementById("avgWordLength");
-  const avgSentenceLengthEl = document.getElementById("avgSentenceLength");
-  const readingTimeEl = document.getElementById("readingTime");
-
-  const fleschScoreEl = document.getElementById("fleschScore");
-  const fkGradeEl = document.getElementById("fkGrade");
-  const fogIndexEl = document.getElementById("fogIndex");
-  const smogIndexEl = document.getElementById("smogIndex");
-  const difficultyLabelEl = document.getElementById("difficultyLabel");
-  const gradeLabelEl = document.getElementById("gradeLabel");
-
-  function safeNumber(value) {
-    if (!isFinite(value) || isNaN(value)) return 0;
-    return value;
+  function getElement(id) {
+    return document.getElementById(id);
   }
 
-  function countSyllables(word) {
-    if (!word) return 0;
-    const cleaned = word
-      .toLowerCase()
-      .replace(/[^a-z]/g, "");
+  const inputEl = getElement("rp-input");
+  const analyzeBtn = getElement("rp-analyze-btn");
+  const clearBtn = getElement("rp-clear-btn");
+  const liveCountEl = getElement("rp-live-count");
+  const wpmSelect = getElement("rp-wpm");
 
+  const emptyStateEl = getElement("rp-empty-state");
+  const resultsContainer = getElement("rp-results");
+
+  const fleschScoreEl = getElement("rp-flesch-score");
+  const readingEaseLabelEl = getElement("rp-reading-ease-label");
+  const gradeLevelEl = getElement("rp-grade-level");
+  const wordCountEl = getElement("rp-word-count");
+  const textSummarySubEl = getElement("rp-text-summary-sub");
+  const avgWordsSentenceEl = getElement("rp-avg-words-sentence");
+  const avgLengthSubEl = getElement("rp-avg-length-sub");
+
+  const readingTimeEl = getElement("rp-reading-time");
+  const sentenceCountEl = getElement("rp-sentence-count");
+  const syllableCountEl = getElement("rp-syllable-count");
+
+  function countWords(text) {
+    const cleaned = text
+      .trim()
+      .replace(/\s+/g, " ")
+      .replace(/[\n\r]+/g, " ");
     if (!cleaned) return 0;
-    if (cleaned.length <= 3) return 1;
-
-    let syllableMatches = cleaned.match(/[aeiouy]+/g);
-    let count = syllableMatches ? syllableMatches.length : 0;
-
-    if (cleaned.endsWith("e")) {
-      count -= 1;
-    }
-    if (count <= 0) count = 1;
-    return count;
+    return cleaned.split(" ").filter(Boolean).length;
   }
 
-  function analyzeText(text) {
-    const trimmed = text.trim();
+  function countCharacters(text) {
+    return text.length;
+  }
 
-    const charCount = text.length;
-    const charNoSpaceCount = text.replace(/\s+/g, "").length;
+  function countCharactersNoSpaces(text) {
+    return text.replace(/\s+/g, "").length;
+  }
 
-    let words = [];
-    if (trimmed.length > 0) {
-      words = trimmed.split(/\s+/).filter(Boolean);
-    }
-    const wordCount = words.length;
+  function countSentences(text) {
+    const normalized = text.replace(/([.!?])+/g, "$1|");
+    const parts = normalized.split("|").map((s) => s.trim());
+    const filtered = parts.filter((s) => s.length > 0);
+    return filtered.length;
+  }
 
-    let sentenceCount = 0;
-    if (trimmed.length > 0) {
-      const sentences = trimmed
-        .split(/[.!?]+/g)
-        .map((s) => s.trim())
-        .filter((s) => s.length > 0);
-      sentenceCount = sentences.length || 1; // avoid division by zero
-    }
+  function countParagraphs(text) {
+    const parts = text
+      .split(/\n{2,}/)
+      .map((p) => p.trim())
+      .filter((p) => p.length > 0);
+    return parts.length;
+  }
 
-    let paragraphs = 0;
-    if (trimmed.length > 0) {
-      const paras = trimmed
-        .split(/\n{2,}/g)
-        .map((p) => p.trim())
-        .filter((p) => p.length > 0);
-      paragraphs = paras.length || 1;
-    }
+  function countSyllablesInWord(word) {
+    const lower = word.toLowerCase().replace(/[^a-z]/g, "");
+    if (!lower) return 0;
 
-    let syllableCount = 0;
-    let complexWordCount = 0;
+    if (lower.length <= 3) return 1;
 
-    for (const rawWord of words) {
-      const w = rawWord.replace(/[^a-zA-Z']/g, "");
-      if (!w) continue;
-      const sCount = countSyllables(w);
-      syllableCount += sCount;
-      if (sCount >= 3) {
-        complexWordCount += 1;
+    const endings = [/e$/i, /es$/i, /ed$/i/];
+    let tmp = lower;
+    endings.forEach((regex) => {
+      if (regex.test(tmp)) {
+        tmp = tmp.replace(regex, "");
       }
+    });
+
+    const matches = tmp.match(/[aeiouy]+/g);
+    const groups = matches ? matches.length : 0;
+    return Math.max(1, groups);
+  }
+
+  function countSyllables(text) {
+    const words = text
+      .toLowerCase()
+      .replace(/[^a-z\s]/g, " ")
+      .split(/\s+/)
+      .filter(Boolean);
+
+    if (words.length === 0) return 0;
+
+    let syllables = 0;
+    for (const w of words) {
+      syllables += countSyllablesInWord(w);
+    }
+    return syllables;
+  }
+
+  function computeReadability(text) {
+    const words = countWords(text);
+    const sentences = countSentences(text);
+    const syllables = countSyllables(text);
+
+    if (words === 0 || sentences === 0 || syllables === 0) {
+      return {
+        flesch: null,
+        grade: null,
+        words,
+        sentences,
+        syllables
+      };
     }
 
-    const avgWordLength =
-      wordCount > 0 ? charNoSpaceCount / wordCount : 0;
-    const avgSentenceLength =
-      sentenceCount > 0 ? wordCount / sentenceCount : 0;
+    const wordsPerSentence = words / sentences;
+    const syllablesPerWord = syllables / words;
 
-    // reading time: ~200 wpm
-    const minutes = wordCount / 200;
-    let readingTimeLabel = "0 sec";
-    if (minutes > 0) {
-      const totalSeconds = Math.round(minutes * 60);
-      if (totalSeconds < 60) {
-        readingTimeLabel = totalSeconds + " sec";
-      } else {
-        const mins = Math.floor(totalSeconds / 60);
-        const secs = totalSeconds % 60;
-        readingTimeLabel =
-          mins + " min" + (secs > 0 ? " " + secs + " sec" : "");
-      }
-    }
+    const flesch =
+      206.835 - 1.015 * wordsPerSentence - 84.6 * syllablesPerWord;
 
-    // Readability calculations
-    let flesch = 0;
-    let fk = 0;
-    let fog = 0;
-    let smog = 0;
-
-    if (wordCount > 0 && sentenceCount > 0 && syllableCount > 0) {
-      const wordsPerSentence = wordCount / sentenceCount;
-      const syllablesPerWord = syllableCount / wordCount;
-
-      flesch =
-        206.835 -
-        1.015 * wordsPerSentence -
-        84.6 * syllablesPerWord;
-
-      fk =
-        0.39 * wordsPerSentence +
-        11.8 * syllablesPerWord -
-        15.59;
-
-      fog =
-        0.4 *
-        (wordsPerSentence +
-          (100 * complexWordCount) / wordCount);
-
-      if (sentenceCount >= 1 && complexWordCount > 0) {
-        smog =
-          1.043 *
-            Math.sqrt(
-              (complexWordCount * 30) / sentenceCount
-            ) +
-          3.1291;
-      }
-    }
+    const grade =
+      0.39 * wordsPerSentence + 11.8 * syllablesPerWord - 15.59;
 
     return {
-      charCount,
-      charNoSpaceCount,
-      wordCount,
-      sentenceCount,
-      paragraphs,
-      avgWordLength,
-      avgSentenceLength,
-      readingTimeLabel,
       flesch,
-      fk,
-      fog,
-      smog,
+      grade,
+      words,
+      sentences,
+      syllables,
+      wordsPerSentence,
+      syllablesPerWord
     };
   }
 
-  function getDifficultyLabel(score) {
-    if (!isFinite(score)) return "Not enough text yet.";
-    if (score >= 90) return "Very easy (5th grade)";
-    if (score >= 80) return "Easy (6th grade)";
-    if (score >= 70) return "Fairly easy (7th grade)";
-    if (score >= 60) return "Standard (8th–9th grade)";
-    if (score >= 50) return "Fairly difficult (10th–12th grade)";
-    if (score >= 30) return "Difficult (college level)";
-    return "Very confusing (academic / specialist).";
+  function getReadingEaseLabel(score) {
+    if (score === null || isNaN(score)) return "–";
+    if (score >= 90) return "Very easy";
+    if (score >= 80) return "Easy";
+    if (score >= 70) return "Fairly easy";
+    if (score >= 60) return "Standard";
+    if (score >= 50) return "Fairly difficult";
+    if (score >= 30) return "Difficult";
+    return "Very confusing";
   }
 
-  function getGradeLabel(grade) {
-    if (!isFinite(grade)) return "—";
-    const rounded = Math.round(grade * 10) / 10;
-    if (rounded <= 1) return "Grade " + rounded + " (Very simple text)";
-    if (rounded <= 5) return "Grade " + rounded + " (Children / easy)";
-    if (rounded <= 8) return "Grade " + rounded + " (Middle school)";
-    if (rounded <= 12) return "Grade " + rounded + " (High school)";
-    if (rounded <= 16) return "Grade " + rounded + " (College / university)";
-    return "Grade " + rounded + " (Advanced / professional)";
+  function getDifficultyClass(score) {
+    if (score === null || isNaN(score)) return "";
+    if (score >= 70) return "badge-easy";
+    if (score >= 50) return "badge-medium";
+    return "badge-hard";
   }
 
-  function formatNumber(value, decimals) {
-    const num = safeNumber(value);
-    return num.toFixed(decimals);
+  function formatGrade(grade) {
+    if (grade === null || isNaN(grade)) return "–";
+    const value = Math.max(0, Math.round(grade * 10) / 10);
+    if (value >= 13) return value.toFixed(1) + " (College)";
+    return value.toFixed(1);
   }
 
-  function update() {
-    const text = textarea.value || "";
-    const stats = analyzeText(text);
+  function formatReadingTime(words, wpm) {
+    if (!words || !wpm) return "–";
+    const minutesFloat = words / wpm;
+    const minutes = Math.floor(minutesFloat);
+    const seconds = Math.round((minutesFloat - minutes) * 60);
 
-    // Basic stats
-    wordCountEl.textContent = stats.wordCount;
-    charCountEl.textContent = stats.charCount;
-    charNoSpaceCountEl.textContent = stats.charNoSpaceCount;
-    sentenceCountEl.textContent = stats.sentenceCount;
-    paragraphCountEl.textContent = stats.paragraphs;
-    avgWordLengthEl.textContent = formatNumber(
-      stats.avgWordLength || 0,
-      2
-    );
-    avgSentenceLengthEl.textContent = formatNumber(
-      stats.avgSentenceLength || 0,
-      2
-    );
-    readingTimeEl.textContent = stats.readingTimeLabel;
+    if (minutes === 0 && seconds === 0) return "< 5 sec";
+    if (minutes === 0) return seconds + " sec";
+    if (seconds === 0) return minutes + " min";
 
-    // Readability
-    if (stats.wordCount === 0) {
-      fleschScoreEl.textContent = "—";
-      fkGradeEl.textContent = "—";
-      fogIndexEl.textContent = "—";
-      smogIndexEl.textContent = "—";
-      difficultyLabelEl.textContent =
-        "Start typing or paste your text above to see readability details.";
-      gradeLabelEl.textContent = "—";
+    return minutes + " min " + seconds + " sec";
+  }
+
+  function updateLiveCount() {
+    const text = inputEl.value || "";
+    const words = countWords(text);
+    const chars = countCharacters(text);
+    liveCountEl.textContent = words + " words • " + chars + " characters";
+  }
+
+  function renderResults() {
+    const text = (inputEl.value || "").trim();
+
+    if (!text) {
+      emptyStateEl.hidden = false;
+      resultsContainer.hidden = true;
+
+      wordCountEl.textContent = "0";
+      textSummarySubEl.textContent = "0 characters • 0 sentences • 0 paragraphs";
+      avgWordsSentenceEl.textContent = "–";
+      avgLengthSubEl.textContent = "– words per sentence • – syllables per word";
+      fleschScoreEl.textContent = "–";
+      gradeLevelEl.textContent = "–";
+      readingEaseLabelEl.textContent = "–";
+      readingTimeEl.textContent = "–";
+      sentenceCountEl.textContent = "0";
+      syllableCountEl.textContent = "0";
       return;
     }
 
-    fleschScoreEl.textContent = formatNumber(stats.flesch, 1);
-    fkGradeEl.textContent = formatNumber(stats.fk, 1);
-    fogIndexEl.textContent = formatNumber(stats.fog, 1);
-    smogIndexEl.textContent =
-      stats.smog > 0 ? formatNumber(stats.smog, 1) : "—";
+    const chars = countCharacters(text);
+    const charsNoSpaces = countCharactersNoSpaces(text);
+    const paragraphs = countParagraphs(text);
+    const wpm = parseInt(wpmSelect.value, 10) || 200;
 
-    difficultyLabelEl.textContent = getDifficultyLabel(stats.flesch);
-    gradeLabelEl.textContent = getGradeLabel(stats.fk);
+    const stats = computeReadability(text);
+    const score = stats.flesch;
+    const grade = stats.grade;
+    const words = stats.words;
+    const sentences = stats.sentences;
+    const syllables = stats.syllables;
+
+    emptyStateEl.hidden = true;
+    resultsContainer.hidden = false;
+
+    const scoreDisplay =
+      score === null || isNaN(score)
+        ? "–"
+        : (Math.round(score * 10) / 10).toFixed(1);
+    fleschScoreEl.textContent = scoreDisplay;
+
+    const difficultyClass = getDifficultyClass(score);
+    fleschScoreEl.classList.remove("badge-easy", "badge-medium", "badge-hard");
+    if (difficultyClass) {
+      fleschScoreEl.classList.add(difficultyClass);
+    }
+
+    readingEaseLabelEl.textContent = getReadingEaseLabel(score);
+    gradeLevelEl.textContent = formatGrade(grade);
+
+    wordCountEl.textContent = String(words);
+    textSummarySubEl.textContent =
+      chars +
+      " characters (" +
+      charsNoSpaces +
+      " without spaces) • " +
+      sentences +
+      " sentences • " +
+      paragraphs +
+      " paragraphs";
+
+    if (stats.wordsPerSentence && stats.syllablesPerWord) {
+      const wps = Math.round(stats.wordsPerSentence * 10) / 10;
+      const spw = Math.round(stats.syllablesPerWord * 100) / 100;
+
+      avgWordsSentenceEl.textContent = wps.toFixed(1);
+      avgLengthSubEl.textContent =
+        wps.toFixed(1) +
+        " words per sentence • " +
+        spw.toFixed(2) +
+        " syllables per word";
+    } else {
+      avgWordsSentenceEl.textContent = "–";
+      avgLengthSubEl.textContent =
+        "– words per sentence • – syllables per word";
+    }
+
+    readingTimeEl.textContent = formatReadingTime(words, wpm);
+    sentenceCountEl.textContent = String(sentences);
+    syllableCountEl.textContent = String(syllables);
   }
 
-  if (textarea) {
-    textarea.addEventListener("input", update);
+  function handleAnalyzeClick() {
+    renderResults();
   }
 
-  if (clearBtn) {
-    clearBtn.addEventListener("click", function () {
-      textarea.value = "";
-      update();
-      textarea.focus();
-    });
+  function handleClearClick() {
+    inputEl.value = "";
+    updateLiveCount();
+    renderResults();
+    inputEl.focus();
   }
 
-  if (sampleBtn) {
-    sampleBtn.addEventListener("click", function () {
-      const sample =
-        "Writing clearly is one of the most important skills in the digital age. " +
-        "Readers scan content quickly and rarely finish long, dense paragraphs. " +
-        "Short sentences, familiar words, and a logical structure make your ideas easier to understand.\n\n" +
-        "Use readability tools to check your work before you publish. " +
-        "They will not replace good judgment, but they can highlight problems " +
-        "like long sentences, complex wording, and inconsistent tone.";
-      textarea.value = sample;
-      update();
-      textarea.focus();
-    });
-  }
+  document.addEventListener("DOMContentLoaded", function () {
+    updateLiveCount();
+    renderResults();
 
-  // Initial update
-  update();
+    if (inputEl) {
+      inputEl.addEventListener("input", updateLiveCount);
+    }
+    if (analyzeBtn) {
+      analyzeBtn.addEventListener("click", handleAnalyzeClick);
+    }
+    if (clearBtn) {
+      clearBtn.addEventListener("click", handleClearClick);
+    }
+    if (wpmSelect) {
+      wpmSelect.addEventListener("change", renderResults);
+    }
+
+    var yearEl = document.getElementById("pf-year");
+    if (yearEl) {
+      yearEl.textContent = new Date().getFullYear();
+    }
+
+    var mobileMenuBtn = document.getElementById("mobileMenuBtn");
+    var mobileCloseBtn = document.getElementById("mobileCloseBtn");
+    var mobileNav = document.getElementById("mobileNav");
+    var mobileOverlay = document.getElementById("mobileOverlay");
+
+    function openMobileNav() {
+      if (!mobileNav || !mobileOverlay) return;
+      mobileNav.classList.add("open");
+      mobileOverlay.classList.add("visible");
+    }
+
+    function closeMobileNav() {
+      if (!mobileNav || !mobileOverlay) return;
+      mobileNav.classList.remove("open");
+      mobileOverlay.classList.remove("visible");
+    }
+
+    if (mobileMenuBtn) {
+      mobileMenuBtn.addEventListener("click", openMobileNav);
+    }
+    if (mobileCloseBtn) {
+      mobileCloseBtn.addEventListener("click", closeMobileNav);
+    }
+    if (mobileOverlay) {
+      mobileOverlay.addEventListener("click", closeMobileNav);
+    }
+  });
 })();
