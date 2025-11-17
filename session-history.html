@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session History — WordCalculator.net</title>
+  <meta name="description" content="Track your writing, reading, and focus sessions with this free Session History tool.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .sh-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .sh-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .sh-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .sh-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+
+    .sh-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 10px;
+    }
+
+    .sh-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 14px;
+      margin-top: 10px;
+    }
+
+    .sh-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sh-field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .sh-input,
+    .sh-select,
+    .sh-textarea {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 8px 10px;
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .sh-input:focus,
+    .sh-select:focus,
+    .sh-textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+    }
+
+    .sh-textarea {
+      min-height: 60px;
+      resize: vertical;
+      grid-column: 1 / -1;
+    }
+
+    .sh-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .sh-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .sh-btn.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .sh-btn.primary:hover {
+      background: #1d4ed8;
+    }
+
+    .sh-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .sh-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .sh-results {
+      background: #020617;
+      border-radius: 14px;
+      padding: 14px;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+    }
+
+    .sh-summary-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+    }
+
+    .sh-summary-item {
+      background: #020617;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .sh-summary-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+
+    .sh-summary-value {
+      font-size: 15px;
+      font-weight: 800;
+      color: #e5e7eb;
+    }
+
+    .sh-summary-sub {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    .sh-status {
+      margin-top: 6px;
+      font-size: 13px;
+      color: #e5e7eb;
+    }
+
+    .sh-table-wrap {
+      margin-top: 10px;
+      max-height: 360px;
+      overflow: auto;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      background: #020617;
+    }
+
+    table.sh-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      min-width: 100%;
+    }
+
+    table.sh-table thead {
+      position: sticky;
+      top: 0;
+      background: #020617;
+      z-index: 1;
+    }
+
+    table.sh-table th,
+    table.sh-table td {
+      padding: 7px 8px;
+      border-bottom: 1px solid #111827;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    table.sh-table th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+    }
+
+    table.sh-table td {
+      color: #e5e7eb;
+    }
+
+    table.sh-table tr:nth-child(even) td {
+      background: #030712;
+    }
+
+    .sh-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      font-size: 11px;
+    }
+
+    .sh-tag-writing {
+      border-color: #22c55e;
+      color: #bbf7d0;
+    }
+
+    .sh-tag-reading {
+      border-color: #38bdf8;
+      color: #bae6fd;
+    }
+
+    .sh-tag-focus {
+      border-color: #eab308;
+      color: #facc15;
+    }
+
+    .sh-tag-other {
+      border-color: #a855f7;
+      color: #e9d5ff;
+    }
+
+    .sh-table-empty {
+      padding: 10px;
+      text-align: center;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .sh-delete-btn {
+      border-radius: 999px;
+      border: 1px solid #4b5563;
+      background: transparent;
+      padding: 3px 7px;
+      font-size: 11px;
+      color: #fca5a5;
+      cursor: pointer;
+    }
+
+    .sh-delete-btn:hover {
+      background: #7f1d1d;
+      border-color: #b91c1c;
+    }
+
+    @media (max-width: 900px) {
+      .sh-layout {
+        grid-template-columns: 1fr;
+      }
+      .sh-grid {
+        grid-template-columns: 1fr;
+      }
+      .sh-summary-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header (same as all tools) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">Calculator<small class="wc-tagline">Every Word Counts</small></span>
+      </a>
+
+      <nav class="wc-nav">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="sh-main">
+
+    <!-- Hero section -->
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Session History</h1>
+          <p>Log your writing, reading, and focus sessions and track your progress over time.</p>
+
+          <div class="tools-meta-row">
+            <span><i class="fas fa-pen"></i> Writing sessions</span>
+            <span><i class="fas fa-book-open"></i> Reading time</span>
+            <span><i class="fas fa-bullseye"></i> Focus & productivity</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tool Layout -->
+    <section class="sh-layout">
+
+      <!-- LEFT SIDE: Form -->
+      <div class="sh-card">
+        <h2>Add a Session</h2>
+        <p class="lead">Record a writing, reading, or focus session with duration and notes.</p>
+
+        <form id="shForm">
+          <div class="sh-grid">
+            <div class="sh-field">
+              <label for="shType">Session type</label>
+              <select id="shType" class="sh-select">
+                <option value="writing">Writing</option>
+                <option value="reading">Reading</option>
+                <option value="focus">Focus / Deep work</option>
+                <option value="planning">Planning</option>
+                <option value="editing">Editing</option>
+                <option value="other">Other / Custom</option>
+              </select>
+            </div>
+
+            <div class="sh-field">
+              <label for="shDate">Date</label>
+              <input
+                type="date"
+                id="shDate"
+                class="sh-input"
+              />
+            </div>
+
+            <div class="sh-field">
+              <label for="shStartTime">Start time (optional)</label>
+              <input
+                type="time"
+                id="shStartTime"
+                class="sh-input"
+              />
+            </div>
+
+            <div class="sh-field">
+              <label for="shDuration">Duration (minutes)</label>
+              <input
+                type="number"
+                id="shDuration"
+                class="sh-input"
+                min="1"
+                placeholder="e.g. 25"
+              />
+            </div>
+
+            <div class="sh-field">
+              <label for="shWords">Words (optional)</label>
+              <input
+                type="number"
+                id="shWords"
+                class="sh-input"
+                min="0"
+                placeholder="e.g. 500"
+              />
+            </div>
+
+            <div class="sh-field">
+              <label for="shNotes">Notes (optional)</label>
+              <textarea
+                id="shNotes"
+                class="sh-textarea"
+                placeholder="Context, goals, or what you worked on."
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="sh-actions">
+            <button type="submit" class="sh-btn primary">
+              <i class="fas fa-plus-circle"></i> Add Session
+            </button>
+            <button type="button" id="shClearAllBtn" class="sh-btn">
+              <i class="fas fa-trash"></i> Clear All Sessions
+            </button>
+          </div>
+
+          <p class="sh-note">
+            Your sessions are stored locally in this browser using localStorage — no account required.
+          </p>
+        </form>
+      </div>
+
+      <!-- RIGHT SIDE: Summary + History -->
+      <div class="sh-results">
+        <h2>Session Summary</h2>
+
+        <div class="sh-summary-row">
+          <div class="sh-summary-item">
+            <div class="sh-summary-label">Total sessions</div>
+            <div id="shTotalSessions" class="sh-summary-value">0</div>
+            <div class="sh-summary-sub">All-time</div>
+          </div>
+          <div class="sh-summary-item">
+            <div class="sh-summary-label">Total minutes</div>
+            <div id="shTotalMinutes" class="sh-summary-value">0</div>
+            <div class="sh-summary-sub">Logged time</div>
+          </div>
+          <div class="sh-summary-item">
+            <div class="sh-summary-label">Total words</div>
+            <div id="shTotalWords" class="sh-summary-value">0</div>
+            <div class="sh-summary-sub">From writing sessions</div>
+          </div>
+        </div>
+
+        <div id="shStatus" class="sh-status">
+          No sessions yet. Add your first session to start tracking your progress.
+        </div>
+
+        <div class="sh-table-wrap" id="shTableWrap">
+          <!-- Table injected by JS -->
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer (same as all tools) -->
+  <footer class="pro-footer" id="about">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">WordCalculator<span>.net</span></div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col"><h5>Product</h5></div>
+        <div class="pf-col"><h5>Resources</h5></div>
+        <div class="pf-col"><h5>Company</h5></div>
+        <div class="pf-col"><h5>Legal</h5></div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Shared + Page Scripts -->
+  <script src="tools.js"></script>
+  <script src="session-history.js"></script>
+</body>
+</html>
