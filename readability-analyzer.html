@@ -4,11 +4,468 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Readability & Text Statistics — WordCalculator.net</title>
-  <meta name="description" content="Analyze readability scores, text statistics, and sentence structure for your writing.">
+  <meta name="description" content="Analyze readability, grade level, and detailed text statistics for your content.">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <!-- Reuse same styles as your tools/header/footer -->
   <link rel="stylesheet" href="tools.css"/>
   <link rel="icon" href="favicon.ico"/>
+
+  <!-- Page-specific styles -->
+  <style>
+    :root {
+      --rp-bg: #050816;
+      --rp-surface: #0b1020;
+      --rp-border: rgba(255,255,255,0.06);
+      --rp-accent: #6366f1;
+      --rp-accent-soft: rgba(99,102,241,0.15);
+      --rp-text-main: #f9fafb;
+      --rp-text-subtle: #9ca3af;
+      --rp-danger: #f97373;
+      --rp-radius-lg: 18px;
+      --rp-radius-md: 12px;
+      --rp-shadow-soft: 0 18px 45px rgba(0,0,0,0.55);
+      --rp-shadow-card: 0 16px 40px rgba(15,23,42,0.85);
+    }
+
+    body {
+      background: radial-gradient(circle at top, #111827 0, #020617 45%, #000 100%);
+      color: var(--rp-text-main);
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main.readability-main {
+      padding: 40px 16px 64px;
+    }
+
+    .readability-wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    /* Hero / Intro */
+    .readability-hero {
+      margin-bottom: 28px;
+    }
+
+    .readability-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--rp-text-subtle);
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.35);
+      background: linear-gradient(to right, rgba(15,23,42,0.95), rgba(15,23,42,0.6));
+      margin-bottom: 10px;
+    }
+    .readability-eyebrow i {
+      color: var(--rp-accent);
+      font-size: 11px;
+    }
+
+    .readability-hero h1 {
+      font-size: clamp(1.9rem, 3vw, 2.2rem);
+      letter-spacing: -0.03em;
+      margin: 0 0 8px;
+    }
+
+    .readability-hero p {
+      margin: 0 0 14px;
+      color: var(--rp-text-subtle);
+      max-width: 620px;
+      font-size: 0.95rem;
+    }
+
+    .readability-hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      font-size: 0.82rem;
+      color: #9ca3af;
+    }
+
+    .readability-hero-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.85);
+      border: 1px solid rgba(148,163,184,0.3);
+    }
+
+    .readability-hero-meta i {
+      font-size: 0.8rem;
+      color: var(--rp-accent);
+    }
+
+    /* Layout */
+    .readability-section {
+      margin-top: 8px;
+    }
+
+    .readability-layout {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      align-items: flex-start;
+    }
+
+    .readability-panel {
+      background: radial-gradient(circle at top left, rgba(148,163,184,0.08) 0, rgba(15,23,42,1) 45%, #020617 100%);
+      border-radius: var(--rp-radius-lg);
+      border: 1px solid rgba(148,163,184,0.35);
+      box-shadow: var(--rp-shadow-card);
+      padding: 18px 18px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .readability-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at top left, rgba(94,234,212,0.12) 0, transparent 55%),
+        radial-gradient(circle at bottom right, rgba(129,140,248,0.16) 0, transparent 55%);
+      opacity: 0.72;
+      mix-blend-mode: screen;
+    }
+
+    .readability-panel-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Left panel */
+    .rp-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .rp-panel-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .rp-panel-title-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, rgba(129,140,248,0.9), rgba(56,189,248,0.65));
+      color: white;
+      box-shadow: 0 10px 20px rgba(37,99,235,0.55);
+      font-size: 0.9rem;
+    }
+
+    .rp-panel-title h2 {
+      font-size: 1rem;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .rp-panel-sub {
+      font-size: 0.78rem;
+      color: var(--rp-text-subtle);
+      margin-top: 2px;
+    }
+
+    .rp-badge-local {
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(52,211,153,0.7);
+      color: #bbf7d0;
+      background: rgba(5,46,22,0.7);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .rp-badge-local i {
+      font-size: 0.8rem;
+      color: #34d399;
+    }
+
+    .rp-textarea-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+      color: var(--rp-text-subtle);
+    }
+
+    .rp-textarea-label span strong {
+      color: var(--rp-text-main);
+      font-weight: 600;
+    }
+
+    .rp-input-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    textarea#rp-input {
+      width: 100%;
+      min-height: 210px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9rem;
+      color: var(--rp-text-main);
+      background: rgba(15,23,42,0.93);
+      border-radius: var(--rp-radius-md);
+      border: 1px solid rgba(148,163,184,0.55);
+      padding: 10px 12px;
+      outline: none;
+      box-shadow: inset 0 0 0 1px rgba(15,23,42,0.7);
+      line-height: 1.5;
+    }
+
+    textarea#rp-input::placeholder {
+      color: rgba(148,163,184,0.9);
+    }
+
+    textarea#rp-input:focus {
+      border-color: rgba(129,140,248,0.95);
+      box-shadow:
+        0 0 0 1px rgba(129,140,248,0.95),
+        0 0 0 12px rgba(79,70,229,0.25);
+    }
+
+    .rp-btn-primary {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #6366f1, #22d3ee);
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 14px 30px rgba(37,99,235,0.55);
+      transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, filter 0.08s ease-out;
+    }
+
+    .rp-btn-primary i {
+      font-size: 0.85rem;
+    }
+
+    .rp-btn-primary:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+      box-shadow: 0 16px 38px rgba(37,99,235,0.7);
+    }
+
+    .rp-btn-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 10px 20px rgba(37,99,235,0.55);
+    }
+
+    .rp-btn-ghost {
+      background: transparent;
+      border-radius: 999px;
+      border: 1px dashed rgba(148,163,184,0.7);
+      color: var(--rp-text-subtle);
+      font-size: 0.78rem;
+      padding: 6px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .rp-btn-ghost i {
+      font-size: 0.78rem;
+    }
+
+    .rp-small-note {
+      font-size: 0.78rem;
+      color: var(--rp-text-subtle);
+      margin-top: 4px;
+    }
+
+    .rp-options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 16px;
+      margin-top: 10px;
+      font-size: 0.78rem;
+      color: var(--rp-text-subtle);
+    }
+
+    .rp-option-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.6);
+      background: rgba(15,23,42,0.9);
+    }
+
+    .rp-option-chip select {
+      border: none;
+      background: transparent;
+      color: var(--rp-text-main);
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .rp-option-chip label {
+      font-size: 0.76rem;
+    }
+
+    /* Right panel (results) */
+    .rp-results-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .rp-result-block {
+      background: rgba(15,23,42,0.96);
+      border-radius: 14px;
+      padding: 10px 11px;
+      border: 1px solid rgba(55,65,81,0.95);
+      box-shadow: 0 10px 26px rgba(15,23,42,0.9);
+    }
+
+    .rp-result-block.highlight {
+      border-color: rgba(129,140,248,0.95);
+      background:
+        radial-gradient(circle at top left, rgba(129,140,248,0.25), rgba(15,23,42,0.95));
+      box-shadow:
+        0 0 0 1px rgba(129,140,248,0.65),
+        0 18px 40px rgba(37,99,235,0.85);
+    }
+
+    .rp-result-label {
+      font-size: 0.76rem;
+      color: var(--rp-text-subtle);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .rp-result-label span.badge {
+      font-size: 0.68rem;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.7);
+      color: #e5e7eb;
+    }
+
+    .rp-result-main {
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .rp-result-sub {
+      font-size: 0.78rem;
+      color: var(--rp-text-subtle);
+      margin-top: 2px;
+    }
+
+    .rp-result-main.badge-easy {
+      color: #4ade80;
+    }
+    .rp-result-main.badge-medium {
+      color: #facc15;
+    }
+    .rp-result-main.badge-hard {
+      color: #fb7185;
+    }
+
+    .rp-results-meta {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed rgba(148,163,184,0.5);
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .rp-meta-item {
+      font-size: 0.78rem;
+      color: var(--rp-text-subtle);
+    }
+
+    .rp-meta-item strong {
+      display: block;
+      color: var(--rp-text-main);
+      font-size: 0.9rem;
+      margin-bottom: 1px;
+    }
+
+    .rp-empty-state {
+      font-size: 0.82rem;
+      color: var(--rp-text-subtle);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rp-empty-state i {
+      color: rgba(148,163,184,0.9);
+    }
+
+    @media (max-width: 960px) {
+      .readability-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .readability-panel {
+        padding: 16px 14px 16px;
+      }
+
+      .rp-results-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .rp-results-meta {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      main.readability-main {
+        padding: 26px 12px 40px;
+      }
+      .readability-hero h1 {
+        font-size: 1.6rem;
+      }
+      .rp-results-meta {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
 </head>
 <body>
   <!-- Header (unchanged) -->
@@ -66,170 +523,191 @@
   </header>
 
   <!-- Main -->
-  <main class="tools-main">
-    <!-- Hero / Intro for this tool -->
-    <section class="tools-hero">
-      <div class="tools-hero-inner">
-        <div class="tools-hero-text">
-          <h1>Readability & Text Statistics</h1>
-          <p>
-            Paste your text and instantly see readability scores, grade levels, and detailed statistics like
-            word count, sentence length, and estimated reading time.
-          </p>
-          <div class="tools-meta-row">
-            <span><i class="fas fa-chart-bar"></i> Flesch & grade levels</span>
-            <span><i class="fas fa-book-open"></i> Reading time estimate</span>
-            <span><i class="fas fa-shield-alt"></i> Runs in your browser</span>
-          </div>
+  <main class="readability-main">
+    <div class="readability-wrap">
+      <!-- Hero -->
+      <section class="readability-hero">
+        <div class="readability-eyebrow">
+          <i class="fas fa-gauge-high"></i>
+          Readability & Text Statistics
         </div>
-        <div class="tools-hero-card">
-          <div class="tools-hero-badge">
-            <i class="fas fa-sparkles"></i> Works with WordCalculator
-          </div>
-          <h2>Optimize your text before publishing</h2>
-          <p>
-            Use this analyzer alongside the main editor to keep your writing clear, readable, and on-level for your audience.
-          </p>
-          <a href="https://wordcalculator.net" class="hero-cta">
-            Open Main Editor
-            <i class="fas fa-arrow-right"></i>
-          </a>
-          <ul class="hero-list">
-            <li><i class="fas fa-check"></i> No data leaves your browser</li>
-            <li><i class="fas fa-check"></i> Instant recalculation</li>
-            <li><i class="fas fa-check"></i> Great for blogs & essays</li>
-          </ul>
+        <h1>Measure how easy your text is to read.</h1>
+        <p>
+          Paste any article, blog post, essay, or script and get instant readability scores,
+          grade level, and detailed text statistics – right inside WordCalculator.
+        </p>
+        <div class="readability-hero-meta">
+          <span><i class="fas fa-gauge-simple"></i> Flesch Reading Ease & Grade Level</span>
+          <span><i class="fas fa-chart-simple"></i> Words, sentences, syllables</span>
+          <span><i class="fas fa-lock"></i> 100% browser-based — no text is sent to a server</span>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Tool Body -->
-    <section class="tools-grid-section" aria-label="Readability tool">
-      <div class="tools-grid tool-page-layout">
-        <!-- Left: Text input -->
-        <article class="tool-card tool-card-wide">
-          <div class="tool-card-header">
-            <span class="tool-icon">
-              <i class="fas fa-file-alt"></i>
-            </span>
-            <span class="tool-badge badge-popular">Live</span>
-          </div>
-          <h3>Paste or type your text</h3>
-          <p>
-            The analyzer automatically updates as you type. You can also use the sample text to see how it works.
-          </p>
-
-          <div class="tool-input-group">
-            <label for="readabilityInput" class="sr-only">Text to analyze</label>
-            <textarea
-              id="readabilityInput"
-              rows="10"
-              placeholder="Paste your article, blog post, essay, or any text here..."
-            ></textarea>
-          </div>
-
-          <div class="tool-actions-row">
-            <button type="button" id="sampleTextBtn" class="tool-primary-btn">
-              <i class="fas fa-align-left"></i> Use Sample Text
-            </button>
-            <button type="button" id="clearTextBtn" class="tool-secondary-btn">
-              <i class="fas fa-eraser"></i> Clear
-            </button>
-          </div>
-        </article>
-
-        <!-- Right: Results -->
-        <article class="tool-card tool-card-wide">
-          <div class="tool-card-header">
-            <span class="tool-icon">
-              <i class="fas fa-chart-line"></i>
-            </span>
-            <span class="tool-badge badge-pro">Stats</span>
-          </div>
-          <h3>Readability scores</h3>
-          <p>
-            These metrics help you understand how easy your text is to read and which audience level it fits best.
-          </p>
-
-          <div class="readability-grid">
-            <div class="readability-item">
-              <div class="readability-label">
-                Flesch Reading Ease
-                <span class="hint">(0–100, higher is easier)</span>
+      <!-- Tool layout -->
+      <section class="readability-section">
+        <div class="readability-layout">
+          <!-- Left: Input -->
+          <article class="readability-panel">
+            <div class="readability-panel-inner">
+              <div class="rp-panel-header">
+                <div class="rp-panel-title">
+                  <div class="rp-panel-title-icon">
+                    <i class="fas fa-pen-fancy"></i>
+                  </div>
+                  <div>
+                    <h2>Paste text to analyze</h2>
+                    <div class="rp-panel-sub">
+                      Works best with full paragraphs or articles instead of single sentences.
+                    </div>
+                  </div>
+                </div>
+                <span class="rp-badge-local">
+                  <i class="fas fa-shield-check"></i>
+                  Local only
+                </span>
               </div>
-              <div class="readability-value" id="fleschScore">—</div>
-              <div class="readability-sub" id="difficultyLabel">Start typing to analyze…</div>
-            </div>
 
-            <div class="readability-item">
-              <div class="readability-label">
-                Flesch-Kincaid Grade Level
+              <label for="rp-input" class="rp-textarea-label">
+                <span>
+                  <strong>Input text</strong>
+                  <span>• Paste or start typing</span>
+                </span>
+                <span id="rp-live-count" aria-live="polite">
+                  0 words • 0 characters
+                </span>
+              </label>
+
+              <textarea
+                id="rp-input"
+                placeholder="Paste your blog post, article, email, or essay here to see readability scores and detailed statistics..."
+              ></textarea>
+
+              <div class="rp-input-actions">
+                <button id="rp-analyze-btn" class="rp-btn-primary" type="button">
+                  <i class="fas fa-gauge-high"></i>
+                  Analyze text
+                </button>
+                <button id="rp-clear-btn" class="rp-btn-ghost" type="button">
+                  <i class="fas fa-eraser"></i>
+                  Clear
+                </button>
               </div>
-              <div class="readability-value" id="fkGrade">—</div>
-              <div class="readability-sub" id="gradeLabel">—</div>
-            </div>
 
-            <div class="readability-item">
-              <div class="readability-label">
-                Gunning Fog Index
+              <p class="rp-small-note">
+                We do not store or send your text anywhere — everything is calculated directly in your browser.
+              </p>
+
+              <div class="rp-options-row">
+                <div class="rp-option-chip">
+                  <label for="rp-wpm">Reading speed:</label>
+                  <select id="rp-wpm">
+                    <option value="200">Average (200 wpm)</option>
+                    <option value="150">Slow (150 wpm)</option>
+                    <option value="250">Fast (250 wpm)</option>
+                    <option value="300">Very fast (300 wpm)</option>
+                  </select>
+                </div>
+                <div class="rp-option-chip">
+                  <label for="rp-language">Language:</label>
+                  <select id="rp-language" disabled>
+                    <option>English (supported)</option>
+                  </select>
+                </div>
               </div>
-              <div class="readability-value" id="fogIndex">—</div>
-              <div class="readability-sub">Estimated years of formal education required.</div>
             </div>
+          </article>
 
-            <div class="readability-item">
-              <div class="readability-label">
-                SMOG Index
+          <!-- Right: Results -->
+          <article class="readability-panel">
+            <div class="readability-panel-inner">
+              <div class="rp-panel-header">
+                <div class="rp-panel-title">
+                  <div class="rp-panel-title-icon">
+                    <i class="fas fa-chart-bar"></i>
+                  </div>
+                  <div>
+                    <h2>Readability & statistics</h2>
+                    <div class="rp-panel-sub">
+                      Based on Flesch Reading Ease, Flesch–Kincaid Grade Level, and basic text metrics.
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="readability-value" id="smogIndex">—</div>
-              <div class="readability-sub">Best for shorter, formal texts.</div>
-            </div>
-          </div>
 
-          <hr class="tool-divider"/>
+              <div id="rp-empty-state" class="rp-empty-state">
+                <i class="fas fa-info-circle"></i>
+                Start by pasting some text on the left and click <strong>Analyze text</strong>.
+              </div>
 
-          <h3>Text statistics</h3>
-          <p>
-            Basic counts and averages based on your current text.
-          </p>
+              <div id="rp-results" hidden>
+                <div class="rp-results-grid">
+                  <!-- Flesch score -->
+                  <div class="rp-result-block highlight">
+                    <div class="rp-result-label">
+                      <span>Flesch Reading Ease</span>
+                      <span class="badge" id="rp-reading-ease-label">–</span>
+                    </div>
+                    <div class="rp-result-main" id="rp-flesch-score">–</div>
+                    <div class="rp-result-sub">
+                      Higher is easier to read. Aim for 60–70 for general web content.
+                    </div>
+                  </div>
 
-          <div class="stats-grid">
-            <div class="stat-item">
-              <span class="stat-label">Words</span>
-              <span class="stat-value" id="wordCount">0</span>
+                  <!-- Grade level -->
+                  <div class="rp-result-block">
+                    <div class="rp-result-label">
+                      <span>Grade level (US)</span>
+                      <span class="badge">Flesch–Kincaid</span>
+                    </div>
+                    <div class="rp-result-main" id="rp-grade-level">–</div>
+                    <div class="rp-result-sub">
+                      Approximate school grade needed to comfortably understand this text.
+                    </div>
+                  </div>
+
+                  <!-- Word stats -->
+                  <div class="rp-result-block">
+                    <div class="rp-result-label">
+                      <span>Text summary</span>
+                    </div>
+                    <div class="rp-result-main" id="rp-word-count">0</div>
+                    <div class="rp-result-sub" id="rp-text-summary-sub">
+                      0 characters • 0 sentences • 0 paragraphs
+                    </div>
+                  </div>
+
+                  <!-- Averages -->
+                  <div class="rp-result-block">
+                    <div class="rp-result-label">
+                      <span>Average length</span>
+                    </div>
+                    <div class="rp-result-main" id="rp-avg-words-sentence">–</div>
+                    <div class="rp-result-sub" id="rp-avg-length-sub">
+                      – words per sentence • – syllables per word
+                    </div>
+                  </div>
+                </div>
+
+                <div class="rp-results-meta">
+                  <div class="rp-meta-item">
+                    <strong id="rp-reading-time">–</strong>
+                    Estimated reading time
+                  </div>
+                  <div class="rp-meta-item">
+                    <strong id="rp-sentence-count">0</strong>
+                    Sentences
+                  </div>
+                  <div class="rp-meta-item">
+                    <strong id="rp-syllable-count">0</strong>
+                    Approximate syllables
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="stat-item">
-              <span class="stat-label">Characters (with spaces)</span>
-              <span class="stat-value" id="charCount">0</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Characters (no spaces)</span>
-              <span class="stat-value" id="charNoSpaceCount">0</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Sentences</span>
-              <span class="stat-value" id="sentenceCount">0</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Paragraphs</span>
-              <span class="stat-value" id="paragraphCount">0</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Avg. word length (characters)</span>
-              <span class="stat-value" id="avgWordLength">0</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Avg. sentence length (words)</span>
-              <span class="stat-value" id="avgSentenceLength">0</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Estimated reading time</span>
-              <span class="stat-value" id="readingTime">0 sec</span>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
+          </article>
+        </div>
+      </section>
+    </div>
   </main>
 
   <!-- Footer (unchanged) -->
@@ -305,27 +783,10 @@
     </div>
   </footer>
 
-  <!-- Simple Auth Modal (same as tools page) -->
-  <div class="modal-overlay" id="authOverlay" aria-hidden="true"></div>
-  <div class="modal modal-auth" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-    <div class="modal-head">
-      <h3 id="authTitle"><i class="fas fa-user-lock"></i> Account</h3>
-      <button class="modal-close" id="authCloseBtn" aria-label="Close">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="modal-body">
-      <p class="auth-note">
-        Sign-in and account features are coming soon. For now, all tools are free to use without registration.
-      </p>
-    </div>
-  </div>
-
-  <!-- Toast Notification -->
+  <!-- Toast (optional, from your global design if used) -->
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <!-- Scripts -->
-  <script src="tools.js"></script>
+  <!-- Page script -->
   <script src="readability-analyzer.js"></script>
 </body>
 </html>
