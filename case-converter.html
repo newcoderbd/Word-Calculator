@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case Converter — WordCalculator.net</title>
+  <meta name="description" content="Free online case converter tool to change text to UPPERCASE, lowercase, Title Case, Sentence case and more.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Main shared CSS -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .cc-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .cc-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .cc-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .cc-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .cc-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 10px;
+    }
+
+    .cc-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .cc-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cc-row label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .cc-input-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .cc-textarea {
+      width: 100%;
+      min-height: 200px;
+      resize: vertical;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      line-height: 1.5;
+      font-family: inherit;
+      outline: none;
+      background-color: #ffffff;
+    }
+
+    .cc-textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+    }
+
+    .cc-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .cc-btn {
+      border-radius: 10px;
+      border: 1px solid transparent;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f3f4f6;
+      border-color: #e5e7eb;
+      color: #111827;
+      white-space: nowrap;
+    }
+
+    .cc-btn.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .cc-btn.primary:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.28);
+    }
+
+    .cc-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .cc-note {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .cc-results-card {
+      background: #020617;
+      color: #e5e7eb;
+      border-radius: 14px;
+      border: 1px solid #1f2937;
+      padding: 14px 14px 12px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+    }
+
+    .cc-results-card h2 {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .cc-results-meta {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 8px;
+    }
+
+    .cc-preview-box {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid #1e293b;
+      max-height: 230px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .cc-stats {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .cc-stat {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 8px;
+      padding: 6px 8px;
+      border: 1px solid #1e293b;
+    }
+
+    .cc-stat-label {
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+
+    .cc-stat-value {
+      font-size: 12px;
+      font-weight: 700;
+      color: #e5e7eb;
+    }
+
+    .cc-helper {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    @media (max-width: 900px) {
+      .cc-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header (unchanged) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">
+          Calculator
+          <small class="wc-tagline">Every Word Counts</small>
+        </span>
+      </a>
+
+      <nav class="wc-nav" aria-label="Primary">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+        <button class="wc-link wc-signin-btn" id="openAuthBtn" type="button">
+          Sign In <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+        </button>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+        <button class="nav-link mobile-link" id="openAuthBtnMobile" type="button">Sign In</button>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main -->
+  <main class="cc-main">
+    <section class="tools-hero">
+      <div className="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Case Converter</h1>
+          <p>
+            Quickly convert your text to UPPERCASE, lowercase, Title Case, Sentence case or toggle case.
+            Perfect for content writers, developers and students.
+          </p>
+          <div class="tools-meta-row">
+            <span><i class="fas fa-font"></i> Multiple case styles</span>
+            <span><i class="fas fa-bolt"></i> Instant conversion</span>
+            <span><i class="fas fa-shield-alt"></i> Runs in your browser</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cc-layout" aria-label="Case converter">
+      <!-- Left: input & buttons -->
+      <div class="cc-card">
+        <h2>Enter your text</h2>
+        <p class="lead">
+          Paste or type your text below, then choose a case style from the buttons.
+        </p>
+
+        <form class="cc-form" onsubmit="return false;">
+          <div class="cc-row">
+            <span class="cc-input-label">Source text</span>
+            <textarea
+              id="ccInput"
+              class="cc-textarea"
+              placeholder="Paste or type your text here to convert the case..."
+            ></textarea>
+          </div>
+
+          <div class="cc-actions">
+            <button type="button" class="cc-btn primary" id="toUpperBtn">
+              <i class="fas fa-arrow-up-a-z"></i> UPPERCASE
+            </button>
+            <button type="button" class="cc-btn primary" id="toLowerBtn">
+              <i class="fas fa-arrow-down-a-z"></i> lowercase
+            </button>
+            <button type="button" class="cc-btn" id="toTitleBtn">
+              <i class="fas fa-text-height"></i> Title Case
+            </button>
+            <button type="button" class="cc-btn" id="toSentenceBtn">
+              <i class="fas fa-paragraph"></i> Sentence case
+            </button>
+            <button type="button" class="cc-btn" id="toToggleBtn">
+              <i class="fas fa-exchange-alt"></i> tOGGLE cASE
+            </button>
+            <button type="button" class="cc-btn" id="copyBtn">
+              <i class="fas fa-copy"></i> Copy
+            </button>
+            <button type="button" class="cc-btn" id="clearBtn">
+              <i class="fas fa-eraser"></i> Clear
+            </button>
+          </div>
+
+          <p class="cc-note">
+            Tip: You can convert first, then edit the result directly and copy it with one click.
+          </p>
+        </form>
+      </div>
+
+      <!-- Right: preview & stats -->
+      <aside class="cc-results-card" aria-label="Converted text preview">
+        <h2>Converted preview</h2>
+        <p class="cc-results-meta">
+          The converted version of your text appears here. You can select and edit it freely.
+        </p>
+
+        <div id="ccPreview" class="cc-preview-box"></div>
+
+        <div class="cc-stats">
+          <div class="cc-stat">
+            <div class="cc-stat-label">Characters</div>
+            <div id="ccCharCount" class="cc-stat-value">0</div>
+          </div>
+          <div class="cc-stat">
+            <div class="cc-stat-label">Words</div>
+            <div id="ccWordCount" class="cc-stat-value">0</div>
+          </div>
+          <div class="cc-stat">
+            <div class="cc-stat-label">Lines</div>
+            <div id="ccLineCount" class="cc-stat-value">0</div>
+          </div>
+        </div>
+
+        <p class="cc-helper">
+          Case styles:<br />
+          <strong>UPPERCASE</strong> — all caps ·
+          <strong>lowercase</strong> — all small letters ·
+          <strong>Title Case</strong> — capitalizes each word ·
+          <strong>Sentence case</strong> — capitalizes first letter of sentences ·
+          <strong>tOGGLE cASE</strong> — flips each letter.
+        </p>
+      </aside>
+    </section>
+  </main>
+
+  <!-- Footer (unchanged) -->
+  <footer class="pro-footer" id="about" aria-label="Website footer">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">
+            WordCalculator<span>.net</span>
+          </div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+        <div class="pf-social">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col">
+          <h5>Product</h5>
+          <ul>
+            <li><a href="https://wordcalculator.net">Editor</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="#">Grammar Check</a></li>
+            <li><a href="#">Keyword Density</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Tips & Guides</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#">Report a Bug</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+        <div class="pf-links">
+          <a href="#">Sitemap</a>
+          <a href="#">Status</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="tools.js"></script>
+  <script src="case-converter.js"></script>
+</body>
+</html>
