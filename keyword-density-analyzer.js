@@ -1,183 +1,176 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("kdForm");
-  const textEl = document.getElementById("kdText");
-  const focusKeywordEl = document.getElementById("kdFocusKeyword");
-  const minLengthEl = document.getElementById("kdMinLength");
-  const ignoreCaseEl = document.getElementById("kdIgnoreCase");
-  const excludeStopWordsEl = document.getElementById("kdExcludeStopWords");
-  const clearBtn = document.getElementById("kdClearBtn");
+  const form = document.getElementById("kdaForm");
+  const textEl = document.getElementById("kdaText");
+  const keywordsEl = document.getElementById("kdaKeywords");
+  const minLengthEl = document.getElementById("kdaMinLength");
+  const excludeStopwordsEl = document.getElementById("kdaExcludeStopwords");
+  const includeNumbersEl = document.getElementById("kdaIncludeNumbers");
+  const clearBtn = document.getElementById("kdaClearBtn");
 
-  const totalWordsEl = document.getElementById("kdTotalWords");
-  const uniqueWordsEl = document.getElementById("kdUniqueWords");
-  const focusDensityEl = document.getElementById("kdFocusDensity");
-  const focusInfoEl = document.getElementById("kdFocusInfo");
-  const statusEl = document.getElementById("kdStatus");
-  const tableWrapEl = document.getElementById("kdTableWrap");
+  const totalWordsEl = document.getElementById("kdaTotalWords");
+  const uniqueWordsEl = document.getElementById("kdaUniqueWords");
+  const topDensityEl = document.getElementById("kdaTopDensity");
+  const statusEl = document.getElementById("kdaStatus");
+  const tableWrapEl = document.getElementById("kdaTableWrap");
+
+  const focusWrapEl = document.getElementById("kdaFocusWrap");
+  const focusListEl = document.getElementById("kdaFocusList");
 
   const footerYear = document.getElementById("pf-year");
   if (footerYear) {
     footerYear.textContent = new Date().getFullYear();
   }
 
-  const STOP_WORDS = new Set([
-    "a", "an", "the", "and", "or", "but", "if", "then", "else", "when", "while",
-    "at", "by", "for", "from", "in", "into", "of", "on", "to", "up", "with",
-    "as", "is", "it", "its", "be", "are", "was", "were", "this", "that", "these",
-    "those", "your", "my", "our", "their", "you", "we", "they", "he", "she",
-    "him", "her", "them", "me", "i", "so", "no", "not", "too", "very", "can",
-    "could", "should", "would", "will", "just", "about", "than", "also", "such"
+  const STOPWORDS = new Set([
+    "the", "and", "a", "an", "of", "to", "in", "on", "for", "with", "at",
+    "by", "from", "up", "about", "into", "over", "after", "under", "above",
+    "below", "this", "that", "these", "those", "is", "are", "was", "were",
+    "be", "been", "being", "it", "its", "as", "or", "if", "but", "not",
+    "no", "so", "can", "will", "just", "do", "does", "did", "than", "then",
+    "there", "their", "them", "they", "you", "your", "yours", "we", "our",
+    "ours", "i", "me", "my", "mine"
   ]);
 
-  function normalizeText(text, ignoreCase) {
-    let result = text.replace(/[\u2018\u2019']/g, "'").replace(/[\u201C\u201D"]/g, '"');
-    if (ignoreCase) {
-      result = result.toLowerCase();
-    }
-    return result;
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
-  function tokenize(text) {
-    return text
-      .replace(/[^a-zA-Z0-9]+/g, " ")
-      .split(/\s+/)
-      .filter(Boolean);
+  function tokenize(text, includeNumbers) {
+    const lower = text.toLowerCase();
+    const pattern = includeNumbers ? /[a-z0-9']+/g : /[a-z']+/g;
+    const matches = lower.match(pattern);
+    return matches || [];
   }
 
-  function analyzeKeywordDensity(content, options) {
-    const ignoreCase = options.ignoreCase;
-    const excludeStopWords = options.excludeStopWords;
-    const minLength = options.minLength;
+  function analyzeText() {
+    const rawText = textEl.value || "";
+    const focusRaw = keywordsEl.value || "";
+    const minLength = Number(minLengthEl.value) || 1;
+    const excludeStopwords = excludeStopwordsEl.checked;
+    const includeNumbers = includeNumbersEl.checked;
 
-    const normalized = normalizeText(content, ignoreCase);
-    const tokens = tokenize(normalized);
-
-    const totalWords = tokens.length;
-    const frequencies = new Map();
-
-    for (const token of tokens) {
-      const word = token;
-      if (excludeStopWords && STOP_WORDS.has(word)) {
-        continue;
-      }
-      if (word.length < minLength) {
-        continue;
-      }
-      const current = frequencies.get(word) || 0;
-      frequencies.set(word, current + 1);
-    }
-
-    const resultArray = [];
-    frequencies.forEach((count, word) => {
-      const density = totalWords > 0 ? (count / totalWords) * 100 : 0;
-      resultArray.push({
-        word,
-        count,
-        density
-      });
-    });
-
-    resultArray.sort((a, b) => {
-      if (b.count === a.count) {
-        return a.word < b.word ? -1 : 1;
-      }
-      return b.count - a.count;
-    });
-
-    return {
-      totalWords,
-      uniqueWords: frequencies.size,
-      entries: resultArray,
-      normalizedText: normalized,
-      tokens
-    };
-  }
-
-  function countPhraseOccurrences(text, phrase, ignoreCase) {
-    if (!phrase) return 0;
-    let normalizedText = text;
-    let normalizedPhrase = phrase;
-
-    if (ignoreCase) {
-      normalizedText = text.toLowerCase();
-      normalizedPhrase = phrase.toLowerCase();
-    }
-
-    normalizedText = normalizedText.replace(/[\u2018\u2019']/g, "'").replace(/[\u201C\u201D"]/g, '"');
-    normalizedPhrase = normalizedPhrase.replace(/[\u2018\u2019']/g, "'").replace(/[\u201C\u201D"]/g, '"');
-
-    let count = 0;
-    let index = 0;
-
-    while (true) {
-      const foundIndex = normalizedText.indexOf(normalizedPhrase, index);
-      if (foundIndex === -1) break;
-      count += 1;
-      index = foundIndex + normalizedPhrase.length;
-    }
-
-    return count;
-  }
-
-  function renderSummary(stats, focusKeyword, options) {
-    const { totalWords, uniqueWords, normalizedText } = stats;
-
-    totalWordsEl.textContent = totalWords;
-    uniqueWordsEl.textContent = uniqueWords;
-
-    if (!focusKeyword || !focusKeyword.trim()) {
-      focusDensityEl.textContent = "0%";
-      focusInfoEl.textContent = "No focus keyword set.";
-      return;
-    }
-
-    const trimmedFocus = focusKeyword.trim();
-    const occurrences = countPhraseOccurrences(
-      normalizedText,
-      trimmedFocus,
-      options.ignoreCase
-    );
-    const total = totalWords;
-
-    const density = total > 0 ? (occurrences * trimmedFocus.split(/\s+/).length / total) * 100 : 0;
-    const densityRounded = density.toFixed(2);
-
-    focusDensityEl.textContent = `${densityRounded}%`;
-    focusInfoEl.textContent = `“${trimmedFocus}” appears ${occurrences} time${occurrences === 1 ? "" : "s"} in your text.`;
-  }
-
-  function renderTable(stats) {
-    const entries = stats.entries;
-
-    if (!stats.totalWords) {
+    if (!rawText.trim()) {
+      statusEl.textContent = "Please paste or type some content to analyze.";
+      totalWordsEl.textContent = "0";
+      uniqueWordsEl.textContent = "0";
+      topDensityEl.textContent = "0%";
       tableWrapEl.innerHTML =
-        '<div class="kd-table-empty">No words to display. Paste some text and analyze it first.</div>';
+        '<div class="kda-table-empty">No data available. Add text and click “Analyze”.</div>';
+      focusWrapEl.style.display = "none";
       return;
     }
 
+    let words = tokenize(rawText, includeNumbers);
+
+    if (minLength > 1) {
+      words = words.filter((w) => w.length >= minLength);
+    }
+
+    if (excludeStopwords) {
+      words = words.filter((w) => !STOPWORDS.has(w));
+    }
+
+    const totalWords = words.length;
+    if (totalWords === 0) {
+      statusEl.textContent =
+        "No words left after applying filters (min length / stopwords). Try lowering the minimum word length or disabling stopword filtering.";
+      totalWordsEl.textContent = "0";
+      uniqueWordsEl.textContent = "0";
+      topDensityEl.textContent = "0%";
+      tableWrapEl.innerHTML =
+        '<div class="kda-table-empty">No data available after filtering.</div>';
+      focusWrapEl.style.display = "none";
+      return;
+    }
+
+    const freq = new Map();
+    words.forEach((w) => {
+      freq.set(w, (freq.get(w) || 0) + 1);
+    });
+
+    const uniqueCount = freq.size;
+
+    const entries = Array.from(freq.entries()).map(([word, count]) => {
+      const density = (count / totalWords) * 100;
+      return { word, count, density };
+    });
+
+    entries.sort((a, b) => {
+      if (b.count !== a.count) return b.count - a.count;
+      return a.word.localeCompare(b.word);
+    });
+
+    const top = entries[0];
+    const topDensity = top ? top.density : 0;
+
+    totalWordsEl.textContent = totalWords.toString();
+    uniqueWordsEl.textContent = uniqueCount.toString();
+    topDensityEl.textContent = `${topDensity.toFixed(2)}%`;
+
+    statusEl.textContent = `Found ${uniqueCount} unique word${
+      uniqueCount === 1 ? "" : "s"
+    } across ${totalWords} total words.`;
+
+    renderTable(entries, totalWords);
+    renderFocusKeywords(focusRaw, freq, totalWords);
+  }
+
+  function densityBadgeClass(density) {
+    if (density >= 3 && density <= 5) return "kda-badge kda-badge-strong";
+    if ((density > 1 && density < 3) || (density > 5 && density <= 7)) {
+      return "kda-badge kda-badge-medium";
+    }
+    return "kda-badge kda-badge-weak";
+  }
+
+  function renderTable(entries, totalWords) {
     if (!entries.length) {
       tableWrapEl.innerHTML =
-        '<div class="kd-table-empty">No keywords found based on your current settings (stop words / minimum length).</div>';
+        '<div class="kda-table-empty">No keyword statistics available.</div>';
       return;
     }
 
+    const topLimit = 200;
+    const sliced = entries.slice(0, topLimit);
+
     let rows = "";
-    entries.forEach((entry) => {
+    sliced.forEach((item, index) => {
+      const { word, count, density } = item;
+      const percent = density.toFixed(2);
+      const badgeClass = densityBadgeClass(density);
+      let label = "Low";
+
+      if (density >= 3 && density <= 5) {
+        label = "SEO-friendly";
+      } else if ((density > 1 && density < 3) || (density > 5 && density <= 7)) {
+        label = "Medium";
+      } else if (density > 7) {
+        label = "High";
+      }
+
       rows += `
         <tr>
-          <td>${entry.word.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</td>
-          <td>${entry.count}</td>
-          <td>${entry.density.toFixed(2)}%</td>
+          <td>${index + 1}</td>
+          <td>${escapeHtml(word)}</td>
+          <td>${count}</td>
+          <td>${percent}%</td>
+          <td><span class="${badgeClass}">${label}</span></td>
         </tr>
       `;
     });
 
     tableWrapEl.innerHTML = `
-      <table class="kd-table">
+      <table class="kda-table">
         <thead>
           <tr>
-            <th>Keyword</th>
+            <th>#</th>
+            <th>Word</th>
             <th>Count</th>
-            <th>Density (%)</th>
+            <th>Density</th>
+            <th>Signal</th>
           </tr>
         </thead>
         <tbody>
@@ -187,70 +180,68 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
-  function updateStatus(stats) {
-    if (!stats.totalWords) {
-      statusEl.innerHTML =
-        'Paste some content and click <span class="kd-highlight">Analyze Density</span> to see results.';
+  function renderFocusKeywords(focusRaw, freq, totalWords) {
+    const raw = focusRaw.trim();
+    if (!raw) {
+      focusWrapEl.style.display = "none";
+      focusListEl.innerHTML = "";
       return;
     }
 
-    statusEl.textContent = `Analyzed ${stats.totalWords} word${stats.totalWords === 1 ? "" : "s"} with ${stats.uniqueWords} unique keyword${stats.uniqueWords === 1 ? "" : "s"}.`;
+    const parts = raw
+      .split(",")
+      .map((p) => p.trim().toLowerCase())
+      .filter((p) => p.length > 0);
+
+    if (!parts.length) {
+      focusWrapEl.style.display = "none";
+      focusListEl.innerHTML = "";
+      return;
+    }
+
+    let content = "";
+    parts.forEach((kw) => {
+      const count = freq.get(kw) || 0;
+      const density = totalWords > 0 ? (count / totalWords) * 100 : 0;
+      const percent = density.toFixed(2);
+
+      content += `
+        <div class="kda-focus-chip">
+          <span class="value">${escapeHtml(kw)}</span>
+          <span class="meta">${count} × • ${percent}%</span>
+        </div>
+      `;
+    });
+
+    focusWrapEl.style.display = "block";
+    focusListEl.innerHTML = content;
   }
 
-  function handleAnalyze(event) {
+  function handleFormSubmit(event) {
     event.preventDefault();
-
-    const content = textEl.value || "";
-    const focusKeyword = focusKeywordEl.value || "";
-    const minLengthRaw = Number(minLengthEl.value || "1");
-    const minLength = Number.isFinite(minLengthRaw) && minLengthRaw > 0 ? minLengthRaw : 1;
-    const ignoreCase = !!ignoreCaseEl.checked;
-    const excludeStopWords = !!excludeStopWordsEl.checked;
-
-    if (!content.trim()) {
-      statusEl.textContent = "Please paste or type some content first.";
-      tableWrapEl.innerHTML =
-        '<div class="kd-table-empty">No content to analyze.</div>';
-      totalWordsEl.textContent = "0";
-      uniqueWordsEl.textContent = "0";
-      focusDensityEl.textContent = "0%";
-      focusInfoEl.textContent = "No focus keyword set.";
-      return;
-    }
-
-    const stats = analyzeKeywordDensity(content, {
-      ignoreCase,
-      excludeStopWords,
-      minLength
-    });
-
-    renderSummary(stats, focusKeyword, {
-      ignoreCase
-    });
-    renderTable(stats);
-    updateStatus(stats);
+    analyzeText();
   }
 
-  function handleClear() {
+  function clearAll() {
     textEl.value = "";
-    focusKeywordEl.value = "";
-    minLengthEl.value = "3";
-    ignoreCaseEl.checked = true;
-    excludeStopWordsEl.checked = true;
+    keywordsEl.value = "";
+    minLengthEl.value = "2";
+    excludeStopwordsEl.checked = true;
+    includeNumbersEl.checked = false;
 
     totalWordsEl.textContent = "0";
     uniqueWordsEl.textContent = "0";
-    focusDensityEl.textContent = "0%";
-    focusInfoEl.textContent = "No focus keyword set.";
-    statusEl.innerHTML =
-      'Paste some content and click <span class="kd-highlight">Analyze Density</span> to see results.';
+    topDensityEl.textContent = "0%";
+    statusEl.textContent =
+      "Paste your content and click “Analyze” to see keyword density.";
     tableWrapEl.innerHTML =
-      '<div class="kd-table-empty">No content to analyze.</div>';
+      '<div class="kda-table-empty">No data available. Add text and click “Analyze”.</div>';
+    focusWrapEl.style.display = "none";
+    focusListEl.innerHTML = "";
   }
 
-  tableWrapEl.innerHTML =
-    '<div class="kd-table-empty">No content to analyze.</div>';
+  form.addEventListener("submit", handleFormSubmit);
+  clearBtn.addEventListener("click", clearAll);
 
-  form.addEventListener("submit", handleAnalyze);
-  clearBtn.addEventListener("click", handleClear);
+  clearAll();
 });
