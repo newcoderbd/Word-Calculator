@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calorie Calculator — Daily Calorie & TDEE | WordCalculator.net</title>
+  <meta name="description" content="Calorie calculator to estimate your daily calorie needs (TDEE) using gender, age, height, weight, and activity level.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="tools.css"/>
+  <link rel="icon" href="favicon.ico"/>
+
+  <!-- Page-specific styles -->
+  <style>
+    :root {
+      --wc-bg: #050816;
+      --wc-surface: #0b1020;
+      --wc-border-subtle: rgba(255,255,255,0.06);
+      --wc-accent: #3b82f6;
+      --wc-accent-soft: rgba(59,130,246,0.12);
+      --wc-accent-alt: #22c55e;
+      --wc-text: #e5e7eb;
+      --wc-text-soft: #9ca3af;
+      --wc-danger: #f97373;
+    }
+
+    body {
+      background: radial-gradient(circle at top, #111827 0, #020617 45%, #000 100%);
+      color: var(--wc-text);
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .tool-main {
+      min-height: 100vh;
+      padding: 96px 16px 64px;
+    }
+
+    .tool-wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .tool-breadcrumb {
+      font-size: 13px;
+      color: var(--wc-text-soft);
+      margin-bottom: 16px;
+    }
+    .tool-breadcrumb a {
+      color: var(--wc-text-soft);
+      text-decoration: none;
+    }
+    .tool-breadcrumb a:hover {
+      color: var(--wc-accent);
+    }
+
+    .tool-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 28px;
+    }
+
+    .tool-header-main h1 {
+      font-size: clamp(26px, 4vw, 32px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tool-header-main h1 .tool-chip {
+      font-size: 13px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--wc-accent-soft);
+      color: var(--wc-accent);
+      text-transform: uppercase;
+    }
+
+    .tool-subtitle {
+      margin-top: 6px;
+      font-size: 14px;
+      color: var(--wc-text-soft);
+      max-width: 640px;
+    }
+
+    .tool-header-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--wc-text-soft);
+      text-align: right;
+    }
+
+    .tool-badge-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--wc-border-subtle);
+      background: linear-gradient(to right, rgba(59,130,246,0.08), rgba(56,189,248,0.06));
+    }
+
+    .tool-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.3);
+    }
+
+    .tool-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.2fr);
+      gap: 22px;
+      align-items: flex-start;
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, rgba(59,130,246,0.12), rgba(15,23,42,0.95));
+      border-radius: 18px;
+      border: 1px solid var(--wc-border-subtle);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.6);
+      padding: 20px 20px 18px;
+      backdrop-filter: blur(18px);
+    }
+
+    .card-secondary {
+      background: radial-gradient(circle at top right, rgba(56,189,248,0.1), rgba(15,23,42,0.96));
+    }
+
+    .card h2 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 13px;
+      color: var(--wc-text-soft);
+      margin-bottom: 14px;
+    }
+
+    .calorie-form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px 14px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 13px;
+    }
+
+    .form-group label {
+      color: var(--wc-text);
+      font-weight: 500;
+    }
+
+    .form-group small {
+      font-size: 11px;
+      color: var(--wc-text-soft);
+    }
+
+    .form-control,
+    .form-select {
+      background: rgba(15,23,42,0.9);
+      border-radius: 10px;
+      border: 1px solid rgba(148,163,184,0.35);
+      padding: 8px 10px;
+      font-size: 13px;
+      color: var(--wc-text);
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+      border-color: var(--wc-accent);
+      box-shadow: 0 0 0 1px rgba(59,130,246,0.5);
+      background: rgba(15,23,42,1);
+    }
+
+    .form-inline-row {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 12px;
+    }
+
+    .radio-row {
+      display: flex;
+      gap: 10px;
+      font-size: 13px;
+    }
+
+    .radio-pill {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.5);
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--wc-text-soft);
+      user-select: none;
+      transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+
+    .radio-pill input {
+      display: none;
+    }
+
+    .radio-pill span.icon {
+      font-size: 12px;
+    }
+
+    .radio-pill.active {
+      border-color: var(--wc-accent);
+      background: var(--wc-accent-soft);
+      color: var(--wc-text);
+    }
+
+    .btn-row {
+      margin-top: 6px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #3b82f6, #22c55e);
+      color: white;
+      box-shadow: 0 12px 25px rgba(37,99,235,0.4);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.15s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 35px rgba(37,99,235,0.5);
+    }
+
+    .btn-secondary {
+      border-radius: 999px;
+      padding: 7px 13px;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: rgba(15,23,42,0.8);
+      color: var(--wc-text-soft);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .error-text {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--wc-danger);
+      display: none;
+    }
+
+    .result-metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 8px;
+    }
+
+    .result-metric-label {
+      font-size: 13px;
+      color: var(--wc-text-soft);
+    }
+
+    .result-metric-value {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .result-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.4);
+      background: rgba(15,23,42,0.7);
+      margin-right: 6px;
+      margin-bottom: 4px;
+    }
+
+    .macro-grid {
+      margin-top: 10px;
+      border-radius: 12px;
+      border: 1px dashed rgba(148,163,184,0.4);
+      padding: 10px 12px;
+      font-size: 12px;
+    }
+
+    .macro-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .macro-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .macro-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+    }
+
+    .dot-carb { background: #facc15; }
+    .dot-protein { background: #22c55e; }
+    .dot-fat { background: #f97316; }
+
+    .helper-text {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--wc-text-soft);
+    }
+
+    .info-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 12px;
+      color: var(--wc-text-soft);
+    }
+
+    .info-list li {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .info-list i {
+      margin-top: 2px;
+      font-size: 11px;
+      color: var(--wc-accent);
+    }
+
+    @media (max-width: 900px) {
+      .tool-layout {
+        grid-template-columns: minmax(0,1fr);
+      }
+      .tool-header {
+        flex-direction: column;
+      }
+      .tool-header-meta {
+        text-align: left;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .calorie-form-grid {
+        grid-template-columns: minmax(0,1fr);
+      }
+      .form-inline-row {
+        grid-template-columns: minmax(0,1fr);
+      }
+      .tool-main {
+        padding-top: 84px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header (same structure as tools.html) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">
+          Calculator
+          <small class="wc-tagline">Every Word Counts</small>
+        </span>
+      </a>
+
+      <nav class="wc-nav" aria-label="Primary">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="#" class="wc-link">Blog</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+        <button class="wc-link wc-signin-btn" id="openAuthBtn" type="button">
+          Sign In <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+        </button>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="#" class="nav-link mobile-link">Blog</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+        <button class="nav-link mobile-link" id="openAuthBtnMobile" type="button">Sign In</button>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main -->
+  <main class="tool-main">
+    <div class="tool-wrap">
+      <!-- Breadcrumb -->
+      <div class="tool-breadcrumb">
+        <a href="https://wordcalculator.net">Home</a>
+        &nbsp;/&nbsp;
+        <a href="tools.html">Tools</a>
+        &nbsp;/&nbsp;
+        <span>Calorie Calculator</span>
+      </div>
+
+      <!-- Header -->
+      <section class="tool-header">
+        <div class="tool-header-main">
+          <h1>
+            Calorie Calculator
+            <span class="tool-chip">Health</span>
+          </h1>
+          <p class="tool-subtitle">
+            Estimate your daily calorie needs (TDEE) using the Mifflin–St Jeor formula.
+            Adjust calories for maintaining, losing, or gaining weight – all in a few seconds.
+          </p>
+        </div>
+        <div class="tool-header-meta">
+          <div class="tool-badge-row">
+            <span class="tool-badge-dot"></span>
+            <span>Works locally in your browser — no data is sent to a server.</span>
+          </div>
+          <span><i class="far fa-clock"></i> ~ 30 seconds to complete</span>
+          <span><i class="fas fa-fire-alt"></i> Based on BMR × activity level</span>
+        </div>
+      </section>
+
+      <!-- Layout -->
+      <section class="tool-layout" aria-label="Calorie calculator">
+        <!-- Left: Form -->
+        <article class="card" aria-label="Calorie calculator input form">
+          <h2><i class="fas fa-calculator"></i> Enter your details</h2>
+          <p>
+            For best accuracy, use your current body weight and an honest estimate of your
+            average daily activity level.
+          </p>
+
+          <form id="calorieForm" novalidate>
+            <div class="calorie-form-grid">
+              <!-- Gender -->
+              <div class="form-group">
+                <label>Gender</label>
+                <div class="radio-row" id="genderRow">
+                  <label class="radio-pill active">
+                    <input type="radio" name="gender" value="male" checked>
+                    <span class="icon"><i class="fas fa-mars"></i></span>
+                    <span>Male</span>
+                  </label>
+                  <label class="radio-pill">
+                    <input type="radio" name="gender" value="female">
+                    <span class="icon"><i class="fas fa-venus"></i></span>
+                    <span>Female</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Age -->
+              <div class="form-group">
+                <label for="age">Age <span style="color:#f97373">*</span></label>
+                <input
+                  type="number"
+                  id="age"
+                  class="form-control"
+                  placeholder="Years"
+                  min="10"
+                  max="100"
+                  required
+                />
+              </div>
+
+              <!-- Height -->
+              <div class="form-group">
+                <label for="height">Height <span style="color:#f97373">*</span></label>
+                <input
+                  type="number"
+                  id="height"
+                  class="form-control"
+                  placeholder="cm"
+                  min="120"
+                  max="230"
+                  required
+                />
+                <small>Example: 170</small>
+              </div>
+
+              <!-- Weight -->
+              <div class="form-group">
+                <label for="weight">Weight <span style="color:#f97373">*</span></label>
+                <input
+                  type="number"
+                  id="weight"
+                  class="form-control"
+                  placeholder="kg"
+                  min="30"
+                  max="250"
+                  step="0.1"
+                  required
+                />
+                <small>Example: 70</small>
+              </div>
+
+              <!-- Activity -->
+              <div class="form-group form-inline-row">
+                <div>
+                  <label for="activity">Activity level</label>
+                  <select id="activity" class="form-select">
+                    <option value="1.2">Sedentary (little or no exercise)</option>
+                    <option value="1.375">Lightly active (1–3 days/week)</option>
+                    <option value="1.55" selected>Moderately active (3–5 days/week)</option>
+                    <option value="1.725">Very active (6–7 days/week)</option>
+                    <option value="1.9">Extra active (physical job or intense training)</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="goal">Goal</label>
+                  <select id="goal" class="form-select">
+                    <option value="maintain">Maintain weight</option>
+                    <option value="lose">Lose weight (approx. -0.5 kg/week)</option>
+                    <option value="gain">Gain weight (approx. +0.25 kg/week)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <p id="formError" class="error-text">
+              Please fill in all required fields with valid values before calculating.
+            </p>
+
+            <div class="btn-row">
+              <button type="submit" class="btn-primary">
+                <i class="fas fa-fire-alt"></i>
+                Calculate calories
+              </button>
+              <button type="button" id="resetBtn" class="btn-secondary">
+                Reset
+              </button>
+            </div>
+            <p class="helper-text">
+              This calculator uses the Mifflin–St Jeor equation for BMR and multiplies it
+              by an activity factor to estimate your TDEE.
+            </p>
+          </form>
+        </article>
+
+        <!-- Right: Result -->
+        <aside class="card card-secondary" aria-label="Calorie calculator results">
+          <h2><i class="fas fa-chart-line"></i> Your daily calorie estimate</h2>
+          <p>
+            Results update after you click &ldquo;Calculate calories&rdquo;. Use them as a
+            starting point — not as medical advice.
+          </p>
+
+          <div class="result-metric">
+            <div class="result-metric-label">
+              BMR (Basal Metabolic Rate)
+              <div style="font-size:11px;color:var(--wc-text-soft);">
+                Calories burned at rest per day
+              </div>
+            </div>
+            <div class="result-metric-value" id="bmrValue">— kcal</div>
+          </div>
+
+          <div class="result-metric">
+            <div class="result-metric-label">
+              TDEE (Total Daily Energy Expenditure)
+              <div style="font-size:11px;color:var(--wc-text-soft);">
+                Based on your activity level
+              </div>
+            </div>
+            <div class="result-metric-value" id="tdeeValue">— kcal</div>
+          </div>
+
+          <div class="result-metric" style="margin-top:10px;">
+            <div class="result-metric-label">
+              Target calories (goal-based)
+              <div style="font-size:11px;color:var(--wc-text-soft);" id="goalLabelText">
+                Select a goal and calculate to see your target.
+              </div>
+            </div>
+            <div class="result-metric-value" id="targetValue">— kcal</div>
+          </div>
+
+          <div style="margin-top:10px; margin-bottom:6px;">
+            <span class="result-tag" id="tagBmr">
+              <i class="fas fa-bed"></i> Resting metabolism
+            </span>
+            <span class="result-tag" id="tagTdee">
+              <i class="fas fa-running"></i> Daily needs
+            </span>
+            <span class="result-tag" id="tagGoal">
+              <i class="fas fa-bullseye"></i> Goal adjusted
+            </span>
+          </div>
+
+          <div class="macro-grid">
+            <div style="margin-bottom:6px; font-weight:600; font-size:12px;">
+              Example macro split (<span id="macroStyleLabel">Balanced</span>)
+            </div>
+            <div class="macro-row">
+              <div class="macro-label">
+                <span class="macro-dot dot-carb"></span>
+                <span>Carbs</span>
+              </div>
+              <div id="carbInfo">— g (50%)</div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-label">
+                <span class="macro-dot dot-protein"></span>
+                <span>Protein</span>
+              </div>
+              <div id="proteinInfo">— g (25%)</div>
+            </div>
+            <div class="macro-row">
+              <div class="macro-label">
+                <span class="macro-dot dot-fat"></span>
+                <span>Fat</span>
+              </div>
+              <div id="fatInfo">— g (25%)</div>
+            </div>
+          </div>
+
+          <p class="helper-text">
+            Macro suggestions are approximate and based on a typical balanced intake.
+            You can adjust the percentages according to your personal preference or
+            guidance from a professional.
+          </p>
+
+          <ul class="info-list">
+            <li>
+              <i class="fas fa-info-circle"></i>
+              <span>This tool is for general information only and does not replace medical or nutritional advice.</span>
+            </li>
+            <li>
+              <i class="fas fa-shield-alt"></i>
+              <span>All calculations run in your browser. WordCalculator.net does not store or send your inputs.</span>
+            </li>
+          </ul>
+        </aside>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer (same pattern as tools.html) -->
+  <footer class="pro-footer" id="about" aria-label="Website footer">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">
+            WordCalculator<span>.net</span>
+          </div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+        <div class="pf-social">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col">
+          <h5>Product</h5>
+          <ul>
+            <li><a href="https://wordcalculator.net">Editor</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="#">Grammar Check</a></li>
+            <li><a href="#">Keyword Density</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Tips & Guides</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#">Report a Bug</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+        <div class="pf-links">
+          <a href="#">Sitemap</a>
+          <a href="#">Status</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast + Auth modal (if you already use them in tools.js) -->
+  <div class="modal-overlay" id="authOverlay" aria-hidden="true"></div>
+  <div class="modal modal-auth" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-head">
+      <h3 id="authTitle"><i class="fas fa-user-lock"></i> Account</h3>
+      <button class="modal-close" id="authCloseBtn" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="auth-note">
+        Sign-in and account features are coming soon. For now, all tools are free to use without registration.
+      </p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Calculator logic -->
+  <script>
+    (function () {
+      const form = document.getElementById("calorieForm");
+      const resetBtn = document.getElementById("resetBtn");
+      const formError = document.getElementById("formError");
+
+      const bmrEl = document.getElementById("bmrValue");
+      const tdeeEl = document.getElementById("tdeeValue");
+      const targetEl = document.getElementById("targetValue");
+      const goalLabel = document.getElementById("goalLabelText");
+
+      const macroStyleLabel = document.getElementById("macroStyleLabel");
+      const carbInfo = document.getElementById("carbInfo");
+      const proteinInfo = document.getElementById("proteinInfo");
+      const fatInfo = document.getElementById("fatInfo");
+
+      // Gender pill active state
+      const genderRow = document.getElementById("genderRow");
+      genderRow.addEventListener("click", (e) => {
+        const label = e.target.closest(".radio-pill");
+        if (!label) return;
+        genderRow.querySelectorAll(".radio-pill").forEach(p => p.classList.remove("active"));
+        label.classList.add("active");
+        const input = label.querySelector("input[type='radio']");
+        if (input) input.checked = true;
+      });
+
+      function formatKcal(value) {
+        if (!isFinite(value)) return "— kcal";
+        return Math.round(value) + " kcal";
+      }
+
+      function calcMacros(targetCalories, goal) {
+        if (!isFinite(targetCalories) || targetCalories <= 0) {
+          carbInfo.textContent = "— g (50%)";
+          proteinInfo.textContent = "— g (25%)";
+          fatInfo.textContent = "— g (25%)";
+          return;
+        }
+
+        let carbPct = 0.5;
+        let proteinPct = 0.25;
+        let fatPct = 0.25;
+        let styleLabel = "Balanced";
+
+        if (goal === "lose") {
+          // Slightly higher protein for cutting
+          carbPct = 0.4;
+          proteinPct = 0.35;
+          fatPct = 0.25;
+          styleLabel = "Higher protein (cut)";
+        } else if (goal === "gain") {
+          // More carbs to support training
+          carbPct = 0.5;
+          proteinPct = 0.3;
+          fatPct = 0.2;
+          styleLabel = "Higher carbs (gain)";
+        }
+
+        macroStyleLabel.textContent = styleLabel;
+
+        const carbsG = Math.round((targetCalories * carbPct) / 4);
+        const proteinG = Math.round((targetCalories * proteinPct) / 4);
+        const fatG = Math.round((targetCalories * fatPct) / 9);
+
+        carbInfo.textContent = carbsG + " g (" + Math.round(carbPct * 100) + "%)";
+        proteinInfo.textContent = proteinG + " g (" + Math.round(proteinPct * 100) + "%)";
+        fatInfo.textContent = fatG + " g (" + Math.round(fatPct * 100) + "%)";
+      }
+
+      function clearResults() {
+        bmrEl.textContent = "— kcal";
+        tdeeEl.textContent = "— kcal";
+        targetEl.textContent = "— kcal";
+        goalLabel.textContent = "Select a goal and calculate to see your target.";
+        macroStyleLabel.textContent = "Balanced";
+        carbInfo.textContent = "— g (50%)";
+        proteinInfo.textContent = "— g (25%)";
+        fatInfo.textContent = "— g (25%)";
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        formError.style.display = "none";
+
+        const genderInput = form.querySelector("input[name='gender']:checked");
+        const gender = genderInput ? genderInput.value : "male";
+
+        const age = parseFloat(document.getElementById("age").value);
+        const height = parseFloat(document.getElementById("height").value);
+        const weight = parseFloat(document.getElementById("weight").value);
+        const activity = parseFloat(document.getElementById("activity").value);
+        const goal = document.getElementById("goal").value;
+
+        if (!age || !height || !weight || !activity) {
+          formError.style.display = "block";
+          clearResults();
+          return;
+        }
+
+        if (age < 10 || age > 100 || height < 120 || height > 230 || weight < 30 || weight > 250) {
+          formError.textContent = "Please check the ranges for age, height, and weight.";
+          formError.style.display = "block";
+          clearResults();
+          return;
+        } else {
+          formError.textContent = "Please fill in all required fields with valid values before calculating.";
+        }
+
+        // Mifflin–St Jeor BMR
+        let bmr;
+        if (gender === "male") {
+          bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+        } else {
+          bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+        }
+
+        const tdee = bmr * activity;
+
+        let target = tdee;
+        let goalText = "Calories to roughly maintain your current weight.";
+
+        if (goal === "lose") {
+          target = tdee - 500;
+          if (target < 1200) target = Math.max(1200, tdee * 0.75);
+          goalText = "A moderate deficit for gradual fat loss.";
+        } else if (goal === "gain") {
+          target = tdee + 300;
+          goalText = "A mild surplus for lean muscle gain.";
+        }
+
+        bmrEl.textContent = formatKcal(bmr);
+        tdeeEl.textContent = formatKcal(tdee);
+        targetEl.textContent = formatKcal(target);
+        goalLabel.textContent = goalText;
+
+        calcMacros(target, goal);
+      });
+
+      resetBtn.addEventListener("click", function () {
+        form.reset();
+        // reset default selections
+        genderRow.querySelectorAll(".radio-pill").forEach(p => p.classList.remove("active"));
+        genderRow.querySelector(".radio-pill").classList.add("active");
+        document.getElementById("activity").value = "1.55";
+        document.getElementById("goal").value = "maintain";
+        formError.style.display = "none";
+        clearResults();
+      });
+
+      // Set footer year
+      const yearSpan = document.getElementById("pf-year");
+      if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+      }
+    })();
+  </script>
+
+  <!-- Your existing site JS (for nav, modal, toast). Optional but recommended if already used. -->
+  <script src="tools.js"></script>
+</body>
+</html>
