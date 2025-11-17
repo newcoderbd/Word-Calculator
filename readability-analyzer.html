@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Readability & Text Statistics — WordCalculator.net</title>
+  <meta name="description" content="Analyze readability scores, text statistics, and sentence structure for your writing.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="tools.css"/>
+  <link rel="icon" href="favicon.ico"/>
+</head>
+<body>
+  <!-- Header (unchanged) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">
+          Calculator
+          <small class="wc-tagline">Every Word Counts</small>
+        </span>
+      </a>
+
+      <nav class="wc-nav" aria-label="Primary">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="#" class="wc-link">Blog</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+        <button class="wc-link wc-signin-btn" id="openAuthBtn" type="button">
+          Sign In <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+        </button>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="#" class="nav-link mobile-link">Blog</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+        <button class="nav-link mobile-link" id="openAuthBtnMobile" type="button">Sign In</button>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main -->
+  <main class="tools-main">
+    <!-- Hero / Intro for this tool -->
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Readability & Text Statistics</h1>
+          <p>
+            Paste your text and instantly see readability scores, grade levels, and detailed statistics like
+            word count, sentence length, and estimated reading time.
+          </p>
+          <div class="tools-meta-row">
+            <span><i class="fas fa-chart-bar"></i> Flesch & grade levels</span>
+            <span><i class="fas fa-book-open"></i> Reading time estimate</span>
+            <span><i class="fas fa-shield-alt"></i> Runs in your browser</span>
+          </div>
+        </div>
+        <div class="tools-hero-card">
+          <div class="tools-hero-badge">
+            <i class="fas fa-sparkles"></i> Works with WordCalculator
+          </div>
+          <h2>Optimize your text before publishing</h2>
+          <p>
+            Use this analyzer alongside the main editor to keep your writing clear, readable, and on-level for your audience.
+          </p>
+          <a href="https://wordcalculator.net" class="hero-cta">
+            Open Main Editor
+            <i class="fas fa-arrow-right"></i>
+          </a>
+          <ul class="hero-list">
+            <li><i class="fas fa-check"></i> No data leaves your browser</li>
+            <li><i class="fas fa-check"></i> Instant recalculation</li>
+            <li><i class="fas fa-check"></i> Great for blogs & essays</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tool Body -->
+    <section class="tools-grid-section" aria-label="Readability tool">
+      <div class="tools-grid tool-page-layout">
+        <!-- Left: Text input -->
+        <article class="tool-card tool-card-wide">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-file-alt"></i>
+            </span>
+            <span class="tool-badge badge-popular">Live</span>
+          </div>
+          <h3>Paste or type your text</h3>
+          <p>
+            The analyzer automatically updates as you type. You can also use the sample text to see how it works.
+          </p>
+
+          <div class="tool-input-group">
+            <label for="readabilityInput" class="sr-only">Text to analyze</label>
+            <textarea
+              id="readabilityInput"
+              rows="10"
+              placeholder="Paste your article, blog post, essay, or any text here..."
+            ></textarea>
+          </div>
+
+          <div class="tool-actions-row">
+            <button type="button" id="sampleTextBtn" class="tool-primary-btn">
+              <i class="fas fa-align-left"></i> Use Sample Text
+            </button>
+            <button type="button" id="clearTextBtn" class="tool-secondary-btn">
+              <i class="fas fa-eraser"></i> Clear
+            </button>
+          </div>
+        </article>
+
+        <!-- Right: Results -->
+        <article class="tool-card tool-card-wide">
+          <div class="tool-card-header">
+            <span class="tool-icon">
+              <i class="fas fa-chart-line"></i>
+            </span>
+            <span class="tool-badge badge-pro">Stats</span>
+          </div>
+          <h3>Readability scores</h3>
+          <p>
+            These metrics help you understand how easy your text is to read and which audience level it fits best.
+          </p>
+
+          <div class="readability-grid">
+            <div class="readability-item">
+              <div class="readability-label">
+                Flesch Reading Ease
+                <span class="hint">(0–100, higher is easier)</span>
+              </div>
+              <div class="readability-value" id="fleschScore">—</div>
+              <div class="readability-sub" id="difficultyLabel">Start typing to analyze…</div>
+            </div>
+
+            <div class="readability-item">
+              <div class="readability-label">
+                Flesch-Kincaid Grade Level
+              </div>
+              <div class="readability-value" id="fkGrade">—</div>
+              <div class="readability-sub" id="gradeLabel">—</div>
+            </div>
+
+            <div class="readability-item">
+              <div class="readability-label">
+                Gunning Fog Index
+              </div>
+              <div class="readability-value" id="fogIndex">—</div>
+              <div class="readability-sub">Estimated years of formal education required.</div>
+            </div>
+
+            <div class="readability-item">
+              <div class="readability-label">
+                SMOG Index
+              </div>
+              <div class="readability-value" id="smogIndex">—</div>
+              <div class="readability-sub">Best for shorter, formal texts.</div>
+            </div>
+          </div>
+
+          <hr class="tool-divider"/>
+
+          <h3>Text statistics</h3>
+          <p>
+            Basic counts and averages based on your current text.
+          </p>
+
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-label">Words</span>
+              <span class="stat-value" id="wordCount">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Characters (with spaces)</span>
+              <span class="stat-value" id="charCount">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Characters (no spaces)</span>
+              <span class="stat-value" id="charNoSpaceCount">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Sentences</span>
+              <span class="stat-value" id="sentenceCount">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Paragraphs</span>
+              <span class="stat-value" id="paragraphCount">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Avg. word length (characters)</span>
+              <span class="stat-value" id="avgWordLength">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Avg. sentence length (words)</span>
+              <span class="stat-value" id="avgSentenceLength">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Estimated reading time</span>
+              <span class="stat-value" id="readingTime">0 sec</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer (unchanged) -->
+  <footer class="pro-footer" id="about" aria-label="Website footer">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">
+            WordCalculator<span>.net</span>
+          </div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+        <div class="pf-social">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col">
+          <h5>Product</h5>
+          <ul>
+            <li><a href="https://wordcalculator.net">Editor</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="#">Grammar Check</a></li>
+            <li><a href="#">Keyword Density</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Tips & Guides</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#">Report a Bug</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+        <div class="pf-links">
+          <a href="#">Sitemap</a>
+          <a href="#">Status</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Simple Auth Modal (same as tools page) -->
+  <div class="modal-overlay" id="authOverlay" aria-hidden="true"></div>
+  <div class="modal modal-auth" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-head">
+      <h3 id="authTitle"><i class="fas fa-user-lock"></i> Account</h3>
+      <button class="modal-close" id="authCloseBtn" aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p class="auth-note">
+        Sign-in and account features are coming soon. For now, all tools are free to use without registration.
+      </p>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="tools.js"></script>
+  <script src="readability-analyzer.js"></script>
+</body>
+</html>
