@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Focus Timer (Pomodoro) — WordCalculator.net</title>
+  <meta name="description" content="Use this free Focus Timer (Pomodoro) to manage deep work and study sessions with focus and break cycles.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .ft-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .ft-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .ft-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .ft-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+
+    .ft-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 10px;
+    }
+
+    .ft-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 14px;
+      margin-top: 10px;
+    }
+
+    .ft-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .ft-field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .ft-input {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 8px 10px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .ft-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+    }
+
+    .ft-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ft-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .ft-btn.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .ft-btn.primary:hover {
+      background: #1d4ed8;
+    }
+
+    .ft-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .ft-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .ft-results {
+      background: #020617;
+      border-radius: 14px;
+      padding: 14px;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+      text-align: center;
+    }
+
+    .ft-results h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .ft-phase-label {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 6px;
+    }
+
+    .ft-timer-display {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ft-session-info {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 8px;
+    }
+
+    .ft-progress-bar {
+      width: 100%;
+      height: 10px;
+      background: #0b1220;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 4px;
+      border: 1px solid #1f2937;
+    }
+
+    .ft-progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #22c55e, #eab308);
+      transition: width 0.25s ease-out;
+    }
+
+    .ft-progress-label {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .ft-status {
+      font-size: 13px;
+      margin-top: 8px;
+      color: #e5e7eb;
+    }
+
+    @media (max-width: 900px) {
+      .ft-layout {
+        grid-template-columns: 1fr;
+      }
+      .ft-grid {
+        grid-template-columns: 1fr;
+      }
+      .ft-timer-display {
+        font-size: 34px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header (same as all tools) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">Calculator<small class="wc-tagline">Every Word Counts</small></span>
+      </a>
+
+      <nav class="wc-nav">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="ft-main">
+
+    <!-- Hero section -->
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Focus Timer (Pomodoro)</h1>
+          <p>Stay focused with timed work sessions and regular breaks.</p>
+
+          <div class="tools-meta-row">
+            <span><i class="fas fa-clock"></i> 25/5 Pomodoro cycles</span>
+            <span><i class="fas fa-mug-hot"></i> Short & long breaks</span>
+            <span><i class="fas fa-brain"></i> Designed for deep work</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tool Layout -->
+    <section class="ft-layout">
+
+      <!-- LEFT SIDE: Settings -->
+      <div class="ft-card">
+        <h2>Timer Settings</h2>
+        <p class="lead">Customize your Pomodoro cycle and start focus sessions.</p>
+
+        <div class="ft-grid">
+          <div class="ft-field">
+            <label for="focusMinutes">Focus duration (minutes)</label>
+            <input
+              type="number"
+              id="focusMinutes"
+              class="ft-input"
+              min="1"
+              value="25"
+              placeholder="e.g. 25"
+            />
+          </div>
+
+          <div class="ft-field">
+            <label for="shortBreakMinutes">Short break (minutes)</label>
+            <input
+              type="number"
+              id="shortBreakMinutes"
+              class="ft-input"
+              min="1"
+              value="5"
+              placeholder="e.g. 5"
+            />
+          </div>
+
+          <div class="ft-field">
+            <label for="longBreakMinutes">Long break (minutes)</label>
+            <input
+              type="number"
+              id="longBreakMinutes"
+              class="ft-input"
+              min="1"
+              value="15"
+              placeholder="e.g. 15"
+            />
+          </div>
+
+          <div class="ft-field">
+            <label for="sessionsBeforeLongBreak">Focus sessions before long break</label>
+            <input
+              type="number"
+              id="sessionsBeforeLongBreak"
+              class="ft-input"
+              min="1"
+              value="4"
+              placeholder="e.g. 4"
+            />
+          </div>
+        </div>
+
+        <div class="ft-actions">
+          <button id="ftStartBtn" class="ft-btn primary">
+            <i class="fas fa-play"></i> Start Focus Session
+          </button>
+          <button id="ftPauseBtn" class="ft-btn">
+            <i class="fas fa-pause"></i> Pause
+          </button>
+          <button id="ftResetBtn" class="ft-btn">
+            <i class="fas fa-rotate-right"></i> Reset
+          </button>
+        </div>
+
+        <p class="ft-note">
+          Tip: A classic Pomodoro cycle is <strong>25 minutes focus</strong> + <strong>5 minutes break</strong>.
+        </p>
+      </div>
+
+      <!-- RIGHT SIDE: Timer Display -->
+      <div class="ft-results">
+        <h2>Current Session</h2>
+        <div id="ftPhaseLabel" class="ft-phase-label">Ready to focus</div>
+        <div id="ftTimerDisplay" class="ft-timer-display">25:00</div>
+        <div id="ftSessionInfo" class="ft-session-info">Session 0 • Long break after 4 sessions</div>
+
+        <div class="ft-progress-bar">
+          <div id="ftProgressFill" class="ft-progress-fill"></div>
+        </div>
+        <div id="ftProgressLabel" class="ft-progress-label">0% of current session completed</div>
+
+        <div id="ftStatus" class="ft-status">
+          Press “Start Focus Session” to begin your first Pomodoro.
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer (same as all tools) -->
+  <footer class="pro-footer" id="about">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">WordCalculator<span>.net</span></div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col"><h5>Product</h5></div>
+        <div class="pf-col"><h5>Resources</h5></div>
+        <div class="pf-col"><h5>Company</h5></div>
+        <div class="pf-col"><h5>Legal</h5></div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Shared + Page Scripts -->
+  <script src="tools.js"></script>
+  <script src="focus-timer.js"></script>
+</body>
+</html>
