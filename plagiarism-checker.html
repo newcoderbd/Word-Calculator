@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plagiarism Checker — WordCalculator.net</title>
+  <meta name="description" content="Check similarity between two texts and highlight overlapping phrases to detect potential plagiarism.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .plg-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .plg-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .plg-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .plg-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+
+    .plg-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 10px;
+    }
+
+    .plg-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .plg-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .plg-field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .plg-textarea {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 8px 10px;
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+      min-height: 130px;
+      resize: vertical;
+    }
+
+    .plg-textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+    }
+
+    .plg-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .plg-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .plg-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .plg-btn.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .plg-btn.primary:hover {
+      background: #1d4ed8;
+    }
+
+    .plg-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .plg-message {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .plg-message strong {
+      color: #111827;
+    }
+
+    .plg-results {
+      background: #020617;
+      border-radius: 14px;
+      padding: 14px;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+    }
+
+    .plg-results h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #f9fafb;
+    }
+
+    .plg-score-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .plg-badge {
+      background: #020617;
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid #1f2937;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .plg-badge strong {
+      font-weight: 700;
+    }
+
+    .plg-badge i {
+      font-size: 11px;
+    }
+
+    .plg-score-main {
+      font-size: 20px;
+      font-weight: 800;
+      color: #22c55e;
+    }
+
+    .plg-score-main.medium {
+      color: #facc15;
+    }
+
+    .plg-score-main.high {
+      color: #ef4444;
+    }
+
+    .plg-score-label {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    .plg-highlight-box {
+      margin-top: 10px;
+      background: #020617;
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+      padding: 10px 12px;
+      max-height: 260px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .plg-highlight-box mark {
+      background: #4ade80;
+      color: #052e16;
+      padding: 1px 2px;
+      border-radius: 4px;
+    }
+
+    .plg-section-title {
+      margin-top: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .plg-phrases {
+      margin-top: 6px;
+      padding-left: 18px;
+      font-size: 12px;
+      max-height: 150px;
+      overflow: auto;
+    }
+
+    .plg-phrases li {
+      margin-bottom: 4px;
+      color: #d1d5db;
+    }
+
+    .plg-phrases li span {
+      color: #9ca3af;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+
+    @media (max-width: 900px) {
+      .plg-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header (same as all tools) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">Calculator<small class="wc-tagline">Every Word Counts</small></span>
+      </a>
+
+      <nav class="wc-nav">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="plg-main">
+
+    <!-- Hero section -->
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Plagiarism Checker</h1>
+          <p>Compare two pieces of text, highlight overlapping phrases and estimate similarity.</p>
+
+          <div class="tools-meta-row">
+            <span><i class="fas fa-copy"></i> Text similarity</span>
+            <span><i class="fas fa-highlighter"></i> Highlight overlaps</span>
+            <span><i class="fas fa-percentage"></i> Similarity score</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tool Layout -->
+    <section class="plg-layout">
+
+      <!-- LEFT SIDE: Inputs -->
+      <div class="plg-card">
+        <h2>Compare two texts</h2>
+        <p class="lead">
+          Paste your text and the reference/source text. The tool will show an approximate similarity score and highlight matching phrases.
+        </p>
+
+        <form id="plgForm" onsubmit="return false;">
+          <div class="plg-grid">
+            <div class="plg-field">
+              <label for="plgInputMain">Text to check</label>
+              <textarea
+                id="plgInputMain"
+                class="plg-textarea"
+                placeholder="Paste the text you want to check here..."
+              ></textarea>
+            </div>
+
+            <div class="plg-field">
+              <label for="plgInputRef">Reference / source text</label>
+              <textarea
+                id="plgInputRef"
+                class="plg-textarea"
+                placeholder="Paste the original or reference text here..."
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="plg-actions">
+            <button type="button" id="plgCheckBtn" class="plg-btn primary">
+              <i class="fas fa-search"></i> Check plagiarism
+            </button>
+            <button type="button" id="plgClearBtn" class="plg-btn">
+              <i class="fas fa-rotate-left"></i> Clear
+            </button>
+          </div>
+
+          <p class="plg-note">
+            This tool compares <strong>only the two texts you paste here</strong>. It does not search the entire internet or external databases.
+          </p>
+
+          <div class="plg-message" id="plgMessage">
+            <i class="fas fa-circle-info"></i>
+            <span>Enter both texts and click <strong>Check plagiarism</strong> to see results.</span>
+          </div>
+        </form>
+      </div>
+
+      <!-- RIGHT SIDE: Results -->
+      <div class="plg-results">
+        <h2>Similarity overview</h2>
+
+        <div class="plg-score-row">
+          <div>
+            <div id="plgScore" class="plg-score-main">0%</div>
+            <div id="plgScoreLabel" class="plg-score-label">No similarity calculated yet</div>
+          </div>
+
+          <div class="plg-badge">
+            <i class="fas fa-font"></i>
+            <span>Your text:</span>
+            <strong id="plgWordsMain">0</strong>
+            <span>words</span>
+          </div>
+
+          <div class="plg-badge">
+            <i class="fas fa-book"></i>
+            <span>Reference:</span>
+            <strong id="plgWordsRef">0</strong>
+            <span>words</span>
+          </div>
+
+          <div class="plg-badge">
+            <i class="fas fa-arrows-rotate"></i>
+            <span>Common words:</span>
+            <strong id="plgWordsCommon">0</strong>
+          </div>
+        </div>
+
+        <div class="plg-section-title">Highlighted overlaps in your text</div>
+        <div id="plgHighlighted" class="plg-highlight-box">
+          Paste your text on the left and run the check to see highlighted overlaps here.
+        </div>
+
+        <div class="plg-section-title">Matched phrases (3+ consecutive words)</div>
+        <ul id="plgPhrases" class="plg-phrases">
+          <li>No matches yet.</li>
+        </ul>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer (same as all tools) -->
+  <footer class="pro-footer" id="about">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">WordCalculator<span>.net</span></div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col"><h5>Product</h5></div>
+        <div class="pf-col"><h5>Resources</h5></div>
+        <div class="pf-col"><h5>Company</h5></div>
+        <div class="pf-col"><h5>Legal</h5></div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Shared + Page Scripts -->
+  <script src="tools.js"></script>
+  <script src="plagiarism-checker.js"></script>
+</body>
+</html>
