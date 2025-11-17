@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reading Time Calculator — WordCalculator.net</title>
+  <meta name="description" content="Free reading time calculator to estimate how long it will take to read an article or blog post based on word count.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Main shared CSS -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .rt-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .rt-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .rt-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .rt-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .rt-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 10px;
+    }
+
+    .rt-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .rt-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rt-input-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .rt-textarea {
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      line-height: 1.5;
+      font-family: inherit;
+      outline: none;
+      background-color: #ffffff;
+    }
+
+    .rt-textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+    }
+
+    .rt-input,
+    .rt-select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 7px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      background-color: #ffffff;
+    }
+
+    .rt-input:focus,
+    .rt-select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+    }
+
+    .rt-inline-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .rt-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .rt-btn {
+      border-radius: 10px;
+      border: 1px solid transparent;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f3f4f6;
+      border-color: #e5e7eb;
+      color: #111827;
+      white-space: nowrap;
+    }
+
+    .rt-btn.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .rt-btn.primary:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.28);
+    }
+
+    .rt-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .rt-note {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .rt-results-card {
+      background: #020617;
+      color: #e5e7eb;
+      border-radius: 14px;
+      border: 1px solid #1f2937;
+      padding: 14px 14px 12px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+    }
+
+    .rt-results-card h2 {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .rt-results-meta {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 8px;
+    }
+
+    .rt-result-main {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .rt-result-highlight {
+      color: #facc15;
+    }
+
+    .rt-result-secondary {
+      font-size: 12px;
+      color: #d1d5db;
+      margin-bottom: 6px;
+    }
+
+    .rt-stats {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .rt-stat {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 8px;
+      padding: 6px 8px;
+      border: 1px solid #1e293b;
+    }
+
+    .rt-stat-label {
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+
+    .rt-stat-value {
+      font-size: 12px;
+      font-weight: 700;
+      color: #e5e7eb;
+    }
+
+    .rt-category {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #a5b4fc;
+    }
+
+    @media (max-width: 900px) {
+      .rt-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header (unchanged) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">
+          Calculator
+          <small class="wc-tagline">Every Word Counts</small>
+        </span>
+      </a>
+
+      <nav class="wc-nav" aria-label="Primary">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+        <button class="wc-link wc-signin-btn" id="openAuthBtn" type="button">
+          Sign In <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+        </button>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+        <button class="nav-link mobile-link" id="openAuthBtnMobile" type="button">Sign In</button>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main -->
+  <main class="rt-main">
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Reading Time Calculator</h1>
+          <p>
+            Estimate how long it will take to read your text based on total word count and reading speed (words per minute).
+          </p>
+          <div class="tools-meta-row">
+            <span><i class="fas fa-book-open"></i> Reading time</span>
+            <span><i class="fas fa-bolt"></i> Instant calculation</span>
+            <span><i class="fas fa-clock"></i> Ideal for blogs &amp; articles</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="rt-layout" aria-label="Reading time calculator">
+      <!-- Left: input & controls -->
+      <div class="rt-card">
+        <h2>Enter text or word count</h2>
+        <p class="lead">
+          Paste your article or blog post, or enter only the word count to estimate the total reading time.
+        </p>
+
+        <form class="rt-form" onsubmit="return false;">
+          <div class="rt-row">
+            <span class="rt-input-label">Text</span>
+            <textarea
+              id="rtText"
+              class="rt-textarea"
+              placeholder="Paste your text here to calculate reading time..."
+            ></textarea>
+          </div>
+
+          <div class="rt-inline-row">
+            <div class="rt-row">
+              <span class="rt-input-label">Words per minute (WPM)</span>
+              <input
+                type="number"
+                id="rtWpm"
+                class="rt-input"
+                value="200"
+                min="50"
+                max="1000"
+              />
+            </div>
+            <div class="rt-row">
+              <span class="rt-input-label">Or manual word count</span>
+              <input
+                type="number"
+                id="rtWordCount"
+                class="rt-input"
+                placeholder="e.g. 1200"
+                min="0"
+              />
+            </div>
+          </div>
+
+          <div class="rt-actions">
+            <button type="button" class="rt-btn primary" id="rtFromTextBtn">
+              <i class="fas fa-align-left"></i> Calculate from text
+            </button>
+            <button type="button" class="rt-btn" id="rtFromCountBtn">
+              <i class="fas fa-hashtag"></i> From word count
+            </button>
+            <button type="button" class="rt-btn" id="rtCopyStatsBtn">
+              <i class="fas fa-copy"></i> Copy summary
+            </button>
+            <button type="button" class="rt-btn" id="rtClearBtn">
+              <i class="fas fa-eraser"></i> Clear
+            </button>
+          </div>
+
+          <p class="rt-note">
+            Typical reading speed is between 180–250 words per minute. You can adjust the WPM value
+            to match your audience or your own reading speed.
+          </p>
+        </form>
+      </div>
+
+      <!-- Right: results -->
+      <aside class="rt-results-card" aria-label="Reading time results">
+        <h2>Estimated reading time</h2>
+        <p class="rt-results-meta">
+          Use this estimate to display "X min read" on your articles, blog posts, or documentation pages.
+        </p>
+
+        <div id="rtResultMain" class="rt-result-main">
+          Enter text or word count to see the estimated reading time.
+        </div>
+        <div id="rtResultSecondary" class="rt-result-secondary"></div>
+
+        <div class="rt-stats">
+          <div class="rt-stat">
+            <div class="rt-stat-label">Characters</div>
+            <div id="rtCharCount" class="rt-stat-value">0</div>
+          </div>
+          <div class="rt-stat">
+            <div class="rt-stat-label">Words</div>
+            <div id="rtWordCountStat" class="rt-stat-value">0</div>
+          </div>
+          <div class="rt-stat">
+            <div class="rt-stat-label">WPM used</div>
+            <div id="rtWpmStat" class="rt-stat-value">200</div>
+          </div>
+        </div>
+
+        <div id="rtCategory" class="rt-category"></div>
+      </aside>
+    </section>
+  </main>
+
+  <!-- Footer (unchanged) -->
+  <footer class="pro-footer" id="about" aria-label="Website footer">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">
+            WordCalculator<span>.net</span>
+          </div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+        <div class="pf-social">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col">
+          <h5>Product</h5>
+          <ul>
+            <li><a href="https://wordcalculator.net">Editor</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="#">Grammar Check</a></li>
+            <li><a href="#">Keyword Density</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Tips & Guides</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#">Report a Bug</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+        <div class="pf-links">
+          <a href="#">Sitemap</a>
+          <a href="#">Status</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="tools.js"></script>
+  <script src="reading-time-calculator.js"></script>
+</body>
+</html>
