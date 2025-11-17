@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interest Calculator — WordCalculator.net</title>
+  <meta name="description" content="Free interest calculator to calculate simple interest, compound interest, maturity value and total earnings easily.">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .int-main { max-width: 1200px; margin: 24px auto 40px; padding: 0 15px; }
+    .int-layout {
+      display: grid;
+      grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);
+      gap: 18px;
+    }
+    .int-card {
+      background:#fff; border-radius:14px; border:1px solid #e2e8f0;
+      padding:14px; box-shadow:0 8px 20px rgba(15,23,42,0.04);
+    }
+    .int-card h2 { font-size:18px; font-weight:800; color:#0f172a; }
+    .int-form { display:flex; flex-direction:column; gap:12px; margin-top:8px; }
+    .int-row { display:flex; flex-direction:column; gap:6px; }
+    .int-row label { font-size:13px; font-weight:600; color:#111827; }
+    .int-row small { font-size:11px; color:#6b7280; }
+    .int-field input, .int-field select {
+      padding:8px 10px; border-radius:10px; border:1px solid #e5e7eb;
+      font-size:13px; outline:none;
+    }
+    .int-btn-primary, .int-btn-secondary {
+      border-radius:10px; padding:8px 14px; font-size:13px; cursor:pointer;
+      font-weight:700; display:inline-flex; gap:6px; align-items:center;
+    }
+    .int-btn-primary { background:#2563eb; color:#fff; }
+    .int-btn-secondary { background:#f3f4f6; color:#111; }
+    .int-results-card {
+      background:#020617; color:#e5e7eb; border-radius:14px; padding:14px;
+    }
+    .int-results-card h2 { font-size:18px; font-weight:800; margin-bottom:6px; }
+    .int-results-grid { display:grid; gap:12px; }
+    .int-block {
+      background:rgba(15,23,42,0.9); padding:10px; border-radius:10px;
+      border:1px solid #1e293b;
+    }
+    .int-block p { font-size:12px; display:flex; justify-content:space-between; }
+    .int-label { color:#9ca3af; }
+    .int-value { font-weight:700; }
+    @media(max-width:900px) { .int-layout { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+
+<!-- HEADER (same as all tools) -->
+<header class="wc-header">
+  <div class="wc-wrap">
+    <a class="wc-logo" href="https://wordcalculator.net">
+      <span class="wc-slab slab-w">W</span>
+      <span class="wc-slab slab-o">O</span>
+      <span class="wc-slab slab-r">R</span>
+      <span class="wc-slab slab-d">D</span>
+      <span class="wc-brand-text">Calculator <small>Every Word Counts</small></span>
+    </a>
+
+    <nav class="wc-nav">
+      <a href="https://wordcalculator.net" class="wc-link">Home</a>
+      <a href="tools.html" class="wc-link">Tools</a>
+      <a href="#about" class="wc-link">About Us</a>
+    </nav>
+
+    <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+  </div>
+</header>
+
+<main class="int-main">
+
+  <section class="tools-hero">
+    <div class="tools-hero-inner">
+      <div class="tools-hero-text">
+        <h1>Interest Calculator</h1>
+        <p>Calculate simple interest, compound interest, maturity value and total earnings.</p>
+        <div class="tools-meta-row">
+          <span><i class="fas fa-percent"></i> Simple & Compound</span>
+          <span><i class="fas fa-bolt"></i> Instant Result</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="int-layout">
+
+    <!-- Left -->
+    <div class="int-card">
+      <h2>Enter Interest Details</h2>
+
+      <form class="int-form" onsubmit="return false;">
+        <div class="int-row">
+          <label>Principal Amount</label>
+          <div class="int-field"><input type="number" id="pAmount" placeholder="e.g. 50000"></div>
+        </div>
+
+        <div class="int-row">
+          <label>Interest Rate (%)</label>
+          <div class="int-field"><input type="number" id="iRate" placeholder="e.g. 7.5"></div>
+        </div>
+
+        <div class="int-row">
+          <label>Time</label>
+          <div class="int-field">
+            <input type="number" id="iTime" placeholder="e.g. 3">
+          </div>
+        </div>
+
+        <div class="int-row">
+          <label>Type</label>
+          <div class="int-field">
+            <select id="iType">
+              <option value="simple">Simple Interest</option>
+              <option value="compound">Compound Interest</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="int-row">
+          <label>Compound Frequency</label>
+          <div class="int-field">
+            <select id="iFreq">
+              <option value="1">Annually</option>
+              <option value="4">Quarterly</option>
+              <option value="12">Monthly</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="int-row">
+          <div class="int-btn-primary" id="intCalcBtn">
+            <i class="fas fa-calculator"></i> Calculate
+          </div>
+          <div class="int-btn-secondary" id="intResetBtn">
+            <i class="fas fa-rotate-left"></i> Reset
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Right -->
+    <aside class="int-results-card">
+      <h2>Interest Summary</h2>
+
+      <div class="int-results-grid">
+
+        <div class="int-block">
+          <p><span class="int-label">Interest Amount</span>
+             <span class="int-value" id="interestOut">0</span></p>
+          <p><span class="int-label">Maturity Value</span>
+             <span class="int-value" id="maturityOut">0</span></p>
+        </div>
+
+        <div class="int-block">
+          <p><span class="int-label">Principal</span>
+             <span class="int-value" id="principalOut">0</span></p>
+          <p><span class="int-label">Rate</span>
+             <span class="int-value" id="rateOut">0%</span></p>
+          <p><span class="int-label">Time</span>
+             <span class="int-value" id="timeOut">0</span></p>
+        </div>
+
+      </div>
+    </aside>
+
+  </section>
+
+</main>
+
+<footer class="pro-footer" id="about">
+  <div class="pf-wrap">
+    <p>© <span id="pf-year"></span> WordCalculator.net</p>
+  </div>
+</footer>
+
+<div id="toast" class="toast"></div>
+
+<script src="tools.js"></script>
+<script src="interest-calculator.js"></script>
+
+</body>
+</html>
