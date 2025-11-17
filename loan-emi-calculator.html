@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loan & EMI Calculator — WordCalculator.net</title>
+  <meta name="description" content="Free loan & EMI calculator to estimate monthly payments, total interest and total payable amount for your loans.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Main shared CSS -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .emi-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .emi-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .emi-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .emi-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .emi-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 12px;
+    }
+
+    .emi-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .emi-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .emi-row label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .emi-row small {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .emi-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .emi-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .emi-field-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .emi-field input,
+    .emi-field select {
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+      background-color: #ffffff;
+    }
+
+    .emi-field input:focus,
+    .emi-field select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+    }
+
+    .emi-field input::placeholder {
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .emi-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .emi-btn-primary,
+    .emi-btn-secondary {
+      border-radius: 10px;
+      border: 1px solid transparent;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .emi-btn-primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .emi-btn-primary:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.28);
+    }
+
+    .emi-btn-secondary {
+      background: #f3f4f6;
+      border-color: #e5e7eb;
+      color: #111827;
+    }
+
+    .emi-btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    .emi-note {
+      margin-top: 8px;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .emi-results-card {
+      background: #020617;
+      color: #e5e7eb;
+      border-radius: 14px;
+      border: 1px solid #1f2937;
+      padding: 14px 14px 12px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+    }
+
+    .emi-results-card h2 {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .emi-results-meta {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 10px;
+    }
+
+    .emi-results-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 6px;
+      font-size: 13px;
+    }
+
+    .emi-results-block {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 10px;
+      padding: 8px 10px;
+      border: 1px solid #1e293b;
+    }
+
+    .emi-results-block h3 {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #e5e7eb;
+    }
+
+    .emi-results-block p {
+      font-size: 12px;
+      margin: 2px 0;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      align-items: baseline;
+    }
+
+    .emi-label {
+      color: #9ca3af;
+    }
+
+    .emi-value {
+      font-weight: 700;
+      color: #e5e7eb;
+    }
+
+    .emi-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(59, 130, 246, 0.16);
+      border: 1px solid rgba(59, 130, 246, 0.6);
+      color: #bfdbfe;
+      margin-top: 4px;
+    }
+
+    .emi-scale-bar {
+      margin-top: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(90deg,
+        #22c55e 0% 35%,
+        #3b82f6 35% 65%,
+        #ef4444 65% 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .emi-pointer {
+      position: absolute;
+      top: -4px;
+      width: 2px;
+      height: 16px;
+      background: #f9fafb;
+      transform: translateX(-1px);
+    }
+
+    .emi-disclaimer {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    @media (max-width: 900px) {
+      .emi-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header (same as other tools pages) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">
+          Calculator
+          <small class="wc-tagline">Every Word Counts</small>
+        </span>
+      </a>
+
+      <nav class="wc-nav" aria-label="Primary">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+        <button class="wc-link wc-signin-btn" id="openAuthBtn" type="button">
+          Sign In <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+        </button>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+        <button class="nav-link mobile-link" id="openAuthBtnMobile" type="button">Sign In</button>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main -->
+  <main class="emi-main">
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Loan &amp; EMI Calculator</h1>
+          <p>
+            Estimate your monthly EMI, total interest and total payable amount for any loan.
+            Adjust the loan amount, interest rate and tenure to plan your repayments.
+          </p>
+          <div class="tools-meta-row">
+            <span><i class="fas fa-coins"></i> Detailed breakdown</span>
+            <span><i class="fas fa-bolt"></i> Instant result</span>
+            <span><i class="fas fa-shield-alt"></i> Runs in your browser</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="emi-layout" aria-label="Loan & EMI calculator">
+      <!-- Left: form -->
+      <div class="emi-card">
+        <h2>Enter loan details</h2>
+        <p class="lead">
+          This calculator uses the standard EMI formula to estimate your monthly repayment,
+          total interest and total amount payable for your loan.
+        </p>
+
+        <form class="emi-form" onsubmit="return false;">
+          <!-- Currency label -->
+          <div class="emi-row">
+            <label>Currency</label>
+            <div class="emi-grid-2">
+              <div class="emi-field">
+                <select id="currencyLabel">
+                  <option value="৳">৳ (BDT)</option>
+                  <option value="$">$ (USD)</option>
+                  <option value="₹">₹ (INR)</option>
+                  <option value="€">€ (EUR)</option>
+                  <option value="£">£ (GBP)</option>
+                  <option value="">Generic</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loan amount -->
+          <div class="emi-row">
+            <label>Loan amount</label>
+            <div class="emi-field">
+              <span class="emi-field-label">Principal</span>
+              <input type="number" id="loanAmount" min="1" step="0.01" placeholder="e.g. 500000" />
+              <small>Enter the total amount you want to borrow.</small>
+            </div>
+          </div>
+
+          <!-- Interest & tenure -->
+          <div class="emi-row">
+            <label>Interest &amp; tenure</label>
+            <div class="emi-grid-2">
+              <div class="emi-field">
+                <span class="emi-field-label">Interest rate (% per year)</span>
+                <input type="number" id="interestRate" min="0" step="0.01" placeholder="e.g. 7.5" />
+              </div>
+              <div class="emi-field">
+                <span class="emi-field-label">Tenure</span>
+                <div class="emi-grid-2">
+                  <input type="number" id="loanTenure" min="1" step="1" placeholder="e.g. 10" />
+                  <select id="tenureType">
+                    <option value="years">Years</option>
+                    <option value="months">Months</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extra options -->
+          <div class="emi-row">
+            <label>Repayment details</label>
+            <div class="emi-grid-2">
+              <div class="emi-field">
+                <span class="emi-field-label">Repayment frequency</span>
+                <select id="repaymentFrequency" disabled>
+                  <option value="monthly">Monthly (standard)</option>
+                </select>
+              </div>
+              <div class="emi-field">
+                <span class="emi-field-label">Processing fee (optional)</span>
+                <input type="number" id="processingFee" min="0" step="0.01" placeholder="e.g. 2000" />
+              </div>
+            </div>
+          </div>
+
+          <div class="emi-actions">
+            <button type="button" id="emiCalcBtn" class="emi-btn-primary">
+              <i class="fas fa-calculator"></i> Calculate EMI
+            </button>
+            <button type="button" id="emiResetBtn" class="emi-btn-secondary">
+              <i class="fas fa-rotate-left"></i> Reset
+            </button>
+          </div>
+
+          <p class="emi-note">
+            This tool is for estimation only and does not represent an actual loan offer.
+            For exact figures, always confirm with your bank or lender.
+          </p>
+        </form>
+      </div>
+
+      <!-- Right: results -->
+      <aside class="emi-results-card" aria-label="Loan result summary">
+        <h2>Loan summary</h2>
+        <p class="emi-results-meta">
+          Results update when you click <strong>Calculate EMI</strong>.
+        </p>
+
+        <div class="emi-results-grid">
+          <div class="emi-results-block">
+            <h3>Monthly EMI</h3>
+            <p>
+              <span class="emi-label">EMI (per month)</span>
+              <span class="emi-value" id="emiValue">0</span>
+            </p>
+            <p>
+              <span class="emi-label">Tenure (months)</span>
+              <span class="emi-value" id="tenureSummary">0</span>
+            </p>
+            <div id="emiChip" class="emi-chip" style="display:none;">
+              <i class="fas fa-circle"></i>
+              <span id="emiChipText"></span>
+            </div>
+          </div>
+
+          <div class="emi-results-block">
+            <h3>Payment breakdown</h3>
+            <p>
+              <span class="emi-label">Principal</span>
+              <span class="emi-value" id="principalOut">0</span>
+            </p>
+            <p>
+              <span class="emi-label">Total interest</span>
+              <span class="emi-value" id="totalInterestOut">0</span>
+            </p>
+            <p>
+              <span class="emi-label">Total payable</span>
+              <span class="emi-value" id="totalPaymentOut">0</span>
+            </p>
+            <p>
+              <span class="emi-label">Interest share</span>
+              <span class="emi-value" id="interestShareOut">0%</span>
+            </p>
+          </div>
+
+          <div class="emi-results-block">
+            <h3>Loan intensity</h3>
+            <div class="emi-scale-bar">
+              <div id="emiPointer" class="emi-pointer"></div>
+            </div>
+            <p style="margin-top:6px; font-size:11px; color:#9ca3af;">
+              Left: lower EMI · Middle: moderate · Right: higher EMI relative to principal
+            </p>
+          </div>
+        </div>
+
+        <p class="emi-disclaimer">
+          This EMI calculator is a generic tool. Actual EMI, interest and charges may vary based on
+          lender policies, floating interest rates, fees and taxes. Always verify details with your bank.
+        </p>
+      </aside>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="pro-footer" id="about" aria-label="Website footer">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">
+            WordCalculator<span>.net</span>
+          </div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+        <div class="pf-social">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col">
+          <h5>Product</h5>
+          <ul>
+            <li><a href="https://wordcalculator.net">Editor</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="#">Grammar Check</a></li>
+            <li><a href="#">Keyword Density</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Tips & Guides</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#">Report a Bug</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+        <div class="pf-links">
+          <a href="#">Sitemap</a>
+          <a href="#">Status</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="tools.js"></script>
+  <script src="loan-emi-calculator.js"></script>
+</body>
+</html>
