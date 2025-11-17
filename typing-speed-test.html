@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Typing Speed Test — WordCalculator.net</title>
+  <meta name="description" content="Free typing test tool to measure WPM, accuracy, and typing performance.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .ts-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .ts-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .ts-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .ts-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+
+    .ts-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 10px;
+    }
+
+    .ts-display-text {
+      font-size: 16px;
+      line-height: 1.6;
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      padding: 12px;
+      border-radius: 10px;
+      min-height: 150px;
+      white-space: pre-wrap;
+      letter-spacing: .2px;
+    }
+
+    .word-default {
+      color: #111;
+    }
+
+    .word-correct {
+      color: #16a34a;
+      font-weight: bold;
+    }
+
+    .word-wrong {
+      color: #dc2626;
+      font-weight: bold;
+    }
+
+    .ts-input {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+      margin-top: 12px;
+    }
+    .ts-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, .15);
+    }
+
+    .ts-actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ts-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid #ddd;
+      background: #f3f4f6;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .ts-btn.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #fff;
+    }
+    .ts-btn.primary:hover {
+      background: #1d4ed8;
+    }
+
+    .ts-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .ts-results {
+      background: #020617;
+      border-radius: 14px;
+      padding: 14px;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+    }
+
+    .ts-results h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .ts-result-item {
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .ts-result-number {
+      font-size: 20px;
+      font-weight: 800;
+      color: #facc15;
+    }
+
+    @media(max-width: 900px) {
+      .ts-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header (same as all tools) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">Calculator<small class="wc-tagline">Every Word Counts</small></span>
+      </a>
+
+      <nav class="wc-nav">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main Typing Test Structure -->
+  <main class="ts-main">
+
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Typing Speed Test</h1>
+          <p>Measure your typing speed (WPM), accuracy, and performance.</p>
+
+          <div class="tools-meta-row">
+            <span><i class="fas fa-keyboard"></i> Real-time typing</span>
+            <span><i class="fas fa-bolt"></i> Instant WPM</span>
+            <span><i class="fas fa-clock"></i> Accuracy tracking</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ts-layout">
+      <!-- LEFT SIDE -->
+      <div class="ts-card">
+        <h2>Start Typing Test (60 seconds)</h2>
+        <p class="lead">Click “Start Test” and begin typing the shown text. Timer begins automatically.</p>
+
+        <div id="tsDisplay" class="ts-display-text"></div>
+
+        <input id="tsInput" class="ts-input" placeholder="Start typing here..." disabled />
+
+        <div class="ts-actions">
+          <button id="tsStartBtn" class="ts-btn primary"><i class="fas fa-play"></i> Start Test</button>
+          <button id="tsRestartBtn" class="ts-btn"><i class="fas fa-redo"></i> Restart</button>
+        </div>
+
+        <p class="ts-note">Timer: <span id="tsTimer">60</span> sec</p>
+      </div>
+
+      <!-- RIGHT SIDE -->
+      <div class="ts-results">
+        <h2>Your Results</h2>
+
+        <div class="ts-result-item">
+          Words Per Minute (WPM): 
+          <span id="tsWpm" class="ts-result-number">0</span>
+        </div>
+
+        <div class="ts-result-item">
+          Accuracy: 
+          <span id="tsAccuracy" class="ts-result-number">0%</span>
+        </div>
+
+        <div class="ts-result-item">
+          Correct Keystrokes: <span id="tsCorrect">0</span>
+        </div>
+
+        <div class="ts-result-item">
+          Wrong Keystrokes: <span id="tsWrong">0</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer (same as all tools) -->
+  <footer class="pro-footer" id="about">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">WordCalculator<span>.net</span></div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col"><h5>Product</h5></div>
+        <div class="pf-col"><h5>Resources</h5></div>
+        <div class="pf-col"><h5>Company</h5></div>
+        <div class="pf-col"><h5>Legal</h5></div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="tools.js"></script>
+  <script src="typing-speed-test.js"></script>
+
+</body>
+</html>
