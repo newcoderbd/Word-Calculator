@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grammar & Spell Checker — WordCalculator.net</title>
+  <meta name="description" content="Free online grammar and spell checker to fix spelling mistakes and improve your English sentences.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Main shared CSS -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .gs-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .gs-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .gs-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .gs-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .gs-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 10px;
+    }
+
+    .gs-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .gs-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .gs-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .gs-input-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .gs-textarea {
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      line-height: 1.5;
+      font-family: inherit;
+      outline: none;
+      background-color: #ffffff;
+    }
+
+    .gs-textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+    }
+
+    .gs-select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 7px 10px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      background-color: #ffffff;
+    }
+
+    .gs-select:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+    }
+
+    .gs-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .gs-btn {
+      border-radius: 10px;
+      border: 1px solid transparent;
+      padding: 7px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f3f4f6;
+      border-color: #e5e7eb;
+      color: #111827;
+      white-space: nowrap;
+    }
+
+    .gs-btn.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .gs-btn.primary:hover {
+      background: #1d4ed8;
+      border-color: #1d4ed8;
+      box-shadow: 0 8px 22px rgba(37, 99, 235, 0.28);
+    }
+
+    .gs-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .gs-note {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .gs-results-card {
+      background: #020617;
+      color: #e5e7eb;
+      border-radius: 14px;
+      border: 1px solid #1f2937;
+      padding: 14px 14px 12px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+    }
+
+    .gs-results-card h2 {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .gs-results-meta {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 8px;
+    }
+
+    .gs-output-box {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px solid #1e293b;
+      max-height: 210px;
+      overflow: auto;
+      font-size: 13px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .gs-highlight {
+      background: rgba(239, 68, 68, 0.18);
+      border-bottom: 1px dashed #f87171;
+      cursor: help;
+    }
+
+    .gs-stats {
+      margin-top: 8px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      font-size: 11px;
+    }
+
+    .gs-stat {
+      background: rgba(15, 23, 42, 0.9);
+      border-radius: 8px;
+      padding: 6px 8px;
+      border: 1px solid #1e293b;
+    }
+
+    .gs-stat-label {
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+
+    .gs-stat-value {
+      font-size: 12px;
+      font-weight: 700;
+      color: #e5e7eb;
+    }
+
+    .gs-suggestions {
+      margin-top: 10px;
+      font-size: 11px;
+      color: #d1d5db;
+      max-height: 160px;
+      overflow: auto;
+    }
+
+    .gs-suggestions h3 {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #e5e7eb;
+    }
+
+    .gs-suggestion-item {
+      padding: 5px 6px;
+      border-radius: 6px;
+      border: 1px solid #1e293b;
+      background: rgba(15, 23, 42, 0.9);
+      margin-bottom: 4px;
+    }
+
+    .gs-suggestion-item strong {
+      font-weight: 700;
+    }
+
+    .gs-suggestion-meta {
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    @media (max-width: 900px) {
+      .gs-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header (unchanged) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">
+          Calculator
+          <small class="wc-tagline">Every Word Counts</small>
+        </span>
+      </a>
+
+      <nav class="wc-nav" aria-label="Primary">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+        <button class="wc-link wc-signin-btn" id="openAuthBtn" type="button">
+          Sign In <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+        </button>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <!-- Mobile nav -->
+    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+        <button class="nav-link mobile-link" id="openAuthBtnMobile" type="button">Sign In</button>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main -->
+  <main class="gs-main">
+    <section class="tools-hero">
+      <div className="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Grammar &amp; Spell Checker</h1>
+          <p>
+            Paste your text and instantly check grammar, spelling, and common mistakes using a free online checker.
+          </p>
+          <div class="tools-meta-row">
+            <span><i class="fas fa-spell-check"></i> Grammar &amp; spelling</span>
+            <span><i class="fas fa-bolt"></i> Fast &amp; free</span>
+            <span><i class="fas fa-lock"></i> Runs in your browser</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="gs-layout" aria-label="Grammar and spell checker">
+      <!-- Left: input & controls -->
+      <div class="gs-card">
+        <h2>Enter your text</h2>
+        <p class="lead">
+          Type or paste your English text, then click "Check Grammar &amp; Spelling". Suggestions will appear on the right.
+        </p>
+
+        <form class="gs-form" onsubmit="return false;">
+          <div class="gs-row">
+            <span class="gs-input-label">Language</span>
+            <select id="gsLanguage" class="gs-select">
+              <option value="en-US">English (US)</option>
+              <option value="en-GB">English (UK)</option>
+              <option value="en">English (General)</option>
+            </select>
+          </div>
+
+          <div class="gs-row">
+            <span class="gs-input-label">Text to check</span>
+            <textarea
+              id="gsInput"
+              class="gs-textarea"
+              placeholder="Paste or type your text here to check grammar and spelling..."
+            ></textarea>
+          </div>
+
+          <div class="gs-actions">
+            <button type="button" class="gs-btn primary" id="gsCheckBtn">
+              <i class="fas fa-magic"></i> Check Grammar &amp; Spelling
+            </button>
+            <button type="button" class="gs-btn" id="gsApplyBtn">
+              <i class="fas fa-check"></i> Apply corrections
+            </button>
+            <button type="button" class="gs-btn" id="gsCopyBtn">
+              <i class="fas fa-copy"></i> Copy corrected text
+            </button>
+            <button type="button" class="gs-btn" id="gsClearBtn">
+              <i class="fas fa-eraser"></i> Clear
+            </button>
+          </div>
+
+          <p class="gs-note">
+            This tool uses the free LanguageTool public API. Heavy usage may be rate-limited, but normal writing checks are usually fine.
+          </p>
+        </form>
+      </div>
+
+      <!-- Right: results & suggestions -->
+      <aside class="gs-results-card" aria-label="Grammar check results">
+        <h2>Suggestions &amp; corrected text</h2>
+        <p class="gs-results-meta">
+          Hover over highlighted words to see details. You can also apply all corrections and copy the final text.
+        </p>
+
+        <div id="gsOutput" class="gs-output-box"></div>
+
+        <div class="gs-stats">
+          <div class="gs-stat">
+            <div class="gs-stat-label">Characters</div>
+            <div id="gsCharCount" class="gs-stat-value">0</div>
+          </div>
+          <div class="gs-stat">
+            <div class="gs-stat-label">Words</div>
+            <div id="gsWordCount" class="gs-stat-value">0</div>
+          </div>
+          <div class="gs-stat">
+            <div class="gs-stat-label">Errors found</div>
+            <div id="gsErrorCount" class="gs-stat-value">0</div>
+          </div>
+        </div>
+
+        <div class="gs-suggestions" id="gsSuggestions">
+          <!-- Suggestions list will render here -->
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <!-- Footer (unchanged) -->
+  <footer class="pro-footer" id="about" aria-label="Website footer">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">
+            WordCalculator<span>.net</span>
+          </div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+        <div class="pf-social">
+          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col">
+          <h5>Product</h5>
+          <ul>
+            <li><a href="https://wordcalculator.net">Editor</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="#">Grammar Check</a></li>
+            <li><a href="#">Keyword Density</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Tips & Guides</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#">Report a Bug</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="pf-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">Security</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+        <div class="pf-links">
+          <a href="#">Sitemap</a>
+          <a href="#">Status</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="tools.js"></script>
+  <script src="grammar-spell-checker.js"></script>
+</body>
+</html>
