@@ -1,194 +1,301 @@
-// readability-analyzer.js
+document.addEventListener("DOMContentLoaded", () => {
+  const inputEl = document.getElementById("rtsInput");
+  const analyzeBtn = document.getElementById("rtsAnalyzeBtn");
+  const clearBtn = document.getElementById("rtsClearBtn");
 
-document.addEventListener("DOMContentLoaded", function () {
-  const inputText = document.getElementById("inputText");
+  const fleschScoreEl = document.getElementById("rtsFleschScore");
+  const fleschLabelEl = document.getElementById("rtsFleschLabel");
+  const fkGradeEl = document.getElementById("rtsFkGrade");
+  const readingTimeEl = document.getElementById("rtsReadingTime");
 
-  const wordCountEl = document.getElementById("wordCount");
-  const charCountEl = document.getElementById("charCount");
-  const charCountNoSpacesEl = document.getElementById("charCountNoSpaces");
-  const sentenceCountEl = document.getElementById("sentenceCount");
-  const paragraphCountEl = document.getElementById("paragraphCount");
-  const syllableCountEl = document.getElementById("syllableCount");
+  const wordsEl = document.getElementById("rtsWords");
+  const charsWithEl = document.getElementById("rtsCharsWith");
+  const charsWithoutEl = document.getElementById("rtsCharsWithout");
+  const sentencesEl = document.getElementById("rtsSentences");
+  const wordsPerSentenceEl = document.getElementById("rtsWordsPerSentence");
+  const paragraphsEl = document.getElementById("rtsParagraphs");
+  const summaryEl = document.getElementById("rtsSummary");
+  const messageEl = document.getElementById("rtsMessage");
 
-  const fleschScoreEl = document.getElementById("fleschScore");
-  const fleschLabelEl = document.getElementById("fleschLabel");
-  const fkGradeEl = document.getElementById("fkGrade");
-  const fkLabelEl = document.getElementById("fkLabel");
+  const footerYear = document.getElementById("pf-year");
+  if (footerYear) {
+    footerYear.textContent = new Date().getFullYear();
+  }
 
-  const avgWordsPerSentenceEl = document.getElementById("avgWordsPerSentence");
-  const avgCharsPerWordEl = document.getElementById("avgCharsPerWord");
-  const avgSyllablesPerWordEl = document.getElementById("avgSyllablesPerWord");
-  const readingTimeEl = document.getElementById("readingTime");
-
-  const btnSample = document.getElementById("btnSample");
-  const btnClear = document.getElementById("btnClear");
+  function normalizeText(text) {
+    return text.replace(/\r\n/g, "\n");
+  }
 
   function countWords(text) {
-    const matches = text.trim().match(/[A-Za-z0-9']+/g);
-    return matches ? matches.length : 0;
+    const tokens = text.trim().split(/\s+/).filter((t) => t.length > 0);
+    return tokens.length;
   }
 
   function countSentences(text) {
-    // Split on ., !, ? while ignoring empty segments
-    const sentences = text
-      .replace(/\s+/g, " ")
-      .split(/[.!?]+/)
+    const parts = text
+      .replace(/[\r\n]+/g, " ")
+      .split(/[.!?]+/g)
       .map((s) => s.trim())
       .filter((s) => s.length > 0);
-    return sentences.length;
+    return parts.length;
   }
 
   function countParagraphs(text) {
     const paragraphs = text
-      .split(/\n{2,}|\r{2,}/)
+      .split(/\n+/)
       .map((p) => p.trim())
       .filter((p) => p.length > 0);
     return paragraphs.length;
   }
 
   function countCharacters(text) {
-    return text.length;
+    const withSpaces = text.length;
+    const withoutSpaces = text.replace(/\s+/g, "").length;
+    return { withSpaces, withoutSpaces };
   }
 
-  function countCharactersNoSpaces(text) {
-    return text.replace(/\s/g, "").length;
+  // Simple syllable estimation for English text
+  function estimateSyllables(text) {
+    const lower = text.toLowerCase();
+    const words = lower.match(/[a-z]+/g) || [];
+    let syllables = 0;
+
+    words.forEach((word) => {
+      let w = word;
+      w = w.replace(/e\b/g, "");
+      const matches = w.match(/[aeiouy]+/g);
+      let count = matches ? matches.length : 0;
+      if (count === 0) count = 1;
+      syllables += count;
+    });
+
+    return syllables;
   }
 
-  function countSyllables(word) {
-    let w = word.toLowerCase().replace(/[^a-z]/g, "");
-    if (!w) return 0;
+  function formatReadingTime(words) {
+    if (words === 0) return "0 min";
 
-    if (w.length <= 3) return 1;
-
-    w = w.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, "");
-    w = w.replace(/^y/, "");
-
-    const matches = w.match(/[aeiouy]{1,2}/g);
-    return matches ? matches.length : 1;
-  }
-
-  function getAllWords(text) {
-    const matches = text.toLowerCase().match(/[a-z0-9']+/g);
-    return matches || [];
-  }
-
-  function calculateReadability() {
-    const text = inputText.value || "";
-
-    const words = getAllWords(text);
-    const wordCount = words.length;
-    const sentenceCount = countSentences(text);
-    const paragraphCount = countParagraphs(text);
-    const charCount = countCharacters(text);
-    const charCountNoSpaces = countCharactersNoSpaces(text);
-
-    let totalSyllables = 0;
-    for (let i = 0; i < words.length; i++) {
-      totalSyllables += countSyllables(words[i]);
-    }
-
-    // Update basic stats
-    wordCountEl.textContent = wordCount;
-    sentenceCountEl.textContent = sentenceCount;
-    paragraphCountEl.textContent = paragraphCount;
-    charCountEl.textContent = charCount;
-    charCountNoSpacesEl.textContent = charCountNoSpaces;
-    syllableCountEl.textContent = totalSyllables;
-
-    if (wordCount === 0 || sentenceCount === 0) {
-      fleschScoreEl.textContent = "--";
-      fleschLabelEl.textContent = "Add more text to calculate";
-      fkGradeEl.textContent = "--";
-      fkLabelEl.textContent = "Approx. US grade level";
-
-      avgWordsPerSentenceEl.textContent = "0";
-      avgCharsPerWordEl.textContent = "0";
-      avgSyllablesPerWordEl.textContent = "0";
-      readingTimeEl.textContent = "0 sec";
-      return;
-    }
-
-    const avgWordsPerSentence = wordCount / sentenceCount;
-    const avgCharsPerWord =
-      wordCount > 0 ? charCountNoSpaces / wordCount : 0;
-    const avgSyllablesPerWord =
-      wordCount > 0 ? totalSyllables / wordCount : 0;
-
-    // Flesch Reading Ease
-    const fleschReadingEase =
-      206.835 - 1.015 * avgWordsPerSentence - 84.6 * avgSyllablesPerWord;
-
-    // Flesch–Kincaid Grade
-    const fkGrade =
-      0.39 * avgWordsPerSentence + 11.8 * avgSyllablesPerWord - 15.59;
-
-    // Estimated reading time (200 wpm)
     const wordsPerMinute = 200;
-    const totalMinutes = wordCount / wordsPerMinute;
+    const totalMinutes = words / wordsPerMinute;
     const minutes = Math.floor(totalMinutes);
     const seconds = Math.round((totalMinutes - minutes) * 60);
 
-    // Update stats display
-    avgWordsPerSentenceEl.textContent = avgWordsPerSentence.toFixed(1);
-    avgCharsPerWordEl.textContent = avgCharsPerWord.toFixed(2);
-    avgSyllablesPerWordEl.textContent = avgSyllablesPerWord.toFixed(2);
-
-    if (minutes === 0 && seconds === 0) {
-      readingTimeEl.textContent = "< 1 sec";
-    } else if (minutes === 0) {
-      readingTimeEl.textContent = `${seconds} sec`;
-    } else {
-      readingTimeEl.textContent = `${minutes} min ${seconds} sec`;
+    if (minutes <= 0) {
+      return `${seconds}s`;
     }
 
-    // Flesch Reading Ease label
-    let easeLabel = "";
-    if (fleschReadingEase >= 90) {
-      easeLabel = "Very easy (5th grade)";
-    } else if (fleschReadingEase >= 80) {
-      easeLabel = "Easy";
-    } else if (fleschReadingEase >= 70) {
-      easeLabel = "Fairly easy";
-    } else if (fleschReadingEase >= 60) {
-      easeLabel = "Standard (plain English)";
-    } else if (fleschReadingEase >= 50) {
-      easeLabel = "Fairly difficult";
-    } else if (fleschReadingEase >= 30) {
-      easeLabel = "Difficult (academic)";
-    } else {
-      easeLabel = "Very confusing";
+    if (seconds === 0) {
+      return `${minutes} min`;
     }
 
-    fleschScoreEl.textContent = fleschReadingEase.toFixed(1);
-    fleschLabelEl.textContent = easeLabel;
-
-    // FK grade label
-    const gradeRounded = Math.max(0, Math.min(20, fkGrade));
-    fkGradeEl.textContent = gradeRounded.toFixed(1);
-    fkLabelEl.textContent = `Approx. US grade ${gradeRounded.toFixed(1)}`;
+    return `${minutes} min ${seconds}s`;
   }
 
-  // Sample text loader
-  function loadSampleText() {
-    const sample =
-      "WordCalculator helps you write clearer, sharper content. " +
-      "This sample paragraph is here to demonstrate how the readability " +
-      "analyzer works. Longer sentences with more complex words will " +
-      "increase the reading difficulty, while short and direct sentences " +
-      "keep your writing easy to read.";
-    inputText.value = sample;
-    calculateReadability();
+  function classifyFlesch(score) {
+    if (isNaN(score)) {
+      return {
+        label: "Not enough data to calculate readability score",
+        level: "none",
+        description:
+          "Add more sentences and words to get a meaningful readability estimate."
+      };
+    }
+
+    if (score >= 90) {
+      return {
+        label: "Very easy (5th grade)",
+        level: "high",
+        description:
+          "Simple language, suitable for younger readers and quick-scan content."
+      };
+    }
+    if (score >= 80) {
+      return {
+        label: "Easy (6th grade)",
+        level: "high",
+        description:
+          "Accessible language, great for general web content and marketing copy."
+      };
+    }
+    if (score >= 70) {
+      return {
+        label: "Fairly easy",
+        level: "high",
+        description:
+          "Comfortable to read for most adults. Suitable for blogs and how-to guides."
+      };
+    }
+    if (score >= 60) {
+      return {
+        label: "Standard",
+        level: "medium",
+        description:
+          "Typical for online articles and product documentation."
+      };
+    }
+    if (score >= 50) {
+      return {
+        label: "Fairly difficult",
+        level: "medium",
+        description:
+          "More complex language. Consider simplifying sentences or vocabulary."
+      };
+    }
+    if (score >= 30) {
+      return {
+        label: "Difficult",
+        level: "low",
+        description:
+          "Academic-style writing. Readers may need extra focus and time."
+      };
+    }
+    return {
+      label: "Very confusing",
+      level: "low",
+      description:
+        "Highly complex text. Recommended only for expert or academic audiences."
+    };
   }
 
-  function clearText() {
-    inputText.value = "";
-    calculateReadability();
+  function analyzeText() {
+    const rawText = inputEl.value || "";
+    const text = normalizeText(rawText).trim();
+
+    if (!text) {
+      resetResults();
+      if (messageEl) {
+        messageEl.innerHTML =
+          '<i class="fas fa-circle-info"></i><span>Paste some text first, then click <strong>Analyze text</strong>.</span>';
+      }
+      return;
+    }
+
+    const wordCount = countWords(text);
+    const sentenceCount = countSentences(text);
+    const paragraphCount = countParagraphs(text);
+    const chars = countCharacters(text);
+    const syllables = estimateSyllables(text);
+
+    const avgWordsPerSentence =
+      sentenceCount > 0 ? wordCount / sentenceCount : 0;
+    const readingTime = formatReadingTime(wordCount);
+
+    let flesch = NaN;
+    let fkGrade = NaN;
+
+    if (wordCount > 0 && sentenceCount > 0 && syllables > 0) {
+      flesch =
+        206.835 - 1.015 * (wordCount / sentenceCount) -
+        84.6 * (syllables / wordCount);
+      fkGrade =
+        0.39 * (wordCount / sentenceCount) +
+        11.8 * (syllables / wordCount) -
+        15.59;
+    }
+
+    const roundedFlesch = isNaN(flesch)
+      ? NaN
+      : Math.round(flesch * 10) / 10;
+    const roundedGrade = isNaN(fkGrade)
+      ? NaN
+      : Math.round(fkGrade * 10) / 10;
+
+    wordsEl.textContent = String(wordCount);
+    charsWithEl.textContent = String(chars.withSpaces);
+    charsWithoutEl.textContent = String(chars.withoutSpaces);
+    sentencesEl.textContent = String(sentenceCount);
+    wordsPerSentenceEl.textContent = sentenceCount
+      ? (Math.round(avgWordsPerSentence * 10) / 10).toString()
+      : "0";
+    paragraphsEl.textContent = String(paragraphCount);
+
+    readingTimeEl.textContent = readingTime;
+
+    fleschScoreEl.classList.remove("medium", "low");
+    if (isNaN(roundedFlesch)) {
+      fleschScoreEl.textContent = "–";
+      fleschLabelEl.textContent =
+        "Not enough data to calculate readability score";
+    } else {
+      fleschScoreEl.textContent = `${roundedFlesch}`;
+      const cls = classifyFlesch(roundedFlesch);
+      fleschLabelEl.textContent = cls.label;
+      if (cls.level === "medium") {
+        fleschScoreEl.classList.add("medium");
+      } else if (cls.level === "low") {
+        fleschScoreEl.classList.add("low");
+      }
+    }
+
+    if (isNaN(roundedGrade)) {
+      fkGradeEl.textContent = "–";
+    } else {
+      fkGradeEl.textContent = `${roundedGrade}`;
+    }
+
+    if (summaryEl) {
+      const sentencePart =
+        sentenceCount > 0
+          ? `Your text has an average of ${Math.round(
+              avgWordsPerSentence * 10
+            ) / 10} words per sentence, `
+          : "Your text does not contain enough sentence-ending punctuation for a detailed readability estimate. ";
+
+      const fleschInfo = isNaN(roundedFlesch)
+        ? ""
+        : `The Flesch Reading Ease score is approximately ${roundedFlesch}, which indicates that the text is ${classifyFlesch(
+            roundedFlesch
+          ).label.toLowerCase()}. `;
+
+      const gradeInfo = isNaN(roundedGrade)
+        ? ""
+        : `The Flesch–Kincaid grade level is about ${roundedGrade}, meaning it should be understandable for readers around that grade level. `;
+
+      summaryEl.textContent =
+        `This text contains ${wordCount} words, ${sentenceCount} sentences, and ${paragraphCount} paragraphs. ` +
+        sentencePart +
+        fleschInfo +
+        gradeInfo +
+        "Use these metrics to refine your content for your target audience.";
+    }
+
+    if (messageEl) {
+      messageEl.innerHTML =
+        '<i class="fas fa-circle-check"></i><span>Analysis updated. Use the readability score and grade level to adjust tone and complexity.</span>';
+    }
   }
 
-  inputText.addEventListener("input", calculateReadability);
-  btnSample.addEventListener("click", loadSampleText);
-  btnClear.addEventListener("click", clearText);
+  function resetResults() {
+    wordsEl.textContent = "0";
+    charsWithEl.textContent = "0";
+    charsWithoutEl.textContent = "0";
+    sentencesEl.textContent = "0";
+    wordsPerSentenceEl.textContent = "0";
+    paragraphsEl.textContent = "0";
 
-  // Initial state
-  calculateReadability();
+    fleschScoreEl.textContent = "–";
+    fleschScoreEl.classList.remove("medium", "low");
+    fleschLabelEl.textContent = "No readability score calculated yet";
+    fkGradeEl.textContent = "–";
+
+    readingTimeEl.textContent = "0 min";
+
+    if (summaryEl) {
+      summaryEl.textContent =
+        "Stats and readability interpretation will appear here after analysis.";
+    }
+  }
+
+  function clearAll() {
+    inputEl.value = "";
+    resetResults();
+
+    if (messageEl) {
+      messageEl.innerHTML =
+        '<i class="fas fa-circle-info"></i><span>Paste your content and click <strong>Analyze text</strong> to see detailed statistics.</span>';
+    }
+  }
+
+  analyzeBtn.addEventListener("click", analyzeText);
+  clearBtn.addEventListener("click", clearAll);
 });
