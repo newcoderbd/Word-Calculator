@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Readability & Text Statistics — WordCalculator.net</title>
-  <meta name="description" content="Analyze text readability, word count, sentence count, reading time and text statistics.">
+  <meta name="description" content="Analyze your text for readability, word count, sentence count, reading time, and detailed text statistics.">
 
   <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
@@ -14,20 +14,20 @@
   <link rel="stylesheet" href="tools.css" />
 
   <style>
-    .rts-main {
+    .rt-main {
       max-width: 1200px;
       margin: 24px auto 40px;
       padding: 0 15px;
     }
 
-    .rts-layout {
+    .rt-layout {
       display: grid;
       grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
       gap: 18px;
       align-items: flex-start;
     }
 
-    .rts-card {
+    .rt-card {
       background: #ffffff;
       border-radius: 14px;
       border: 1px solid #e2e8f0;
@@ -35,62 +35,69 @@
       box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
     }
 
-    .rts-card h2 {
+    .rt-card h2 {
       font-size: 18px;
       font-weight: 800;
       margin-bottom: 8px;
       color: #0f172a;
     }
 
-    .rts-card p.lead {
+    .rt-card p.lead {
       font-size: 13px;
       color: #4b5563;
       margin-bottom: 10px;
     }
 
-    .rts-field {
+    .rt-field {
       display: flex;
       flex-direction: column;
       gap: 4px;
-      margin-top: 6px;
+      margin-top: 8px;
     }
 
-    .rts-field label {
+    .rt-field label {
       font-size: 12px;
       font-weight: 600;
       color: #374151;
     }
 
-    .rts-textarea {
+    .rt-textarea {
       border-radius: 10px;
       border: 1px solid #e5e7eb;
       padding: 8px 10px;
       font-size: 14px;
       outline: none;
       font-family: inherit;
-      min-height: 220px;
+      min-height: 260px;
       resize: vertical;
     }
 
-    .rts-textarea:focus {
+    .rt-textarea:focus {
       border-color: #2563eb;
       box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
     }
 
-    .rts-note {
+    .rt-note {
       font-size: 12px;
       color: #6b7280;
       margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .rts-actions {
-      margin-top: 12px;
+    .rt-note i {
+      font-size: 11px;
+    }
+
+    .rt-actions {
+      margin-top: 10px;
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
 
-    .rts-btn {
+    .rt-btn {
       padding: 8px 12px;
       border-radius: 10px;
       font-size: 13px;
@@ -103,21 +110,21 @@
       align-items: center;
     }
 
-    .rts-btn.primary {
+    .rt-btn.primary {
       background: #2563eb;
       border-color: #2563eb;
       color: #ffffff;
     }
 
-    .rts-btn.primary:hover {
+    .rt-btn.primary:hover {
       background: #1d4ed8;
     }
 
-    .rts-btn:hover {
+    .rt-btn:hover {
       background: #e5e7eb;
     }
 
-    .rts-message {
+    .rt-message {
       margin-top: 8px;
       font-size: 12px;
       color: #6b7280;
@@ -126,11 +133,11 @@
       gap: 6px;
     }
 
-    .rts-message strong {
+    .rt-message strong {
       color: #111827;
     }
 
-    .rts-results {
+    .rt-results {
       background: #020617;
       border-radius: 14px;
       padding: 14px;
@@ -139,104 +146,150 @@
       box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
     }
 
-    .rts-results h2 {
+    .rt-results h2 {
       font-size: 18px;
       font-weight: 800;
       margin-bottom: 10px;
       color: #f9fafb;
     }
 
-    .rts-score-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 10px;
-      align-items: baseline;
+    .rt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 4px;
     }
 
-    .rts-score-main {
+    .rt-stat {
+      border-radius: 12px;
+      border: 1px solid #1f2937;
+      padding: 8px 9px;
+      background: #020617;
+    }
+
+    .rt-stat-label {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rt-stat-label i {
+      font-size: 11px;
+    }
+
+    .rt-stat-value {
+      font-size: 16px;
+      font-weight: 800;
+      color: #e5e7eb;
+    }
+
+    .rt-stat-sub {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    .rt-readability-block {
+      margin-top: 10px;
+      border-radius: 12px;
+      border: 1px solid #111827;
+      padding: 10px 11px;
+      background: radial-gradient(circle at top left, #0f172a, #020617);
+    }
+
+    .rt-readability-main {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .rt-readability-score {
       font-size: 22px;
       font-weight: 800;
       color: #22c55e;
     }
 
-    .rts-score-main.medium {
+    .rt-readability-score.medium {
       color: #facc15;
     }
 
-    .rts-score-main.low {
+    .rt-readability-score.hard {
+      color: #f97316;
+    }
+
+    .rt-readability-score.very-hard {
       color: #ef4444;
     }
 
-    .rts-score-label {
+    .rt-readability-label {
+      font-size: 13px;
+      color: #e5e7eb;
+      font-weight: 600;
+    }
+
+    .rt-readability-meta {
       font-size: 11px;
       color: #9ca3af;
       margin-top: 2px;
     }
 
-    .rts-badge {
-      background: #020617;
-      border-radius: 999px;
-      padding: 6px 10px;
-      border: 1px solid #1f2937;
-      font-size: 11px;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .rts-badge strong {
-      font-weight: 700;
-    }
-
-    .rts-section-title {
-      margin-top: 12px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #e5e7eb;
-    }
-
-    .rts-grid {
+    .rt-level-row {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
       gap: 8px;
       margin-top: 8px;
     }
 
-    .rts-stat-card {
-      background: #020617;
+    .rt-level-box {
       border-radius: 10px;
-      border: 1px solid #1f2937;
-      padding: 8px 9px;
+      border: 1px solid #111827;
+      padding: 7px 9px;
+      background: #020617;
       font-size: 12px;
     }
 
-    .rts-stat-label {
-      color: #9ca3af;
+    .rt-level-box strong {
+      display: block;
+      font-size: 12px;
       margin-bottom: 2px;
     }
 
-    .rts-stat-value {
-      font-weight: 700;
-      font-size: 14px;
-      color: #e5e7eb;
-    }
-
-    .rts-stat-sub {
+    .rt-progress-wrap {
+      margin-top: 8px;
       font-size: 11px;
-      color: #6b7280;
-      margin-top: 2px;
+      color: #9ca3af;
     }
 
-    .rts-summary {
+    .rt-progress-bar {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: #030712;
+      border: 1px solid #111827;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+
+    .rt-progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #22c55e, #facc15, #f97316, #ef4444);
+      transition: width 0.2s ease-out;
+    }
+
+    .rt-reading-summary {
       margin-top: 10px;
       font-size: 12px;
       color: #d1d5db;
-      line-height: 1.5;
     }
 
     @media (max-width: 900px) {
-      .rts-layout {
+      .rt-layout {
         grid-template-columns: 1fr;
       }
     }
@@ -252,7 +305,10 @@
         <span class="wc-slab slab-o">O</span>
         <span class="wc-slab slab-r">R</span>
         <span class="wc-slab slab-d">D</span>
-        <span class="wc-brand-text">Calculator<small class="wc-tagline">Every Word Counts</small></span>
+        <span class="wc-brand-text">
+          Calculator
+          <small class="wc-tagline">Every Word Counts</small>
+        </span>
       </a>
 
       <nav class="wc-nav">
@@ -289,128 +345,165 @@
     <div class="mobile-overlay" id="mobileOverlay"></div>
   </header>
 
-  <!-- Main content -->
-  <main class="rts-main">
+  <!-- Main Content -->
+  <main class="rt-main">
 
-    <!-- Hero -->
+    <!-- Hero section -->
     <section class="tools-hero">
       <div class="tools-hero-inner">
         <div class="tools-hero-text">
-          <h1>Readability & Text Statistics</h1>
-          <p>Measure how easy your text is to read with word count, reading time, and readability scores.</p>
+          <h1>Readability &amp; Text Statistics</h1>
+          <p>
+            Paste your content and get instant word count, sentence count, reading time,
+            and readability scores in one clean view.
+          </p>
 
           <div class="tools-meta-row">
-            <span><i class="fas fa-font"></i> Word & character count</span>
-            <span><i class="fas fa-book-open"></i> Sentences & paragraphs</span>
-            <span><i class="fas fa-gauge-high"></i> Readability scores</span>
+            <span><i class="fas fa-text-width"></i> Word &amp; character counts</span>
+            <span><i class="fas fa-stopwatch"></i> Reading time</span>
+            <span><i class="fas fa-signal"></i> Readability scores</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Tool layout -->
-    <section class="rts-layout">
+    <!-- Tool Layout -->
+    <section class="rt-layout">
 
       <!-- LEFT: Input -->
-      <div class="rts-card">
+      <div class="rt-card">
         <h2>Paste your text</h2>
         <p class="lead">
-          Drop in any content — articles, blog posts, landing page copy, or academic writing — and get instant readability and text statistics.
+          The analyzer will automatically update statistics and readability scores as you type or paste content.
         </p>
 
-        <form id="rtsForm" onsubmit="return false;">
-          <div class="rts-field">
-            <label for="rtsInput">Text</label>
-            <textarea
-              id="rtsInput"
-              class="rts-textarea"
-              placeholder="Paste or type your text here to analyze readability and statistics..."
-            ></textarea>
-          </div>
-
-          <div class="rts-actions">
-            <button type="button" id="rtsAnalyzeBtn" class="rts-btn primary">
-              <i class="fas fa-chart-bar"></i> Analyze text
-            </button>
-            <button type="button" id="rtsClearBtn" class="rts-btn">
-              <i class="fas fa-rotate-left"></i> Clear
-            </button>
-          </div>
-
-          <p class="rts-note">
-            This tool runs entirely in your browser. Your text is <strong>not</strong> sent to any server or external API.
-          </p>
-
-          <div class="rts-message" id="rtsMessage">
-            <i class="fas fa-circle-info"></i>
-            <span>Paste your content and click <strong>Analyze text</strong> to see detailed statistics.</span>
-          </div>
-        </form>
-      </div>
-
-      <!-- RIGHT: Results -->
-      <div class="rts-results">
-        <h2>Readability overview</h2>
-
-        <div class="rts-score-row">
-          <div>
-            <div id="rtsFleschScore" class="rts-score-main">–</div>
-            <div id="rtsFleschLabel" class="rts-score-label">No readability score calculated yet</div>
-          </div>
-
-          <div class="rts-badge">
-            <i class="fas fa-school"></i>
-            <span>Flesch–Kincaid grade:</span>
-            <strong id="rtsFkGrade">–</strong>
-          </div>
-
-          <div class="rts-badge">
-            <i class="fas fa-clock"></i>
-            <span>Reading time:</span>
-            <strong id="rtsReadingTime">0 min</strong>
-          </div>
+        <div class="rt-field">
+          <label for="rtInput">Text input</label>
+          <textarea
+            id="rtInput"
+            class="rt-textarea"
+            placeholder="Paste or type your article, blog post, landing page copy, or any other text here..."
+          ></textarea>
         </div>
 
-        <div class="rts-section-title">Core text statistics</div>
-        <div class="rts-grid">
-          <div class="rts-stat-card">
-            <div class="rts-stat-label">Words</div>
-            <div id="rtsWords" class="rts-stat-value">0</div>
-            <div class="rts-stat-sub">Based on whitespace separation</div>
+        <div class="rt-actions">
+          <button type="button" id="rtAnalyzeBtn" class="rt-btn primary">
+            <i class="fas fa-wand-magic-sparkles"></i> Analyze text
+          </button>
+          <button type="button" id="rtClearBtn" class="rt-btn">
+            <i class="fas fa-rotate-left"></i> Clear
+          </button>
+        </div>
+
+        <div class="rt-note">
+          <i class="fas fa-circle-info"></i>
+          <span>
+            Stats are calculated locally in your browser. No data is sent to any server.
+          </span>
+        </div>
+
+        <div class="rt-message" id="rtMessage">
+          <i class="fas fa-arrow-up-right-from-square"></i>
+          <span>Start typing or paste your text and click <strong>Analyze text</strong>.</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Stats / Results -->
+      <div class="rt-results">
+        <h2>Text statistics</h2>
+
+        <div class="rt-grid">
+          <div class="rt-stat">
+            <div class="rt-stat-label">
+              <i class="fas fa-font"></i>
+              <span>Words</span>
+            </div>
+            <div class="rt-stat-value" id="rtWords">0</div>
+            <div class="rt-stat-sub" id="rtWordsSub">0 unique words</div>
           </div>
 
-          <div class="rts-stat-card">
-            <div class="rts-stat-label">Characters</div>
-            <div id="rtsCharsWith" class="rts-stat-value">0</div>
-            <div class="rts-stat-sub">
-              <span id="rtsCharsWithout">0</span> without spaces
+          <div class="rt-stat">
+            <div class="rt-stat-label">
+              <i class="fas fa-text-width"></i>
+              <span>Characters</span>
+            </div>
+            <div class="rt-stat-value" id="rtCharsWithSpaces">0</div>
+            <div class="rt-stat-sub">
+              <span id="rtCharsNoSpaces">0</span> without spaces
             </div>
           </div>
 
-          <div class="rts-stat-card">
-            <div class="rts-stat-label">Sentences</div>
-            <div id="rtsSentences" class="rts-stat-value">0</div>
-            <div class="rts-stat-sub">
-              Avg <span id="rtsWordsPerSentence">0</span> words / sentence
+          <div class="rt-stat">
+            <div class="rt-stat-label">
+              <i class="fas fa-ellipsis-h"></i>
+              <span>Sentences</span>
+            </div>
+            <div class="rt-stat-value" id="rtSentences">0</div>
+            <div class="rt-stat-sub">
+              Avg. words / sentence: <span id="rtAvgWordsSentence">0</span>
             </div>
           </div>
 
-          <div class="rts-stat-card">
-            <div class="rts-stat-label">Paragraphs</div>
-            <div id="rtsParagraphs" class="rts-stat-value">0</div>
-            <div class="rts-stat-sub">Separated by line breaks</div>
+          <div class="rt-stat">
+            <div class="rt-stat-label">
+              <i class="fas fa-align-left"></i>
+              <span>Paragraphs</span>
+            </div>
+            <div class="rt-stat-value" id="rtParagraphs">0</div>
+            <div class="rt-stat-sub">
+              Avg. characters / word: <span id="rtAvgCharsWord">0</span>
+            </div>
           </div>
         </div>
 
-        <div class="rts-section-title">Summary</div>
-        <div id="rtsSummary" class="rts-summary">
-          Stats and readability interpretation will appear here after analysis.
+        <div class="rt-readability-block">
+          <div class="rt-readability-main">
+            <div class="rt-readability-score" id="rtFleschScore">0</div>
+            <div>
+              <div class="rt-readability-label" id="rtFleschLabel">
+                No readability score yet
+              </div>
+              <div class="rt-readability-meta">
+                Flesch Reading Ease (higher = easier to read)
+              </div>
+            </div>
+          </div>
+
+          <div class="rt-level-row">
+            <div class="rt-level-box">
+              <strong>Estimated grade level</strong>
+              <span id="rtFkGrade">–</span>
+              <div style="font-size: 11px; color: #9ca3af; margin-top: 2px;" id="rtFkLabel">
+                Flesch–Kincaid Grade Level
+              </div>
+            </div>
+
+            <div class="rt-level-box">
+              <strong>Reading time</strong>
+              <span id="rtReadingTime">0 min</span>
+              <div style="font-size: 11px; color: #9ca3af; margin-top: 2px;">
+                Based on ~200 words per minute
+              </div>
+            </div>
+          </div>
+
+          <div class="rt-progress-wrap">
+            <span id="rtDifficultyText">Difficulty: not calculated</span>
+            <div class="rt-progress-bar">
+              <div class="rt-progress-fill" id="rtProgressFill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rt-reading-summary" id="rtSummary">
+          Paste some text to see a quick reading summary here.
         </div>
       </div>
+
     </section>
   </main>
 
-  <!-- Footer (same as all tools) -->
+  <!-- Footer (same as other tools) -->
   <footer class="pro-footer" id="about">
     <div class="pf-wrap">
       <div class="pf-brand">
