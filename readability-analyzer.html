@@ -1,227 +1,417 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Readability & Text Statistics — WordCalculator.net</title>
-  <meta name="description" content="Analyze readability scores, text statistics, sentence length, and word usage with the Readability & Text Statistics tool.">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet"/>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="tools.css"/>
-  <link rel="icon" href="favicon.ico"/>
+  <meta name="description" content="Analyze text readability, word count, sentence count, reading time and text statistics.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .rts-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .rts-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .rts-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .rts-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+
+    .rts-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 10px;
+    }
+
+    .rts-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .rts-field label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .rts-textarea {
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 8px 10px;
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+      min-height: 220px;
+      resize: vertical;
+    }
+
+    .rts-textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+    }
+
+    .rts-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .rts-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .rts-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .rts-btn.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .rts-btn.primary:hover {
+      background: #1d4ed8;
+    }
+
+    .rts-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .rts-message {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rts-message strong {
+      color: #111827;
+    }
+
+    .rts-results {
+      background: #020617;
+      border-radius: 14px;
+      padding: 14px;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+    }
+
+    .rts-results h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #f9fafb;
+    }
+
+    .rts-score-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      align-items: baseline;
+    }
+
+    .rts-score-main {
+      font-size: 22px;
+      font-weight: 800;
+      color: #22c55e;
+    }
+
+    .rts-score-main.medium {
+      color: #facc15;
+    }
+
+    .rts-score-main.low {
+      color: #ef4444;
+    }
+
+    .rts-score-label {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    .rts-badge {
+      background: #020617;
+      border-radius: 999px;
+      padding: 6px 10px;
+      border: 1px solid #1f2937;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rts-badge strong {
+      font-weight: 700;
+    }
+
+    .rts-section-title {
+      margin-top: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .rts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .rts-stat-card {
+      background: #020617;
+      border-radius: 10px;
+      border: 1px solid #1f2937;
+      padding: 8px 9px;
+      font-size: 12px;
+    }
+
+    .rts-stat-label {
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+
+    .rts-stat-value {
+      font-weight: 700;
+      font-size: 14px;
+      color: #e5e7eb;
+    }
+
+    .rts-stat-sub {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    .rts-summary {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #d1d5db;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 900px) {
+      .rts-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <!-- Header (unchanged) -->
+
+  <!-- Header (same as other tools) -->
   <header class="wc-header">
     <div class="wc-wrap">
-      <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+      <a class="wc-logo" href="https://wordcalculator.net">
         <span class="wc-slab slab-w">W</span>
         <span class="wc-slab slab-o">O</span>
         <span class="wc-slab slab-r">R</span>
         <span class="wc-slab slab-d">D</span>
-        <span class="wc-brand-text">
-          Calculator
-          <small class="wc-tagline">Every Word Counts</small>
-        </span>
+        <span class="wc-brand-text">Calculator<small class="wc-tagline">Every Word Counts</small></span>
       </a>
 
-      <nav class="wc-nav" aria-label="Primary">
+      <nav class="wc-nav">
         <a href="https://wordcalculator.net" class="wc-link">Home</a>
-        <a href="#" class="wc-link">Blog</a>
         <a href="tools.html" class="wc-link">Tools</a>
         <a href="#about" class="wc-link">About Us</a>
-        <button class="wc-link wc-signin-btn" id="openAuthBtn" type="button">
-          Sign In <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
-        </button>
       </nav>
 
-      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
         <i class="fas fa-bars"></i>
       </button>
     </div>
 
-    <!-- Mobile nav -->
-    <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
+    <nav class="mobile-nav" id="mobileNav">
       <div class="mobile-nav-header">
-        <a class="wc-logo" href="https://wordcalculator.net" aria-label="Go to Home">
+        <a class="wc-logo" href="https://wordcalculator.net">
           <span class="wc-slab slab-w">W</span>
           <span class="wc-slab slab-o">O</span>
           <span class="wc-slab slab-r">R</span>
           <span class="wc-slab slab-d">D</span>
           <span class="wc-brand-text">Calculator</span>
         </a>
-        <button class="mobile-close-btn" id="mobileCloseBtn" aria-label="Close menu">
+        <button class="mobile-close-btn" id="mobileCloseBtn">
           <i class="fas fa-times"></i>
         </button>
       </div>
+
       <div class="mobile-nav-links">
         <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
-        <a href="#" class="nav-link mobile-link">Blog</a>
         <a href="tools.html" class="nav-link mobile-link">Tools</a>
         <a href="#about" class="nav-link mobile-link">About Us</a>
-        <button class="nav-link mobile-link" id="openAuthBtnMobile" type="button">Sign In</button>
       </div>
     </nav>
     <div class="mobile-overlay" id="mobileOverlay"></div>
   </header>
 
-  <!-- Main content for this tool -->
-  <main class="tool-main">
-    <!-- Hero / Intro -->
-    <section class="tool-hero">
-      <div class="tool-hero-inner">
-        <div class="tool-hero-text">
-          <p class="tool-breadcrumb">
-            <a href="tools.html"><i class="fas fa-arrow-left"></i> Back to Tools</a>
-          </p>
-          <h1>Readability &amp; Text Statistics</h1>
-          <p class="tool-hero-subtitle">
-            Paste or type your text and instantly see readability scores, sentence length, syllables, and detailed text statistics.
-          </p>
-          <div class="tool-hero-meta">
-            <span><i class="fas fa-book-open"></i> Flesch Reading Ease</span>
-            <span><i class="fas fa-graduation-cap"></i> Flesch–Kincaid Grade</span>
-            <span><i class="fas fa-chart-bar"></i> Word &amp; sentence stats</span>
+  <!-- Main content -->
+  <main class="rts-main">
+
+    <!-- Hero -->
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Readability & Text Statistics</h1>
+          <p>Measure how easy your text is to read with word count, reading time, and readability scores.</p>
+
+          <div class="tools-meta-row">
+            <span><i class="fas fa-font"></i> Word & character count</span>
+            <span><i class="fas fa-book-open"></i> Sentences & paragraphs</span>
+            <span><i class="fas fa-gauge-high"></i> Readability scores</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Tool Layout -->
-    <section class="tool-layout-section">
-      <div class="tool-layout-wrap">
+    <!-- Tool layout -->
+    <section class="rts-layout">
 
-        <!-- Left: Input Panel -->
-        <div class="tool-panel tool-panel-input">
-          <div class="tool-panel-head">
-            <h2><i class="fas fa-file-alt"></i> Text Input</h2>
-            <p>Enter your article, blog post, essay, or any English text to analyze its readability.</p>
-          </div>
+      <!-- LEFT: Input -->
+      <div class="rts-card">
+        <h2>Paste your text</h2>
+        <p class="lead">
+          Drop in any content — articles, blog posts, landing page copy, or academic writing — and get instant readability and text statistics.
+        </p>
 
-          <div class="tool-panel-body">
-            <label for="inputText" class="tool-label">
-              Your text
-            </label>
+        <form id="rtsForm" onsubmit="return false;">
+          <div class="rts-field">
+            <label for="rtsInput">Text</label>
             <textarea
-              id="inputText"
-              class="tool-textarea"
-              rows="12"
-              placeholder="Paste or type your content here..."
+              id="rtsInput"
+              class="rts-textarea"
+              placeholder="Paste or type your text here to analyze readability and statistics..."
             ></textarea>
+          </div>
 
-            <div class="tool-actions-row">
-              <button type="button" id="btnSample" class="tool-btn secondary-btn">
-                <i class="fas fa-magic"></i> Load sample text
-              </button>
-              <button type="button" id="btnClear" class="tool-btn ghost-btn">
-                <i class="fas fa-eraser"></i> Clear
-              </button>
-            </div>
+          <div class="rts-actions">
+            <button type="button" id="rtsAnalyzeBtn" class="rts-btn primary">
+              <i class="fas fa-chart-bar"></i> Analyze text
+            </button>
+            <button type="button" id="rtsClearBtn" class="rts-btn">
+              <i class="fas fa-rotate-left"></i> Clear
+            </button>
+          </div>
 
-            <p class="tool-hint">
-              Tip: Longer texts (at least 3–4 sentences) give more accurate readability scores.
-            </p>
+          <p class="rts-note">
+            This tool runs entirely in your browser. Your text is <strong>not</strong> sent to any server or external API.
+          </p>
+
+          <div class="rts-message" id="rtsMessage">
+            <i class="fas fa-circle-info"></i>
+            <span>Paste your content and click <strong>Analyze text</strong> to see detailed statistics.</span>
+          </div>
+        </form>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div class="rts-results">
+        <h2>Readability overview</h2>
+
+        <div class="rts-score-row">
+          <div>
+            <div id="rtsFleschScore" class="rts-score-main">–</div>
+            <div id="rtsFleschLabel" class="rts-score-label">No readability score calculated yet</div>
+          </div>
+
+          <div class="rts-badge">
+            <i class="fas fa-school"></i>
+            <span>Flesch–Kincaid grade:</span>
+            <strong id="rtsFkGrade">–</strong>
+          </div>
+
+          <div class="rts-badge">
+            <i class="fas fa-clock"></i>
+            <span>Reading time:</span>
+            <strong id="rtsReadingTime">0 min</strong>
           </div>
         </div>
 
-        <!-- Right: Results Panel -->
-        <div class="tool-panel tool-panel-results">
-          <div class="tool-panel-head">
-            <h2><i class="fas fa-chart-line"></i> Results &amp; Statistics</h2>
+        <div class="rts-section-title">Core text statistics</div>
+        <div class="rts-grid">
+          <div class="rts-stat-card">
+            <div class="rts-stat-label">Words</div>
+            <div id="rtsWords" class="rts-stat-value">0</div>
+            <div class="rts-stat-sub">Based on whitespace separation</div>
           </div>
 
-          <div class="tool-panel-body">
-
-            <!-- Summary Stats -->
-            <div class="tool-card-block">
-              <h3 class="tool-card-title">
-                <i class="fas fa-list-ul"></i> Text Summary
-              </h3>
-              <div class="tool-summary-grid">
-                <div class="tool-summary-item">
-                  <span class="label">Words</span>
-                  <span class="value" id="wordCount">0</span>
-                </div>
-                <div class="tool-summary-item">
-                  <span class="label">Characters (with spaces)</span>
-                  <span class="value" id="charCount">0</span>
-                </div>
-                <div class="tool-summary-item">
-                  <span class="label">Characters (without spaces)</span>
-                  <span class="value" id="charCountNoSpaces">0</span>
-                </div>
-                <div class="tool-summary-item">
-                  <span class="label">Sentences</span>
-                  <span class="value" id="sentenceCount">0</span>
-                </div>
-                <div class="tool-summary-item">
-                  <span class="label">Paragraphs</span>
-                  <span class="value" id="paragraphCount">0</span>
-                </div>
-                <div class="tool-summary-item">
-                  <span class="label">Syllables (est.)</span>
-                  <span class="value" id="syllableCount">0</span>
-                </div>
-              </div>
+          <div class="rts-stat-card">
+            <div class="rts-stat-label">Characters</div>
+            <div id="rtsCharsWith" class="rts-stat-value">0</div>
+            <div class="rts-stat-sub">
+              <span id="rtsCharsWithout">0</span> without spaces
             </div>
+          </div>
 
-            <!-- Readability Scores -->
-            <div class="tool-card-block">
-              <h3 class="tool-card-title">
-                <i class="fas fa-signal"></i> Readability Scores
-              </h3>
-              <div class="readability-grid">
-                <div class="readability-score-box">
-                  <div class="score-label">Flesch Reading Ease</div>
-                  <div class="score-value" id="fleschScore">--</div>
-                  <div class="score-tag" id="fleschLabel">Add more text to calculate</div>
-                </div>
-                <div class="readability-score-box">
-                  <div class="score-label">Flesch–Kincaid Grade</div>
-                  <div class="score-value" id="fkGrade">--</div>
-                  <div class="score-tag" id="fkLabel">Approx. US grade level</div>
-                </div>
-              </div>
-              <p class="tool-hint small">
-                Higher Flesch Reading Ease scores (60–100) are easier to read.  
-                Flesch–Kincaid Grade estimates the school grade needed to understand the text.
-              </p>
+          <div class="rts-stat-card">
+            <div class="rts-stat-label">Sentences</div>
+            <div id="rtsSentences" class="rts-stat-value">0</div>
+            <div class="rts-stat-sub">
+              Avg <span id="rtsWordsPerSentence">0</span> words / sentence
             </div>
+          </div>
 
-            <!-- Sentence & Word Stats -->
-            <div class="tool-card-block">
-              <h3 class="tool-card-title">
-                <i class="fas fa-balance-scale"></i> Sentence &amp; Word Statistics
-              </h3>
-              <div class="tool-summary-grid">
-                <div class="tool-summary-item">
-                  <span class="label">Avg. words per sentence</span>
-                  <span class="value" id="avgWordsPerSentence">0</span>
-                </div>
-                <div class="tool-summary-item">
-                  <span class="label">Avg. characters per word</span>
-                  <span class="value" id="avgCharsPerWord">0</span>
-                </div>
-                <div class="tool-summary-item">
-                  <span class="label">Avg. syllables per word</span>
-                  <span class="value" id="avgSyllablesPerWord">0</span>
-                </div>
-                <div class="tool-summary-item">
-                  <span class="label">Estimated reading time</span>
-                  <span class="value" id="readingTime">0 sec</span>
-                </div>
-              </div>
-            </div>
-
+          <div class="rts-stat-card">
+            <div class="rts-stat-label">Paragraphs</div>
+            <div id="rtsParagraphs" class="rts-stat-value">0</div>
+            <div class="rts-stat-sub">Separated by line breaks</div>
           </div>
         </div>
 
+        <div class="rts-section-title">Summary</div>
+        <div id="rtsSummary" class="rts-summary">
+          Stats and readability interpretation will appear here after analysis.
+        </div>
       </div>
     </section>
   </main>
 
-  <!-- Footer (unchanged) -->
-  <footer class="pro-footer" id="about" aria-label="Website footer">
+  <!-- Footer (same as all tools) -->
+  <footer class="pro-footer" id="about">
     <div class="pf-wrap">
       <div class="pf-brand">
         <div class="pf-logo">
@@ -229,91 +419,27 @@
           <span class="slab slab-o">O</span>
           <span class="slab slab-r">R</span>
           <span class="slab slab-d">D</span>
-          <div class="pf-brand-text">
-            WordCalculator<span>.net</span>
-          </div>
+          <div class="pf-brand-text">WordCalculator<span>.net</span></div>
         </div>
         <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
-        <div class="pf-social">
-          <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-          <a href="#" aria-label="X"><i class="fab fa-x-twitter"></i></a>
-          <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-        </div>
       </div>
 
       <div class="pf-cols">
-        <div class="pf-col">
-          <h5>Product</h5>
-          <ul>
-            <li><a href="https://wordcalculator.net">Editor</a></li>
-            <li><a href="tools.html">Tools</a></li>
-            <li><a href="#">Grammar Check</a></li>
-            <li><a href="#">Keyword Density</a></li>
-          </ul>
-        </div>
-        <div class="pf-col">
-          <h5>Resources</h5>
-          <ul>
-            <li><a href="#">Blog</a></li>
-            <li><a href="#">How It Works</a></li>
-            <li><a href="#">Tips & Guides</a></li>
-            <li><a href="#">Changelog</a></li>
-          </ul>
-        </div>
-        <div class="pf-col">
-          <h5>Company</h5>
-          <ul>
-            <li><a href="#about">About Us</a></li>
-            <li><a href="#">Report a Bug</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">Careers</a></li>
-          </ul>
-        </div>
-        <div class="pf-col">
-          <h5>Legal</h5>
-          <ul>
-            <li><a href="#">Terms</a></li>
-            <li><a href="#">Privacy</a></li>
-            <li><a href="#">Cookie Policy</a></li>
-            <li><a href="#">Security</a></li>
-          </ul>
-        </div>
+        <div class="pf-col"><h5>Product</h5></div>
+        <div class="pf-col"><h5>Resources</h5></div>
+        <div class="pf-col"><h5>Company</h5></div>
+        <div class="pf-col"><h5>Legal</h5></div>
       </div>
     </div>
     <div class="pf-bottom">
       <div class="pf-bottom-wrap">
         <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
-        <div class="pf-links">
-          <a href="#">Sitemap</a>
-          <a href="#">Status</a>
-          <a href="#">Accessibility</a>
-        </div>
       </div>
     </div>
   </footer>
 
-  <!-- Simple Auth Modal (optional demo) -->
-  <div class="modal-overlay" id="authOverlay" aria-hidden="true"></div>
-  <div class="modal modal-auth" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle">
-    <div class="modal-head">
-      <h3 id="authTitle"><i class="fas fa-user-lock"></i> Account</h3>
-      <button class="modal-close" id="authCloseBtn" aria-label="Close">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="modal-body">
-      <p class="auth-note">
-        Sign-in and account features are coming soon. For now, all tools are free to use without registration.
-      </p>
-    </div>
-  </div>
-
-  <!-- Toast Notification -->
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
-  <!-- Scripts -->
+  <!-- Shared + Page Scripts -->
   <script src="tools.js"></script>
-  <script src="readability-analyzer.js"></script>
+  <script src="readability-text-statistics.js"></script>
 </body>
 </html>
