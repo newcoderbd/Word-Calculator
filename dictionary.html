@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English Dictionary — WordCalculator.net</title>
+  <meta name="description" content="Look up English word meanings, pronunciation, examples, and synonyms with this fast online dictionary.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .dict-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .dict-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .dict-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .dict-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+
+    .dict-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 10px;
+    }
+
+    .dict-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .dict-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .dict-input-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .dict-input-row input[type="text"] {
+      flex: 1 1 200px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+      padding: 8px 10px;
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .dict-input-row input[type="text"]:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+    }
+
+    .dict-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .dict-btn.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .dict-btn.primary:hover {
+      background: #1d4ed8;
+    }
+
+    .dict-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .dict-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dict-note i {
+      font-size: 11px;
+    }
+
+    .dict-message {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dict-message strong {
+      color: #111827;
+    }
+
+    .dict-results {
+      background: #020617;
+      border-radius: 14px;
+      padding: 14px;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+      min-height: 180px;
+    }
+
+    .dict-results h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #f9fafb;
+    }
+
+    .dict-word-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .dict-word-main {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .dict-word-text {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      text-transform: none;
+    }
+
+    .dict-phonetic {
+      font-size: 13px;
+      color: #9ca3af;
+    }
+
+    .dict-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 3px 8px;
+      border: 1px solid #1f2937;
+      background: #030712;
+      color: #e5e7eb;
+    }
+
+    .dict-audio-btn {
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      background: #030712;
+      color: #e5e7eb;
+      cursor: pointer;
+      font-size: 11px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .dict-audio-btn:hover {
+      background: #111827;
+    }
+
+    .dict-section-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+      margin: 8px 0 4px;
+    }
+
+    .dict-def-block {
+      border-radius: 10px;
+      border: 1px solid #111827;
+      padding: 8px 9px;
+      background: #020617;
+      margin-bottom: 6px;
+    }
+
+    .dict-pos {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 3px;
+    }
+
+    .dict-def {
+      font-size: 13px;
+      color: #e5e7eb;
+    }
+
+    .dict-example {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 4px;
+      border-left: 2px solid #1f2937;
+      padding-left: 8px;
+      font-style: italic;
+    }
+
+    .dict-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .dict-meta-row span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .dict-synonyms {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #d1d5db;
+    }
+
+    .dict-synonyms span.label {
+      color: #9ca3af;
+      margin-right: 4px;
+    }
+
+    .dict-synonym-pill {
+      display: inline-flex;
+      margin: 2px 4px 0 0;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #1f2937;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .dict-synonym-pill:hover {
+      background: #111827;
+    }
+
+    .dict-empty {
+      font-size: 13px;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .dict-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header (same as other tools) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">
+          Calculator
+          <small class="wc-tagline">Every Word Counts</small>
+        </span>
+      </a>
+
+      <nav class="wc-nav">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="dict-main">
+
+    <!-- Hero section -->
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>English Dictionary</h1>
+          <p>
+            Look up word meanings, pronunciation, examples, and synonyms with a clean, fast English dictionary
+            designed for writers and content creators.
+          </p>
+
+          <div class="tools-meta-row">
+            <span><i class="fas fa-book-open"></i> Definitions &amp; examples</span>
+            <span><i class="fas fa-volume-up"></i> Pronunciation audio</span>
+            <span><i class="fas fa-tags"></i> Synonyms &amp; part of speech</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tool Layout -->
+    <section class="dict-layout">
+
+      <!-- LEFT: Search -->
+      <div class="dict-card">
+        <h2>Search for a word</h2>
+        <p class="lead">
+          Type any English word and get instant definitions from a free, offline-friendly dictionary API.
+        </p>
+
+        <div class="dict-field">
+          <label for="dictQuery" class="dict-label">English word</label>
+          <div class="dict-input-row">
+            <input
+              type="text"
+              id="dictQuery"
+              placeholder="Enter a word (e.g., clarity, momentum, creative)"
+              autocomplete="off"
+            />
+            <button type="button" id="dictSearchBtn" class="dict-btn primary">
+              <i class="fas fa-search"></i> Search
+            </button>
+          </div>
+        </div>
+
+        <div class="dict-note">
+          <i class="fas fa-circle-info"></i>
+          <span>
+            Powered by the free <code>dictionaryapi.dev</code>. No account or API key required.
+          </span>
+        </div>
+
+        <div class="dict-message" id="dictMessage">
+          <i class="fas fa-arrow-turn-up"></i>
+          <span>Type a word and press <strong>Search</strong> or hit <strong>Enter</strong>.</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div class="dict-results" id="dictResults">
+        <h2>Definitions</h2>
+        <div id="dictContent">
+          <div class="dict-empty">
+            <i class="fas fa-book"></i>
+            <span>No word selected yet. Start by searching for an English word on the left.</span>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer (same as other tools) -->
+  <footer class="pro-footer" id="about">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">WordCalculator<span>.net</span></div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col"><h5>Product</h5></div>
+        <div class="pf-col"><h5>Resources</h5></div>
+        <div class="pf-col"><h5>Company</h5></div>
+        <div class="pf-col"><h5>Legal</h5></div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Shared + Page Scripts -->
+  <script src="tools.js"></script>
+  <script src="dictionary.js"></script>
+</body>
+</html>
