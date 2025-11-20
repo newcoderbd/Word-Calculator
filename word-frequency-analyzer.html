@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Word Frequency Analyzer — WordCalculator.net</title>
+  <meta name="description" content="Analyze word frequency from any English text. Count total words, unique words, and see which words appear most often in your content.">
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+
+  <!-- Shared CSS (same as other tools) -->
+  <link rel="stylesheet" href="tools.css" />
+
+  <style>
+    .wf-main {
+      max-width: 1200px;
+      margin: 24px auto 40px;
+      padding: 0 15px;
+    }
+
+    .wf-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .wf-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      padding: 14px 14px 12px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.04);
+    }
+
+    .wf-card h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+
+    .wf-card p.lead {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 10px;
+    }
+
+    .wf-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .wf-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+    }
+
+    .wf-textarea {
+      margin-top: 4px;
+    }
+
+    .wf-textarea textarea {
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      border-radius: 12px;
+      padding: 10px 11px;
+      border: 1px solid #e5e7eb;
+      font-size: 13px;
+      font-family: inherit;
+      line-height: 1.5;
+      outline: none;
+    }
+
+    .wf-textarea textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.12);
+    }
+
+    .wf-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .wf-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid #d1d5db;
+      background: #f3f4f6;
+      cursor: pointer;
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      white-space: nowrap;
+    }
+
+    .wf-btn.primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #ffffff;
+    }
+
+    .wf-btn.primary:hover {
+      background: #1d4ed8;
+    }
+
+    .wf-btn:hover {
+      background: #e5e7eb;
+    }
+
+    .wf-toggle-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      font-size: 12px;
+      color: #4b5563;
+    }
+
+    .wf-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .wf-toggle input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
+    .wf-minlength {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .wf-minlength select {
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      padding: 4px 9px;
+      font-size: 12px;
+      background: #f9fafb;
+      outline: none;
+    }
+
+    .wf-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .wf-note i {
+      font-size: 11px;
+    }
+
+    .wf-message {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .wf-message strong {
+      color: #111827;
+    }
+
+    .wf-results {
+      background: #020617;
+      border-radius: 14px;
+      padding: 14px;
+      color: #e5e7eb;
+      border: 1px solid #1f2937;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.6);
+      min-height: 220px;
+    }
+
+    .wf-results h2 {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 10px;
+      color: #f9fafb;
+    }
+
+    .wf-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .wf-s-card {
+      border-radius: 10px;
+      border: 1px solid #111827;
+      background: #030712;
+      padding: 8px 9px;
+    }
+
+    .wf-s-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: #9ca3af;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .wf-s-value {
+      font-size: 16px;
+      font-weight: 800;
+      color: #e5e7eb;
+    }
+
+    .wf-s-sub {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    .wf-top-words {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .wf-top-words strong {
+      color: #e5e7eb;
+    }
+
+    .wf-table-wrap {
+      margin-top: 8px;
+      border-radius: 10px;
+      border: 1px solid #111827;
+      background: #030712;
+      max-height: 260px;
+      overflow: auto;
+    }
+
+    .wf-table-header {
+      padding: 7px 9px;
+      border-bottom: 1px solid #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .wf-table-header span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    table.wf-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .wf-table thead {
+      background: #020617;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .wf-table th,
+    .wf-table td {
+      padding: 6px 9px;
+      border-bottom: 1px solid #111827;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .wf-table th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #9ca3af;
+    }
+
+    .wf-table td.word-cell {
+      font-weight: 600;
+      color: #e5e7eb;
+    }
+
+    .wf-table tr:nth-child(even) td {
+      background: #020617;
+    }
+
+    .wf-empty {
+      font-size: 13px;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .wf-empty span strong {
+      color: #e5e7eb;
+    }
+
+    .wf-footer-note {
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    @media (max-width: 900px) {
+      .wf-layout {
+        grid-template-columns: 1fr;
+      }
+      .wf-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .wf-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header (same as other tools) -->
+  <header class="wc-header">
+    <div class="wc-wrap">
+      <a class="wc-logo" href="https://wordcalculator.net">
+        <span class="wc-slab slab-w">W</span>
+        <span class="wc-slab slab-o">O</span>
+        <span class="wc-slab slab-r">R</span>
+        <span class="wc-slab slab-d">D</span>
+        <span class="wc-brand-text">
+          Calculator
+          <small class="wc-tagline">Every Word Counts</small>
+        </span>
+      </a>
+
+      <nav class="wc-nav">
+        <a href="https://wordcalculator.net" class="wc-link">Home</a>
+        <a href="tools.html" class="wc-link">Tools</a>
+        <a href="#about" class="wc-link">About Us</a>
+      </nav>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+
+    <nav class="mobile-nav" id="mobileNav">
+      <div class="mobile-nav-header">
+        <a class="wc-logo" href="https://wordcalculator.net">
+          <span class="wc-slab slab-w">W</span>
+          <span class="wc-slab slab-o">O</span>
+          <span class="wc-slab slab-r">R</span>
+          <span class="wc-slab slab-d">D</span>
+          <span class="wc-brand-text">Calculator</span>
+        </a>
+        <button class="mobile-close-btn" id="mobileCloseBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="mobile-nav-links">
+        <a href="https://wordcalculator.net" class="nav-link mobile-link">Home</a>
+        <a href="tools.html" class="nav-link mobile-link">Tools</a>
+        <a href="#about" class="nav-link mobile-link">About Us</a>
+      </div>
+    </nav>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="wf-main">
+
+    <!-- Hero -->
+    <section class="tools-hero">
+      <div class="tools-hero-inner">
+        <div class="tools-hero-text">
+          <h1>Word Frequency Analyzer</h1>
+          <p>
+            Paste any English text and instantly see which words appear most frequently. Perfect for SEO, content editing, and keyword research.
+          </p>
+
+          <div class="tools-meta-row">
+            <span><i class="fas fa-keyboard"></i> Content &amp; copy analysis</span>
+            <span><i class="fas fa-chart-bar"></i> Word frequency stats</span>
+            <span><i class="fas fa-magnifying-glass"></i> SEO &amp; keyword insight</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tool Layout -->
+    <section class="wf-layout">
+
+      <!-- LEFT: Input -->
+      <div class="wf-card">
+        <h2>Analyze word frequency</h2>
+        <p class="lead">
+          Paste your article, blog post, landing page copy, or any text. We will count total words, unique words, and highlight the most frequent terms.
+        </p>
+
+        <div class="wf-field wf-textarea">
+          <label for="wfInput" class="wf-label">Text to analyze</label>
+          <textarea
+            id="wfInput"
+            placeholder="Paste or type your English text here..."
+          ></textarea>
+        </div>
+
+        <div class="wf-controls">
+          <button type="button" id="wfAnalyzeBtn" class="wf-btn primary">
+            <i class="fas fa-chart-simple"></i> Analyze text
+          </button>
+          <button type="button" id="wfClearBtn" class="wf-btn">
+            <i class="fas fa-eraser"></i> Clear
+          </button>
+        </div>
+
+        <div class="wf-toggle-group">
+          <label class="wf-toggle">
+            <input type="checkbox" id="wfIgnoreCase" checked />
+            <span>Ignore case (treat "Word" and "word" as the same)</span>
+          </label>
+          <label class="wf-toggle">
+            <input type="checkbox" id="wfExcludeStopwords" />
+            <span>Exclude common English stopwords</span>
+          </label>
+          <div class="wf-minlength">
+            <span>Min word length:</span>
+            <select id="wfMinLength">
+              <option value="1">1+ letters</option>
+              <option value="2">2+ letters</option>
+              <option value="3" selected>3+ letters</option>
+              <option value="4">4+ letters</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="wf-note">
+          <i class="fas fa-circle-info"></i>
+          <span>
+            Only alphabetic sequences (A–Z) are counted as words. Numbers and punctuation are ignored for frequency statistics.
+          </span>
+        </div>
+
+        <div class="wf-message" id="wfMessage">
+          <i class="fas fa-arrow-turn-up"></i>
+          <span>Paste your text and click <strong>Analyze text</strong> to see word frequency.</span>
+        </div>
+      </div>
+
+      <!-- RIGHT: Results -->
+      <div class="wf-results">
+        <h2>Analysis summary</h2>
+        <div id="wfContent">
+          <div class="wf-empty">
+            <i class="fas fa-wand-magic-sparkles"></i>
+            <span>Waiting for input. Paste some text to see detailed word frequency statistics.</span>
+          </div>
+        </div>
+        <div class="wf-footer-note">
+          <i class="fas fa-lightbulb"></i>
+          <span>Tip: Use stopword filtering and minimum length to focus on meaningful keywords.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer (same as other tools) -->
+  <footer class="pro-footer" id="about">
+    <div class="pf-wrap">
+      <div class="pf-brand">
+        <div class="pf-logo">
+          <span class="slab slab-w">W</span>
+          <span class="slab slab-o">O</span>
+          <span class="slab slab-r">R</span>
+          <span class="slab slab-d">D</span>
+          <div class="pf-brand-text">WordCalculator<span>.net</span></div>
+        </div>
+        <p class="pf-tag">A focused, distraction-free toolkit for precise writing.</p>
+      </div>
+
+      <div class="pf-cols">
+        <div class="pf-col"><h5>Product</h5></div>
+        <div class="pf-col"><h5>Resources</h5></div>
+        <div class="pf-col"><h5>Company</h5></div>
+        <div class="pf-col"><h5>Legal</h5></div>
+      </div>
+    </div>
+    <div class="pf-bottom">
+      <div class="pf-bottom-wrap">
+        <div>© <span id="pf-year"></span> WordCalculator.net — All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Shared + Page Scripts -->
+  <script src="tools.js"></script>
+  <script src="word-frequency-analyzer.js"></script>
+</body>
+</html>
